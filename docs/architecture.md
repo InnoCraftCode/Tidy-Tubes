@@ -42,4 +42,4 @@ Neither is installed; no template exists for them, deliberately.
 
 ## Versions (pinned, 2026-10-21)
 libGDX 1.13.1, Gradle 8.14.3, AGP 8.11.1, JDK 21 (Temurin), compileSdk/targetSdk 35 -> **36 required for
-Play**, minSdk 24, GMA Next-Gen 1.5.0, UMP 4.0.0, JUnit 5.11.4.
+Play**, minSdk 24, GMA Next-Gen 1.6.0, UMP 4.0.0, JUnit 5.11.4.

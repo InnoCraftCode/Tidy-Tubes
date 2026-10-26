@@ -20,7 +20,15 @@ uses UMP `com.google.android.ump:user-messaging-platform` (4.0.0). Both require 
   (see Google's migration guide).
 
 ## Consequences
-- Sortpuzzle still has only `NoOpAdProvider`; porting is a documented, copy-based step
-  (`.claude/skills/admob-integration/SKILL.md`).
+- Sortpuzzle (Tidy Tubes) ported the stack on 2026-10-26 (`android/.../AdMobAdProvider.java`,
+  `RewardGate`, `AdPacing`, `RewardOffer` coin fallback); rewarded flow verified on the Pixel_10
+  AVD with demo IDs. Porting into another game remains the copy-based step in
+  `.claude/skills/admob-integration/SKILL.md`.
 - When Google changes SDK versions: bump `gmaNextGen`/`ump` in `libs.versions.toml`, rebuild the
   template, rerun device checks, update this ADR.
+
+## Revisions
+- 2026-10-26: `gmaNextGen` 1.5.0 -> **1.6.0** (released 2026-10-22: rewarded `onUserEarnedReward`
+  ordering fix, R8 full-mode consumer rules, hsdp 2.2.0; no breaking change per the release notes
+  read the same day). UMP stays 4.0.0 (latest on maven.google.com). Verified by compiling both
+  projects and running sortpuzzle's debug build on the AVD.

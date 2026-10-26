@@ -21,8 +21,10 @@ debugging no-fill/crashes, or switching IDs for release. For *where* ads go, see
 - `core/.../ads/RewardGate.java` - earned + dismissed -> one outcome. `AdPacing.java` - frequency caps.
 - `android/.../AdMobAdProvider.java` - UMP -> init on worker thread -> preload -> backoff retries.
 - `android/build.gradle.kts` - demo IDs in debug, `admob.properties` in release, `-Pads.enabled=false`.
-Versions verified 2026-10-21: `ads-mobile-sdk:1.5.0`, `user-messaging-platform:4.0.0`, minSdk 24,
-compileSdk >= 35. Legacy `play-services-ads` is in maintenance mode - don't add it alongside Next-Gen.
+Versions verified 2026-10-26: `ads-mobile-sdk:1.6.0`, `user-messaging-platform:4.0.0`, minSdk 24,
+compileSdk >= 35 (check https://dl.google.com/dl/android/maven2/com/google/android/libraries/ads/mobile/sdk/ads-mobile-sdk/maven-metadata.xml
+for newer ones). Legacy `play-services-ads` is in maintenance mode - don't add it alongside Next-Gen.
+Worked example of a full port: `games/sortpuzzle` (AdMobAdProvider, RewardGate, AdPacing, RewardOffer coin fallback).
 
 ## Workflow: port into an existing game
 1. Add `gmaNextGen`/`ump` versions + libraries to `gradle/libs.versions.toml`; add both to

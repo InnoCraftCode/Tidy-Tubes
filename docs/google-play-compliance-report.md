@@ -15,6 +15,12 @@
 
 **Statut global : BLOQUÉ** (blocking items ci-dessous), puis **PRÊT SOUS CONDITIONS** dès que les trois bloquants sont levés.
 
+> *Mise à jour de l'intégrateur (26/10/2026 21:25)* — état des trois bloquants après l'audit :
+> 1. **Politique de confidentialité** : page rédigée (`privacy-policy/index.html`, EN + FR, AdMob et identifiant publicitaire mentionnés), URL câblée dans `GameConfig.PRIVACY_POLICY_URL` et `listing.json`, bouton visible dans Réglages (capture 07 refaite). **Reste** : pousser le dépôt et activer GitHub Pages (main, racine) pour que `https://innocraftcode.github.io/Tidy-Tubes/privacy-policy/` réponde.
+> 2. **Signature** : clé d'upload créée à la demande de l'utilisateur, `keystore.properties` en place, AAB 8,6 Mo signé (`jarsigner` : jar verified). **Levé.**
+> 3. **IDs AdMob** : `admob.properties` rempli (3 IDs de production, même éditeur), build 21:21 avec `ADS_ENABLED=true` et le bon ID d'application dans le manifeste. **Levé.** Nouveau constat sur l'AVD : UMP répond « no form(s) configured for the input app ID » → **les messages de consentement RGPD / États-Unis doivent être créés et publiés dans AdMob avant publication** (sinon aucun consentement recueilli en EEE/UK/États concernés).
+> Statut effectif : **PRÊT SOUS CONDITIONS** (Pages à activer, messages UMP à publier, déclarations Play Console à saisir).
+
 Bloquants (aucun ne peut être levé par un agent) :
 
 1. **Aucune politique de confidentialité** : `GameConfig.PRIVACY_POLICY_URL` est vide, le bouton de l'écran Réglages est masqué, `listing.json` contient un espace réservé. Obligatoire pour toutes les applications (politique Données utilisateur, lue 2026-10-26).
@@ -120,7 +126,7 @@ Légende : **PASS** conforme ; **FAIL** bloquant ou non conforme ; **WARNING** r
 | 16 | `…DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` | **PASS** | permission de signature privée d'`androidx.core` ; standard | — | — |
 | 17 | `RECEIVE_BOOT_COMPLETED` | **PASS** | demandée par `work-runtime`, **retirée** par le manifeste du SDK (`tools:node="remove"`) ; absente du badging | Google (SDK) | — |
 | 18 | Aucune permission dangereuse / sensible | **PASS** | badging : aucune permission runtime | — | — |
-| 19 | Versions SDK publicitaires | **WARNING** | GMA Next-Gen **1.5.0** alors que **1.6.0** est paru le 2026-10-22 ; UMP 4.0.0 = dernière | — | Non bloquant pour Play. Mettre à jour et re-tester avant le build final (`libs.versions.toml` l. 7). |
+| 19 | Versions SDK publicitaires | **PASS** (corrigé par l'intégrateur) | audit : GMA 1.5.0 alors que 1.6.0 est paru le 2026-10-22. Mis à jour le 26/10 21:07 : `gmaNextGen = "1.6.0"`, 90 tests verts, AAB 5,2 Mo reconstruit, template recompilé, SDK initialisé et annonces chargées sur l'AVD ; UMP 4.0.0 = dernière | intégrateur | Aucun. |
 | 20 | Absence du SDK legacy `play-services-ads` | **PASS** | `dependencies.pb` : seuls `play-services-ads-identifier`, `-appset`, `-base`, `-basement`, `-tasks`, `-cronet` (dépendances du Next-Gen) | — | — |
 | 21 | Secrets hors dépôt | **PASS** | `validate-workspace` 0 échec ; `.gitignore` couvre `keystore.properties`, `admob.properties`, `*.jks` ; `admob.properties.example` ne contient que des zéros ; IDs de démo seulement dans le build type `debug` et comme repli de manifeste | — | Le dossier n'est pas versionné (pas de `.git`) : aucune protection par l'historique, mais aucun risque de fuite par commit non plus. |
 

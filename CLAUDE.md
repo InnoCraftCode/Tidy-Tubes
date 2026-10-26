@@ -5,7 +5,7 @@ OS: Windows 11, shell: Windows PowerShell 5.1 (no `&&`, no `?:`; use `;` and `if
 
 ## Stack (decided, see config/architecture/ADR-001-engine.md)
 - **libGDX 1.13.1 + Java 21 toolchain**, Gradle 8.14.3 wrapper, AGP 8.11.1. Core compiles to Java 17 (D8).
-- Ads: **AdMob GMA Next-Gen SDK 1.5.0 + UMP 4.0.0**, always behind the `AdProvider` interface.
+- Ads: **AdMob GMA Next-Gen SDK 1.6.0 + UMP 4.0.0**, always behind the `AdProvider` interface.
 - Godot/Unity are NOT installed and not used. Don't propose them unless asked.
 - **Never change a project's Gradle wrapper to 9.x**: AGP 8.x fails on it (happened once, via VS Code's Java extension).
 

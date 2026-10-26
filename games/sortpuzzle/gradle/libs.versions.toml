@@ -3,8 +3,9 @@ gdx = "1.13.1"
 junit = "5.11.4"
 agp = "8.11.1"
 # GMA Next-Gen SDK (successor of play-services-ads, which is in maintenance mode).
-# https://developers.google.com/admob/android/next-gen/quick-start
-gmaNextGen = "1.5.0"
+# https://developers.google.com/admob/android/next-gen/quick-start - 1.6.0 (2026-10-22) fixes the
+# rewarded callback order and the R8 full-mode consumer rules; verified on device 2026-10-26.
+gmaNextGen = "1.6.0"
 # User Messaging Platform (consent). https://developers.google.com/admob/android/privacy
 ump = "4.0.0"
 

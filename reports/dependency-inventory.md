@@ -27,12 +27,13 @@ Produced by inspection and `tools\environment-check\check-environment.ps1`. Re-r
 | Android Gradle Plugin | 8.11.1 | both | Needs Gradle 8.x (not 9) |
 | Gradle wrapper | 8.14.3 | both | |
 | JUnit Jupiter (BOM) | 5.11.4 | both | |
-| GMA Next-Gen SDK `ads-mobile-sdk` | 1.5.0 | template | minSdk 24, compileSdk >= 35; verified by compile + javap |
-| UMP `user-messaging-platform` | 4.0.0 | template | needs APPLICATION_ID in manifest |
+| GMA Next-Gen SDK `ads-mobile-sdk` | 1.6.0 (was 1.5.0 until 2026-10-26) | Sortpuzzle, template | minSdk 24, compileSdk >= 35; 1.6.0 verified by compile + device run 2026-10-26 |
+| UMP `user-messaging-platform` | 4.0.0 | Sortpuzzle, template | needs APPLICATION_ID in manifest |
+| gdx-freetype (+ platform natives, 4 ABI + desktop) | 1.13.1 | Sortpuzzle | Poppins rasterised at screen density |
 | Kotlin stdlib (transitive via GMA) | 2.0.0 | template | no Kotlin code in project |
 
 ## SDK levels
 | Project | compileSdk | targetSdk | minSdk | Play-compliant today? |
 |---|---|---|---|---|
-| Sortpuzzle | 35 | 35 | 24 | No - needs 36 |
+| Sortpuzzle | 37 | 36 | 24 | Yes (since 2026-10-26; compileSdk 37 with AGP 8.11.1 advisory suppressed) |
 | templates/libgdx-2d | 35 (gradle.properties) | 35 | 24 | No - set `android.targetSdk=36` once platform 36 is installed |

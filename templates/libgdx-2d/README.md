@@ -8,7 +8,7 @@ AdMob from day one. Copy it with `tools\scripts\new-game.ps1`; don't edit the te
 | Engine | libGDX 1.13.1, Java 21 toolchain (core compiled to Java 17 for D8) |
 | Build | Gradle 8.14.3 wrapper, AGP 8.11.1, Kotlin DSL |
 | Modules | `core` (all game code), `lwjgl3` (desktop, for iteration), `android` (shipping target) |
-| Ads | GMA Next-Gen SDK 1.5.0 + UMP 4.0.0 behind the `AdProvider` interface |
+| Ads | GMA Next-Gen SDK 1.6.0 + UMP 4.0.0 behind the `AdProvider` interface |
 
 ## Commands (from the project folder)
 
