@@ -1,7 +1,7 @@
 {
     "game":  "sortpuzzle",
     "kit":  "store-assets",
-    "generated":  "2026-10-26T21:22:23",
+    "generated":  "2026-10-26T21:33:53",
     "specSource":  "https://support.google.com/googleplay/android-developer/answer/9866151 (read 2026-10-26)",
     "overall":  "PASS",
     "note":  "Technical validation only. Entries under humanReview need a person; they are never marked PASS by this script.",

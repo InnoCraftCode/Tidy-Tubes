@@ -18,11 +18,11 @@ public final class GameConfig {
     /** Shown on the About card. Kept in sync with {@code build.gradle.kts} by hand. */
     public static final String VERSION_NAME = "1.0.0";
     /**
-     * Public privacy policy URL: {@code privacy-policy/index.html} at the workspace root, served
-     * by GitHub Pages from the Tidy-Tubes repository once Pages is enabled on the "main" branch
-     * (root folder). The About card shows the button only when this is non-empty.
+     * Public privacy policy URL: the root {@code index.html} of the Tidy-Tubes GitHub repository,
+     * served by GitHub Pages ("main" branch, root folder). The same page also lives under
+     * {@code privacy-policy/}. The About card shows the button only when this is non-empty.
      */
-    public static final String PRIVACY_POLICY_URL = "https://innocraftcode.github.io/Tidy-Tubes/privacy-policy/";
+    public static final String PRIVACY_POLICY_URL = "https://innocraftcode.github.io/Tidy-Tubes/";
 
     // ---------------------------------------------------------------- viewport
     /** Minimum virtual width. The viewport extends beyond it on wider screens. */
