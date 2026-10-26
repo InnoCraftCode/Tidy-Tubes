@@ -24,10 +24,19 @@ Count: 7 (minimum 2, maximum 8). Featuring eligibility (>= 4 at >= 1080 px, 9:16
 Note: the capture profile has 36 cleared levels and 900 coins so the grid and purse look
 lived-in; these are real game states produced by playing, not edited pixels.
 
-## Tablet 7" / 10", Chromebook, other devices
+## Tablet 7" (`screenshots/tablet-7/`) and 10" (`screenshots/tablet-10/`)
 
-**Not delivered.** The game adapts its viewport to wider screens but was not verified on a
-tablet; no tablet screenshot is provided rather than presenting unverified renders.
+Added 2026-10-26 at the user's request. Same scripted scenario rendered by the real game at
+common Android tablet panel sizes: **1200x1920** (7", 16:10) and **1600x2560** (10", 16:10), 7
+PNG 24-bit each, reviewed on contact sheets: the viewport extends to 800x1280 world units, the
+HUD and boards fill the width, no overlap. Technical validation PASS (each side >= 1080 px, long
+side <= 2x short). These are 16:10, not 9:16, so they satisfy the general screenshot rules but
+not the large-screen *featuring* recommendation (reported as WARNING by the validator). Not
+verified on a physical tablet.
+
+## Chromebook, other devices
+
+Not delivered.
 
 ## Device verification (not store assets)
 

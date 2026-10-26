@@ -49,5 +49,5 @@ Vérification sur appareil : émulateur Pixel_10 (1080×2424, Android 17), voir 
 ## Non fait / hors périmètre
 
 - Thème clair (non pertinent, voir design-system §8).
-- Captures tablette : l'app s'adapte (viewport étendu) mais n'a pas été vérifiée sur tablette
-  réelle ; aucune capture tablette n'est livrée pour ne pas prétendre à un support non testé.
+- Tablette : captures 7″ (1200×1920) et 10″ (1600×2560) rendues par le vrai jeu et revues
+  (`store-assets/screenshots/tablet-7`, `tablet-10`) ; pas de vérification sur tablette physique.

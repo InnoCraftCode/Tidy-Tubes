@@ -20,7 +20,8 @@ Launcher icons: adaptive 108 dp (safe zone 66 dp) foreground + background (+ mon
 ## Pipeline (from the workspace root)
 ```powershell
 .\tools\store\render-brand-assets.ps1 -Game <game>          # icon 512, launcher PNGs, feature graphic, video backdrop, preview sheet
-.\tools\store\capture-desktop.ps1 -Game <game> [-Video]      # real screenshots (+ promo videos via FFmpeg)
+.\tools\store\capture-desktop.ps1 -Game <game> [-Video]      # real phone screenshots 1080x1920 (+ promo videos via FFmpeg)
+.\tools\store\capture-desktop.ps1 -Game <game> -Device tablet-7   # 1200x1920 ; -Device tablet-10 -> 1600x2560
 .\tools\store\validate-store-assets.ps1 -Game <game>         # JSON report, non-zero exit on FAIL
 .\tools\store\export-store-assets.ps1 -Game <game>           # copies the kit to store-assets\ and revalidates
 .\tools\store\build-listing-doc.ps1 -Game <game>             # Word listing from listing.json
