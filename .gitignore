@@ -1,0 +1,45 @@
+# Build outputs and caches (every game)
+**/.gradle/
+**/build/
+**/android/libs/
+**/out/
+# VS Code Java extension (Eclipse JDT) compiler output
+**/bin/
+**/.settings/
+.project
+.classpath
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# IDE (workspace .vscode/settings.json is shared on purpose)
+**/.idea/
+*.iml
+.vscode/*
+!.vscode/settings.json
+
+# Secrets and machine-local config - never commit
+**/local.properties
+**/keystore.properties
+**/admob.properties
+*.jks
+*.keystore
+*.p12
+*.pem
+.env
+.env.*
+!.env.example
+
+# Claude Code personal settings
+.claude/settings.local.json
+
+# Artifacts
+*.apk
+*.aab
+*.hprof
+**/hs_err_pid*.log
+
+# Local restore points (zip snapshots taken before risky changes; not history)
+backups/
+
+# OS
+Thumbs.db
+.DS_Store

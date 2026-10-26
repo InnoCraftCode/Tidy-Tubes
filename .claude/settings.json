@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "PowerShell(.\\tools\\environment-check\\check-environment.ps1*)",
+      "PowerShell(.\\tools\\validation\\validate-workspace.ps1*)",
+      "PowerShell(.\\tools\\android-build\\build-android.ps1 * -Task Test*)",
+      "PowerShell(.\\gradlew.bat :core:test*)",
+      "WebFetch(domain:developer.android.com)",
+      "WebFetch(domain:developers.google.com)",
+      "WebFetch(domain:support.google.com)",
+      "WebFetch(domain:libgdx.com)",
+      "WebFetch(domain:code.claude.com)"
+    ],
+    "ask": [
+      "PowerShell(Remove-Item *)",
+      "PowerShell(winget *)",
+      "PowerShell(setx *)",
+      "PowerShell(*sdkmanager*)",
+      "PowerShell(*publish*)"
+    ],
+    "deny": [
+      "Read(**/*.jks)",
+      "Read(**/*.keystore)",
+      "Read(**/*.p12)",
+      "Read(**/keystore.properties)",
+      "Read(**/.env)",
+      "Read(**/.env.*.local)"
+    ]
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "appName": "Tidy Tubes",
+  "packageId": "com.ben.laama.sortpuzzle",
+  "versionName": "1.0.0",
+  "versionCode": 1,
+  "category": "Jeux > Réflexion (Puzzle)",
+  "tags": ["Réflexion", "Casse-tête", "Tri de couleurs", "Hors ligne", "Relaxant"],
+  "contactEmail": "<à compléter : e-mail affiché sur la fiche>",
+  "website": "<à compléter : site web du développeur (requis pour publier app-ads.txt)>",
+  "privacyPolicyUrl": "<à compléter : URL publique de la politique de confidentialité (obligatoire ; doit mentionner AdMob et l'identifiant publicitaire)>",
+  "containsAds": "Oui. AdMob (GMA Next-Gen SDK 1.5.0 + UMP 4.0.0) : vidéos récompensées facultatives (indices, coups supplémentaires) et interstitiels espacés après un niveau réussi (max. 1 tous les 3 niveaux, 90 s minimum). Déclarer « Contient des annonces » et l'identifiant publicitaire (AD_ID).",
+  "contentRating": "Questionnaire IARC à remplir dans la Play Console. Aucun contenu violent ou sexuel, aucun achat ; contient des publicités : résultat attendu « Tout public / PEGI 3 » (à confirmer).",
+  "targetAudience": "Recommandé : « 13 ans et plus ». Inclure les moins de 13 ans impose la politique Familles (SDK publicitaires certifiés, formats restreints), non prévue dans cette version.",
+  "dataSafety": "La progression est stockée localement (Preferences) et n'est jamais envoyée. Le SDK AdMob collecte des identifiants d'appareil (identifiant publicitaire) et des données de diagnostic/interaction publicitaire, partagées avec Google à des fins publicitaires ; consentement via UMP (RGPD/États américains). Détail : shared/privacy/data-safety-worksheet.md et docs/google-play-compliance-report.md.",
+  "screenshotCaptions": [
+    "01 - Écran d'accueil",
+    "02 - Un niveau en cours (tubes mélangés)",
+    "03 - Indice : les deux tubes du coup conseillé brillent en doré",
+    "04 - Niveau réussi (animation de victoire)",
+    "05 - Sélection des niveaux par chapitres",
+    "06 - Niveau difficile à 10 couleurs",
+    "07 - Réglages : sons, musique, aide, à propos"
+  ],
+  "screenshots": [
+    { "file": "01-home.png", "caption": "Home screen", "alt": "Tidy Tubes home screen: the brand mark of three glass tubes, the Play button at level 37 and the Levels button on a deep indigo background." },
+    { "file": "02-level-in-progress.png", "caption": "A level in progress", "alt": "Level 24 board with seven glass tubes of coloured balls, the move counter reading 2 of 22, and the Undo, Reset, Tube and Hint buttons." },
+    { "file": "03-hint.png", "caption": "Hints from a real solver", "alt": "The same level with the two tubes of the suggested move outlined in gold and a translucent ball flying between them." },
+    { "file": "04-level-cleared.png", "caption": "Level cleared", "alt": "Level 4 solved: every tube holds one colour, the word Perfect appears above the board with coloured sparks." },
+    { "file": "05-levels.png", "caption": "Levels in chapters of ten", "alt": "Level grid grouped in chapters of ten with the colour count of each chapter, cleared levels in green showing their best move count." },
+    { "file": "06-ten-colours.png", "caption": "Up to ten colours", "alt": "Level 105: two rows of tubes with ten different ball colours." },
+    { "file": "07-settings.png", "caption": "Settings and about", "alt": "Settings screen with sound and music switches, how to play, reset progress, and an about card with the version and privacy information." }
+  ],
+  "languages": [
+    {
+      "code": "en-US",
+      "name": "English (United States)",
+      "title": "Tidy Tubes: Ball Sort Puzzle",
+      "shortDescription": "Sort the balls by colour. Calm, endless levels, every one solvable. Offline.",
+      "fullDescription": [
+        "Tidy Tubes is a calm ball-sorting puzzle: move the coloured balls between glass tubes until every tube holds a single colour.",
+        "",
+        "HOW TO PLAY",
+        "• Tap a tube to lift the balls on top, then tap another tube to drop them there.",
+        "• Balls can land in an empty tube or on balls of the same colour, if there is room.",
+        "• Fill every tube with four balls of one colour to clear the level.",
+        "",
+        "WHY YOU'LL LIKE IT",
+        "• Endless levels, generated so that every one of them has a solution.",
+        "• A gentle difficulty curve, from 3 to 10 colours, in chapters of ten levels.",
+        "• Unlimited undo, free, always.",
+        "• Hints from a real solver that tells you honestly when you need to step back.",
+        "• Bonus tubes when you are stuck, and the best possible move count shown for every level.",
+        "• No account, no sign-up, playable offline. Your progress stays on your phone.",
+        "• A clean, readable design made for one-handed play.",
+        "",
+        "Free to play. Contains ads: rewarded videos (extra hints or moves) are always optional, and beyond the free ones you can also pay with in-game coins earned by clearing levels. No purchases."
+      ],
+      "releaseNotes": "First release: endless always-solvable levels, hints, unlimited undo, bonus tubes, chapters, settings."
+    },
+    {
+      "code": "fr-FR",
+      "name": "Français (France)",
+      "title": "Tidy Tubes : Tri de Couleurs",
+      "shortDescription": "Triez les boules par couleur. Niveaux infinis, toujours solubles. Hors ligne.",
+      "fullDescription": [
+        "Tidy Tubes est un jeu de réflexion apaisant : déplacez les boules colorées entre des tubes de verre jusqu'à ce que chaque tube ne contienne plus qu'une seule couleur.",
+        "",
+        "COMMENT JOUER",
+        "• Touchez un tube pour soulever les boules du dessus, puis touchez un autre tube pour les y déposer.",
+        "• Les boules se posent dans un tube vide ou sur des boules de la même couleur, s'il reste de la place.",
+        "• Remplissez chaque tube avec 4 boules d'une même couleur pour réussir le niveau.",
+        "",
+        "POURQUOI VOUS ALLEZ AIMER",
+        "• Des niveaux à l'infini, construits pour toujours avoir une solution.",
+        "• Une difficulté qui monte en douceur, de 3 à 10 couleurs, par chapitres de dix niveaux.",
+        "• Annulation illimitée, gratuite, toujours.",
+        "• Des indices calculés par un vrai solveur, qui vous dit honnêtement quand il faut revenir en arrière.",
+        "• Des tubes bonus quand vous êtes bloqué, et le nombre de coups minimal affiché pour chaque niveau.",
+        "• Sans compte ni inscription, jouable hors ligne. Votre progression reste sur votre téléphone.",
+        "• Un design sobre et lisible, pensé pour jouer d'une seule main.",
+        "",
+        "Gratuit. Contient des publicités : les vidéos récompensées (indices ou coups supplémentaires) sont toujours facultatives, et au-delà des gratuits vous pouvez aussi payer avec les pièces gagnées en réussissant des niveaux. Aucun achat."
+      ],
+      "releaseNotes": "Première version : niveaux infinis toujours solubles, indices, annulation illimitée, tubes bonus, chapitres, réglages."
+    }
+  ]
+}

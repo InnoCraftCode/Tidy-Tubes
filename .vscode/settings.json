@@ -1,0 +1,20 @@
+{
+  // The Red Hat Java extension otherwise imports Gradle projects with its bundled JDK 25, which
+  // Gradle 8.14.x cannot run on; that is what rewrote gradle-wrapper.properties to 9.x on
+  // 2026-10-21 and broke AGP 8.11. Keep this pointed at the project JDK (21).
+  "java.import.gradle.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot",
+  "files.watcherExclude": {
+    "**/bin/**": true,
+    "**/build/**": true,
+    "**/.gradle/**": true,
+    "**/android/libs/**": true
+  },
+  "search.exclude": {
+    "**/bin": true,
+    "**/build": true,
+    "**/.gradle": true,
+    "**/android/libs": true,
+    "**/.idea": true
+  },
+  "java.configuration.updateBuildConfiguration": "automatic"
+}

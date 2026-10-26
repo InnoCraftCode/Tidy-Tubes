@@ -1,0 +1,17 @@
+# Copy to admob.properties (git-ignored) at the project root (next to settings.gradle.kts).
+# Release builds read production IDs from here. Debug builds ALWAYS use Google's demo IDs,
+# whatever this file says. If this file is missing, release builds ship with ads DISABLED.
+#
+# Ad unit IDs are identifiers, not secrets, but keeping them out of git keeps environments separate
+# and stops a fork from serving ads on your account.
+
+# AdMob app ID (has a ~ in it). AdMob console > Apps > App settings.
+admob.appId=ca-app-pub-0000000000000000~0000000000
+# Ad unit IDs (have a / in them). AdMob console > Apps > Ad units.
+admob.rewardedId=ca-app-pub-0000000000000000/0000000000
+admob.interstitialId=ca-app-pub-0000000000000000/0000000000
+
+# Debug only: comma-separated hashed device IDs printed in logcat by the GMA SDK / UMP
+# ("Use RequestConfiguration.Builder().setTestDeviceIds(...)"). Lets your phone get test ads and
+# lets you force the EEA consent form. Never click real ads on your own device.
+admob.testDeviceIds=

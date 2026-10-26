@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Themed-icon layer (Android 13+): a single-colour silhouette of the brand mark - the tube
+    with two balls and one lifted above it - kept inside the 66 dp safe zone of the 108 dp canvas.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Tube: straight walls, open top, semicircular bottom, as a 3.4 dp stroke. -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.4"
+        android:strokeLineCap="round"
+        android:pathData="M43,42 L43,69.5 A11,11 0 0 0 65,69.5 L65,42" />
+    <!-- Balls inside the tube. -->
+    <path android:fillColor="#FFFFFFFF" android:pathData="M54,70 m-7.6,0 a7.6,7.6 0 1 0 15.2,0 a7.6,7.6 0 1 0 -15.2,0" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M54,54 m-7.6,0 a7.6,7.6 0 1 0 15.2,0 a7.6,7.6 0 1 0 -15.2,0" />
+    <!-- The lifted ball. -->
+    <path android:fillColor="#FFFFFFFF" android:pathData="M54,31 m-7.6,0 a7.6,7.6 0 1 0 15.2,0 a7.6,7.6 0 1 0 -15.2,0" />
+</vector>

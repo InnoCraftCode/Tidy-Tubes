@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        No title bar, no system chrome — libGDX owns the whole surface. The immersive flag is
+        set in code as well so it survives the user swiping the bars back in.
+    -->
+    <style name="GdxTheme" parent="android:Theme.Black.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+</resources>

@@ -1,0 +1,30 @@
+# Gradle
+.gradle/
+build/
+*/build/
+!gradle/wrapper/gradle-wrapper.jar
+android/libs/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+out/
+bin/
+.settings/
+.project
+.classpath
+
+# Local config / secrets — never commit
+local.properties
+keystore.properties
+admob.properties
+*.jks
+*.keystore
+*.p12
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+lwjgl3/hs_err_pid*.log

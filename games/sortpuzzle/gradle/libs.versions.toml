@@ -1,0 +1,26 @@
+[versions]
+gdx = "1.13.1"
+junit = "5.11.4"
+agp = "8.11.1"
+# GMA Next-Gen SDK (successor of play-services-ads, which is in maintenance mode).
+# https://developers.google.com/admob/android/next-gen/quick-start
+gmaNextGen = "1.5.0"
+# User Messaging Platform (consent). https://developers.google.com/admob/android/privacy
+ump = "4.0.0"
+
+[libraries]
+gdx = { module = "com.badlogicgames.gdx:gdx", version.ref = "gdx" }
+gdx-freetype = { module = "com.badlogicgames.gdx:gdx-freetype", version.ref = "gdx" }
+gdx-backend-lwjgl3 = { module = "com.badlogicgames.gdx:gdx-backend-lwjgl3", version.ref = "gdx" }
+gdx-backend-android = { module = "com.badlogicgames.gdx:gdx-backend-android", version.ref = "gdx" }
+gdx-platform = { module = "com.badlogicgames.gdx:gdx-platform", version.ref = "gdx" }
+
+gma-nextgen = { module = "com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk", version.ref = "gmaNextGen" }
+ump = { module = "com.google.android.ump:user-messaging-platform", version.ref = "ump" }
+
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }

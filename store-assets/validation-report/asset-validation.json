@@ -1,0 +1,586 @@
+{
+    "game":  "sortpuzzle",
+    "kit":  "store-assets",
+    "generated":  "2026-10-26T20:59:55",
+    "specSource":  "https://support.google.com/googleplay/android-developer/answer/9866151 (read 2026-10-26)",
+    "overall":  "PASS",
+    "note":  "Technical validation only. Entries under humanReview need a person; they are never marked PASS by this script.",
+    "assets":  [
+                   {
+                       "file":  "store-assets\\icon\\play-store-icon.png",
+                       "assetType":  "icon",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  32,
+                       "width":  512,
+                       "height":  512,
+                       "aspectRatio":  1,
+                       "sizeKB":  180.1,
+                       "checks":  [
+                                      {
+                                          "name":  "dimensions 512x512",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "format PNG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "32-bit RGBA (alpha channel present)",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "size \u003c= 1024 KB",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Readable at 48 px; clear silhouette; no badges, ranking, price or award claims; no third-party marks"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\feature-graphic\\feature-graphic.png",
+                       "assetType":  "feature",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1024,
+                       "height":  500,
+                       "aspectRatio":  2.048,
+                       "sizeKB":  320.9,
+                       "checks":  [
+                                      {
+                                          "name":  "dimensions 1024x500",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "size \u003c= 15 MB",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Key elements inside the central safe area; no exaggerated claims, badges or third-party marks; legible at small sizes"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\phone\\01-home.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  282.6,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\phone\\02-level-in-progress.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  431.7,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\phone\\03-hint.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  451.6,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\phone\\04-level-cleared.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  350.5,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\phone\\05-levels.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  244.1,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\phone\\06-ten-colours.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  575,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\phone\\07-settings.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  257.3,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\phone",
+                       "assetType":  "shots",
+                       "status":  "PASS",
+                       "detectedFormat":  null,
+                       "bitsPerPixel":  null,
+                       "width":  null,
+                       "height":  null,
+                       "aspectRatio":  null,
+                       "sizeKB":  null,
+                       "checks":  [
+                                      {
+                                          "name":  "phone screenshots: at least 2",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "phone screenshots: at most 8",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring eligibility: \u003e= 4 at \u003e= 1080 px 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+
+                                       ]
+                   },
+                   {
+                       "file":  "games\\sortpuzzle\\android\\src\\main\\res",
+                       "assetType":  "launch",
+                       "status":  "PASS",
+                       "detectedFormat":  null,
+                       "bitsPerPixel":  null,
+                       "width":  null,
+                       "height":  null,
+                       "aspectRatio":  null,
+                       "sizeKB":  null,
+                       "checks":  [
+                                      {
+                                          "name":  "adaptive foreground mdpi 108px RGBA",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "legacy ic_launcher mdpi 48px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "no duplicate ic_launcher.webp in mdpi",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "legacy ic_launcher_round mdpi 48px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "no duplicate ic_launcher_round.webp in mdpi",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "adaptive foreground xxhdpi 324px RGBA",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "legacy ic_launcher xxhdpi 144px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "no duplicate ic_launcher.webp in xxhdpi",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "legacy ic_launcher_round xxhdpi 144px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "no duplicate ic_launcher_round.webp in xxhdpi",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "adaptive foreground xxxhdpi 432px RGBA",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "legacy ic_launcher xxxhdpi 192px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "no duplicate ic_launcher.webp in xxxhdpi",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "legacy ic_launcher_round xxxhdpi 192px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "no duplicate ic_launcher_round.webp in xxxhdpi",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "adaptive foreground xhdpi 216px RGBA",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "legacy ic_launcher xhdpi 96px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "no duplicate ic_launcher.webp in xhdpi",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "legacy ic_launcher_round xhdpi 96px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "no duplicate ic_launcher_round.webp in xhdpi",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "adaptive foreground hdpi 162px RGBA",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "legacy ic_launcher hdpi 72px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "no duplicate ic_launcher.webp in hdpi",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "legacy ic_launcher_round hdpi 72px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "no duplicate ic_launcher_round.webp in hdpi",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "adaptive icon xml references foreground/background/monochrome",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "monochrome vector exists",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Adaptive foreground artwork stays inside the 66 dp safe zone (verify on the preview sheet / a device)"
+                                       ]
+                   }
+               ]
+}

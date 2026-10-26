@@ -1,0 +1,27 @@
+# Gradle
+.gradle/
+build/
+*/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+.vscode/
+
+# Local config / secrets
+local.properties
+keystore.properties
+admob.properties
+*.jks
+*.keystore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# libGDX / desktop
+lwjgl3/hs_err_pid*.log

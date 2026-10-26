@@ -1,0 +1,62 @@
+{
+  "appName": "__APP_NAME__",
+  "packageId": "__PACKAGE_ID__",
+  "versionName": "1.0.0",
+  "versionCode": 1,
+  "category": "Jeux > <catégorie : Réflexion, Arcade, Simulation, Occasionnel...>",
+  "tags": ["<tag 1>", "<tag 2>", "<tag 3>"],
+  "contactEmail": "<à compléter : e-mail affiché sur la fiche>",
+  "website": "<facultatif : site web (nécessaire pour app-ads.txt)>",
+  "privacyPolicyUrl": "<à compléter : URL publique de la politique de confidentialité>",
+  "containsAds": "<Oui / Non - Oui dès qu'AdMob est actif>",
+  "contentRating": "Questionnaire IARC à remplir dans la Play Console.",
+  "targetAudience": "À décider : « 13 ans et plus » évite la politique Familles.",
+  "screenshotCaptions": [
+    "01 - Écran d'accueil",
+    "02 - Partie en cours",
+    "03 - Moment fort du jeu",
+    "04 - Victoire / score"
+  ],
+  "languages": [
+    {
+      "code": "fr-FR",
+      "name": "Français (France)",
+      "title": "__APP_NAME__",
+      "shortDescription": "<80 caractères maximum : la promesse du jeu en une phrase>",
+      "fullDescription": [
+        "<Phrase d'accroche : ce que fait le joueur et pourquoi c'est agréable.>",
+        "",
+        "COMMENT JOUER",
+        "• <règle 1>",
+        "• <règle 2>",
+        "",
+        "POINTS FORTS",
+        "• <atout 1>",
+        "• <atout 2>",
+        "",
+        "Gratuit. <Contient des publicités ; les vidéos récompensées sont facultatives.>"
+      ],
+      "releaseNotes": "Première version."
+    },
+    {
+      "code": "en-US",
+      "name": "English (United States)",
+      "title": "__APP_NAME__",
+      "shortDescription": "<80 characters max: the game's promise in one sentence>",
+      "fullDescription": [
+        "<Hook sentence: what the player does and why it feels good.>",
+        "",
+        "HOW TO PLAY",
+        "• <rule 1>",
+        "• <rule 2>",
+        "",
+        "FEATURES",
+        "• <feature 1>",
+        "• <feature 2>",
+        "",
+        "Free to play. <Contains ads; rewarded videos are optional.>"
+      ],
+      "releaseNotes": "First release."
+    }
+  ]
+}
