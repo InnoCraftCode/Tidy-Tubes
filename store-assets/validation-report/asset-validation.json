@@ -1,9 +1,9 @@
 {
     "game":  "sortpuzzle",
     "kit":  "store-assets",
-    "generated":  "2026-10-26T21:33:53",
+    "generated":  "2026-10-26T21:54:20",
     "specSource":  "https://support.google.com/googleplay/android-developer/answer/9866151 (read 2026-10-26)",
-    "overall":  "PASS",
+    "overall":  "WARNING",
     "note":  "Technical validation only. Entries under humanReview need a person; they are never marked PASS by this script.",
     "assets":  [
                    {
@@ -429,6 +429,712 @@
                                   ],
                        "humanReview":  [
 
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-7\\01-home.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1200,
+                       "height":  1920,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  300.1,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1200x1920"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-7\\02-level-in-progress.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1200,
+                       "height":  1920,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  433.8,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1200x1920"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-7\\03-hint.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1200,
+                       "height":  1920,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  449.8,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1200x1920"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-7\\04-level-cleared.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1200,
+                       "height":  1920,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  254.6,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1200x1920"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-7\\05-levels.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1200,
+                       "height":  1920,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  243.4,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1200x1920"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-7\\06-ten-colours.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1200,
+                       "height":  1920,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  645.2,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1200x1920"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-7\\07-settings.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1200,
+                       "height":  1920,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  265.2,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1200x1920"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-7",
+                       "assetType":  "shots",
+                       "status":  "WARNING",
+                       "detectedFormat":  null,
+                       "bitsPerPixel":  null,
+                       "width":  null,
+                       "height":  null,
+                       "aspectRatio":  null,
+                       "sizeKB":  null,
+                       "checks":  [
+                                      {
+                                          "name":  "tablet-7 screenshots: at most 8",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "tablet-7 screenshots: each side \u003e= 1080 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "tablet-7 screenshots: 9:16 or 16:9 for large-screen featuring",
+                                          "status":  "WARNING",
+                                          "reason":  "found 0 of 7"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Real tablet rendering (wider viewport); not verified on a physical tablet"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-10\\01-home.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1600,
+                       "height":  2560,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  417.1,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1600x2560"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-10\\02-level-in-progress.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1600,
+                       "height":  2560,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  648.6,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1600x2560"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-10\\03-hint.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1600,
+                       "height":  2560,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  672.4,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1600x2560"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-10\\04-level-cleared.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1600,
+                       "height":  2560,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  378.6,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1600x2560"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-10\\05-levels.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1600,
+                       "height":  2560,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  358.7,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1600x2560"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-10\\06-ten-colours.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1600,
+                       "height":  2560,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  1003.3,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1600x2560"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-10\\07-settings.png",
+                       "assetType":  "shot",
+                       "status":  "WARNING",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1600,
+                       "height":  2560,
+                       "aspectRatio":  0.625,
+                       "sizeKB":  395.8,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "WARNING",
+                                          "reason":  "1600x2560"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "store-assets\\screenshots\\tablet-10",
+                       "assetType":  "shots",
+                       "status":  "WARNING",
+                       "detectedFormat":  null,
+                       "bitsPerPixel":  null,
+                       "width":  null,
+                       "height":  null,
+                       "aspectRatio":  null,
+                       "sizeKB":  null,
+                       "checks":  [
+                                      {
+                                          "name":  "tablet-10 screenshots: at most 8",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "tablet-10 screenshots: each side \u003e= 1080 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "tablet-10 screenshots: 9:16 or 16:9 for large-screen featuring",
+                                          "status":  "WARNING",
+                                          "reason":  "found 0 of 7"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Real tablet rendering (wider viewport); not verified on a physical tablet"
                                        ]
                    },
                    {

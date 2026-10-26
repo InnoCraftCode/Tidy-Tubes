@@ -49,9 +49,14 @@ Copy-Into (Join-Path $gameDir 'android\src\main\res\mipmap-anydpi-v26\ic_launche
 
 Copy-Into (Join-Path $kit 'graphics\feature-graphic-1024x500.png') (Join-Path $out 'feature-graphic') 'feature-graphic.png'
 
-New-Item -ItemType Directory -Force (Join-Path $out 'screenshots\phone') | Out-Null
-Get-ChildItem (Join-Path $out 'screenshots\phone') -File -ErrorAction SilentlyContinue | Remove-Item -Force
-Get-ChildItem (Join-Path $kit 'screenshots\phone') -File -Include *.png, *.jpg -Recurse | ForEach-Object { Copy-Into $_.FullName (Join-Path $out 'screenshots\phone') }
+foreach ($device in @('phone', 'tablet-7', 'tablet-10')) {
+    $src = Join-Path $kit "screenshots\$device"
+    if (-not (Test-Path $src)) { continue }
+    $dst = Join-Path $out "screenshots\$device"
+    New-Item -ItemType Directory -Force $dst | Out-Null
+    Get-ChildItem $dst -File -ErrorAction SilentlyContinue | Remove-Item -Force
+    Get-ChildItem $src -File -Include *.png, *.jpg -Recurse | ForEach-Object { Copy-Into $_.FullName $dst }
+}
 Copy-Into (Join-Path $gameDir 'lwjgl3\src\main\java\com\ben\laama\sortpuzzle\lwjgl3\StoreCapture.java') (Join-Path $out 'screenshots\sources')
 
 Get-ChildItem (Join-Path $kit 'video') -File -Include *.mp4 -Recurse -ErrorAction SilentlyContinue | ForEach-Object { Copy-Into $_.FullName (Join-Path $out 'promo-video') }

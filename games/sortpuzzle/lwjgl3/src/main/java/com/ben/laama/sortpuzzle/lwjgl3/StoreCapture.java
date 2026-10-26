@@ -45,10 +45,13 @@ import java.util.zip.Deflater;
  */
 public final class StoreCapture extends ApplicationAdapter {
 
-    private static final int WIDTH = 1080;
-    private static final int HEIGHT = 1920;
+    /** Play's recommended phone size; tablets pass their own (e.g. 1200x1920, 1600x2560). */
+    private static final int DEFAULT_WIDTH = 1080;
+    private static final int DEFAULT_HEIGHT = 1920;
     private static final float VIDEO_STEP = 1f / 30f;
 
+    private final int WIDTH;
+    private final int HEIGHT;
     private final boolean video;
     private final File output;
     private final Deque<Step> timeline = new ArrayDeque<>();
@@ -62,15 +65,27 @@ public final class StoreCapture extends ApplicationAdapter {
     private String pendingShot;
     private int frameNumber;
 
-    private StoreCapture(boolean video, File output) {
+    private StoreCapture(boolean video, File output, int width, int height) {
         this.video = video;
         this.output = output;
+        this.WIDTH = width;
+        this.HEIGHT = height;
     }
 
+    /**
+     * Arguments: {@code screens|video} {@code <output dir>} {@code <prefs dir>} [{@code WxH}].
+     * The size is the frame-buffer (screenshot) size; the window shows a half-size preview.
+     */
     public static void main(String[] args) {
         boolean video = args.length > 0 && args[0].equals("video");
         File output = new File(args.length > 1 ? args[1] : "capture");
         File prefs = new File(args.length > 2 ? args[2] : "capture-prefs");
+        int width = DEFAULT_WIDTH;
+        int height = DEFAULT_HEIGHT;
+        if (args.length > 3 && args[3].matches("\\d+x\\d+")) {
+            width = Integer.parseInt(args[3].substring(0, args[3].indexOf('x')));
+            height = Integer.parseInt(args[3].substring(args[3].indexOf('x') + 1));
+        }
         deleteRecursively(prefs);
         if (video) {
             deleteRecursively(output);
@@ -78,8 +93,9 @@ public final class StoreCapture extends ApplicationAdapter {
         output.mkdirs();
 
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setTitle(GameConfig.APP_NAME + " - store capture (" + (video ? "video" : "screenshots") + ")");
-        config.setWindowedMode(WIDTH / 2, HEIGHT / 2);
+        config.setTitle(GameConfig.APP_NAME + " - store capture (" + (video ? "video" : "screenshots")
+            + " " + width + "x" + height + ")");
+        config.setWindowedMode(width / 2, height / 2);
         config.setResizable(false);
         config.setHdpiMode(HdpiMode.Pixels); // keep glViewport maths in real pixels inside the FBO
         config.useVsync(!video);
@@ -87,7 +103,7 @@ public final class StoreCapture extends ApplicationAdapter {
         config.setPreferencesConfig(prefs.getAbsolutePath(), Files.FileType.Absolute);
         // Silent capture without touching the mute flag (the home screen shows sound as on).
         config.disableAudio(true);
-        new Lwjgl3Application(new StoreCapture(video, output), config);
+        new Lwjgl3Application(new StoreCapture(video, output, width, height), config);
     }
 
     // ------------------------------------------------------------------ scripts
@@ -162,8 +178,10 @@ public final class StoreCapture extends ApplicationAdapter {
 
     @Override
     public void create() {
-        // Fonts must be rasterised for the 1080-wide frame buffer, not the half-size preview.
-        SkinFactory.setDensityOverride(WIDTH / GameConfig.WORLD_WIDTH);
+        // Fonts must be rasterised for the frame buffer, not the half-size preview. The world
+        // scale is the smaller of the two ratios (ExtendViewport fits the 720x1280 minimum).
+        SkinFactory.setDensityOverride(Math.min(WIDTH / GameConfig.WORLD_WIDTH,
+            HEIGHT / GameConfig.WORLD_HEIGHT));
         game = new Main();
         game.create();
         // Look like a player some way in: the level grid shows progress, the HUD has coins,

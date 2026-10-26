@@ -55,8 +55,10 @@ tasks.named<JavaExec>("run") {
 
 /**
  * Google Play captures (see StoreCapture):
- *   gradlew :lwjgl3:storeCapture                       -> play-store/sortpuzzle/screenshots/phone/
- *   gradlew :lwjgl3:storeCapture -PcaptureMode=video   -> build/capture/frames/ (then make-promo-video.ps1)
+ *   gradlew :lwjgl3:storeCapture                                   -> play-store/sortpuzzle/screenshots/phone/ (1080x1920)
+ *   gradlew :lwjgl3:storeCapture -PcaptureDevice=tablet-7 -PcaptureSize=1200x1920   -> .../screenshots/tablet-7/
+ *   gradlew :lwjgl3:storeCapture -PcaptureDevice=tablet-10 -PcaptureSize=1600x2560  -> .../screenshots/tablet-10/
+ *   gradlew :lwjgl3:storeCapture -PcaptureMode=video               -> build/capture/frames/ (then make-promo-video.ps1)
  */
 tasks.register<JavaExec>("storeCapture") {
     group = "distribution"
@@ -65,12 +67,14 @@ tasks.register<JavaExec>("storeCapture") {
     classpath = sourceSets.main.get().runtimeClasspath
     setWorkingDir(assetsDir)
     val mode = providers.gradleProperty("captureMode").getOrElse("screens")
+    val device = providers.gradleProperty("captureDevice").getOrElse("phone")
+    val size = providers.gradleProperty("captureSize").getOrElse("1080x1920")
     val out = if (mode == "video") {
         layout.buildDirectory.dir("capture/frames").get().asFile
     } else {
-        rootProject.file("../../play-store/sortpuzzle/screenshots/phone")
+        rootProject.file("../../play-store/sortpuzzle/screenshots/$device")
     }
-    args(mode, out.absolutePath, layout.buildDirectory.dir("capture/prefs").get().asFile.absolutePath)
+    args(mode, out.absolutePath, layout.buildDirectory.dir("capture/prefs").get().asFile.absolutePath, size)
     if (System.getProperty("os.name").lowercase().contains("mac")) {
         jvmArgs("-XstartOnFirstThread")
     }

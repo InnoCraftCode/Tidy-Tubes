@@ -164,6 +164,15 @@ foreach ($device in @('phone', 'tablet-7', 'tablet-10')) {
             (Check 'featuring eligibility: >= 4 at >= 1080 px 9:16' ($hiRes -ge 4) "found $hiRes" 'WARNING')
         )
         Add-Result (Rel $dir) 'shots' $null $countChecks @()
+    } else {
+        # Large screens: 1080..7680 px, 16:9 / 9:16 recommended (a 16:10 tablet panel is accepted by the
+        # general rule, long side <= 2x short side, but not for the featuring recommendation).
+        $tabletChecks = @(
+            (Check "$device screenshots: at most 8" ($shots.Count -le 8) "found $($shots.Count)"),
+            (Check "$device screenshots: each side >= 1080 px" (($shots | ForEach-Object { $f = Get-ImageFacts $_.FullName; [Math]::Min($f.width, $f.height) } | Measure-Object -Minimum).Minimum -ge 1080) 'below 1080 px' 'WARNING'),
+            (Check "$device screenshots: 9:16 or 16:9 for large-screen featuring" ($hiRes -eq $shots.Count) "found $hiRes of $($shots.Count)" 'WARNING')
+        )
+        Add-Result (Rel $dir) 'shots' $null $tabletChecks @('Real tablet rendering (wider viewport); not verified on a physical tablet')
     }
 }
 

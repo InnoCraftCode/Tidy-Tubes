@@ -14,8 +14,12 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$Game,
-    [switch]$Video
+    [switch]$Video,
+    # phone (1080x1920), tablet-7 (1200x1920) or tablet-10 (1600x2560): real Android resolutions,
+    # rendered by the same scripted scenario; the game extends its viewport to the wider aspect.
+    [ValidateSet('phone', 'tablet-7', 'tablet-10')][string]$Device = 'phone'
 )
+$sizes = @{ 'phone' = '1080x1920'; 'tablet-7' = '1200x1920'; 'tablet-10' = '1600x2560' }
 
 . "$PSScriptRoot\..\scripts\common.ps1"
 $ErrorActionPreference = 'Stop'
@@ -29,10 +33,10 @@ if ((Get-Content (Join-Path $dir 'lwjgl3\build.gradle.kts') -Raw) -notmatch 'sto
 }
 
 # --- Screenshots ---------------------------------------------------------------------------
-$code = Invoke-Gradle -ProjectDir $dir -Arguments @(':lwjgl3:storeCapture', '-q')
+$code = Invoke-Gradle -ProjectDir $dir -Arguments @(':lwjgl3:storeCapture', "-PcaptureDevice=$Device", "-PcaptureSize=$($sizes[$Device])", '-q')
 if ($code -ne 0) { Write-Status FAIL 'Screenshot capture failed'; exit $code }
 
-$shotDir = Join-Path $root "play-store\$Game\screenshots\phone"
+$shotDir = Join-Path $root "play-store\$Game\screenshots\$Device"
 foreach ($file in Get-ChildItem $shotDir -Filter *.png) {
     # Load through a memory stream so the file is not locked while we overwrite it.
     $bytes = [IO.File]::ReadAllBytes($file.FullName)
