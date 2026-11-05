@@ -87,6 +87,9 @@ android {
         named("release") {
             isMinifyEnabled = true
             isShrinkResources = true
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             if (hasSigningConfig) {
                 signingConfig = signingConfigs.getByName("release")
@@ -118,6 +121,9 @@ dependencies {
     implementation(libs.gdx.backend.android)
     implementation(libs.gma.nextgen)
     implementation(libs.ump)
+    // Overrides the fragment 1.1.0 that play-services-basement pins (Play flags it as deprecated).
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.core) // WindowInsetsControllerCompat in AndroidLauncher
 
     natives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a")
     natives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a")

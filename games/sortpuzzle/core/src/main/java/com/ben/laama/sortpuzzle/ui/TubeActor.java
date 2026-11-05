@@ -39,6 +39,10 @@ public final class TubeActor extends Actor {
     private float pulse;
     private float homeX;
     private float homeY;
+    /** One-shot colour feedback (red "no", gold "done") that decays back to the resting tint. */
+    private final Color flashColor = new Color();
+    private float flash;
+    private float flashDuration = 1f;
 
     /**
      * @param index    position of this tube in the {@link com.ben.laama.sortpuzzle.model.BoardState}
@@ -126,6 +130,27 @@ public final class TubeActor extends Actor {
         if (suggested) {
             pulse += delta;
         }
+        if (flash > 0f) {
+            flash = Math.max(0f, flash - delta / flashDuration);
+        }
+    }
+
+    /**
+     * Tints glass and rim towards {@code color} at once, then fades back over {@code seconds}.
+     * Small-area, never full screen, so it needs no reduced-motion setting.
+     */
+    public void flash(Color color, float seconds) {
+        flashColor.set(color);
+        flashDuration = Math.max(0.05f, seconds);
+        flash = 1f;
+    }
+
+    /** Lerps only the RGB of {@code TINT} towards the flash colour (alpha stays the layer's). */
+    private void applyFlash(float strength) {
+        float k = flash * flash * strength; // quadratic: a quick bright hit that settles softly
+        TINT.r += (flashColor.r - TINT.r) * k;
+        TINT.g += (flashColor.g - TINT.g) * k;
+        TINT.b += (flashColor.b - TINT.b) * k;
     }
 
     /** Quick left-right wobble that always ends exactly back home. */
@@ -157,8 +182,12 @@ public final class TubeActor extends Actor {
         batch.setColor(TINT);
         shadow.draw(batch, getX() - w * 0.35f, getY() - w * 0.42f, w * 1.7f, w * 0.7f);
 
-        TINT.set(highlighted ? Palette.SURFACE_STRONG : Palette.SURFACE);
+        // Body and rim colours belong to the equipped tube style (see Palette.applyTubeStyle).
+        TINT.set(highlighted ? Palette.TUBE_BODY_STRONG : Palette.TUBE_BODY);
         TINT.a *= alpha;
+        if (flash > 0f) {
+            applyFlash(0.45f);
+        }
         batch.setColor(TINT);
         body.draw(batch, getX(), getY(), w, h);
 
@@ -166,8 +195,12 @@ public final class TubeActor extends Actor {
             TINT.set(Palette.GOLD);
             TINT.a *= alpha * (0.55f + 0.45f * MathUtils.sin(pulse * 6f));
         } else {
-            TINT.set(highlighted ? Palette.PRIMARY : Palette.EDGE);
+            TINT.set(highlighted ? Palette.PRIMARY : Palette.TUBE_RIM);
             TINT.a *= alpha * (highlighted ? 1f : 0.7f);
+            if (flash > 0f) {
+                applyFlash(1f);
+                TINT.a = Math.max(TINT.a, alpha * flash);
+            }
         }
         batch.setColor(TINT);
         rim.draw(batch, getX(), getY(), w, h);

@@ -1,0 +1,72 @@
+<en-US>
+Version 1.1.1
+• World map: every 10 levels is a new place, and the game wears its colours.
+• Shop: 29 looks, extra-tube packs, undos and resets. Daily reward calendar.
+• Share your result as a picture. Breathe: a 36 s guided breath every 5 levels, instead of an ad.
+• Undo and reset: a few free per level, more for coins or a short video.
+• Optional comeback reminders, never at night. Softer sounds, clearer buttons.
+</en-US>
+<ar>
+الإصدار 1.1.1
+• خريطة العالم: كل 10 مستويات مكان جديد، وتأخذ اللعبة ألوانه.
+• المتجر: 29 مظهرًا، حزم أنابيب إضافية، تراجعات وإعادات. تقويم مكافأة يومية على 7 أيام.
+• شارك نتيجتك كصورة. تنفّس: 36 ثانية من التنفس الموجّه كل 5 مستويات بدلًا من إعلان.
+• التراجع والإعادة: بضع محاولات مجانية في كل مستوى، والمزيد مقابل عملات أو فيديو قصير.
+• تذكيرات اختيارية للعودة، وليس في الليل أبدًا. أصوات أنعم، أزرار أوضح.
+</ar>
+<de-DE>
+Version 1.1.1
+• Weltkarte: alle 10 Level ein neuer Ort, und das Spiel trägt seine Farben.
+• Shop: 29 Looks, Röhren-Pakete, Rückgängig und Neustart. 7-Tage-Belohnungskalender.
+• Teile dein Ergebnis als Bild. Durchatmen: 36 s geführtes Atmen alle 5 Level, statt einer Werbung.
+• Rückgängig und Neustart: einige Male pro Level kostenlos, mehr für Münzen oder ein kurzes Video.
+• Optionale Erinnerungen, nie nachts. Sanftere Klänge, klarere Buttons.
+</de-DE>
+<es-ES>
+Versión 1.1.1
+• Mapa del mundo: cada 10 niveles, un lugar nuevo, y el juego toma sus colores.
+• Tienda: 29 estilos, packs de tubos, deshacer y reiniciar. Calendario de recompensa diaria de 7 días.
+• Comparte tu resultado como imagen. Respira: 36 s de respiración guiada cada 5 niveles, en lugar de un anuncio.
+• Deshacer y reiniciar: algunos usos gratis por nivel, más por monedas o un vídeo corto.
+• Recordatorios opcionales, nunca de noche. Sonidos más suaves, botones más claros.
+</es-ES>
+<fr-FR>
+Version 1.1.1
+• Carte du monde : tous les 10 niveaux, un nouveau lieu, et le jeu prend ses couleurs.
+• Boutique : 29 styles, packs de tubes, annulations et recommencements. Récompense quotidienne sur 7 jours.
+• Partagez votre résultat en image. Breathe : 36 s de respiration guidée tous les 5 niveaux, à la place d'une pub.
+• Annuler et recommencer : quelques essais gratuits par niveau, plus avec des pièces ou une courte vidéo.
+• Rappels facultatifs, jamais la nuit. Sons plus doux, boutons plus clairs.
+</fr-FR>
+<hi-IN>
+संस्करण 1.1.1
+• दुनिया का नक्शा: हर 10 लेवल पर एक नई जगह, और गेम उसके रंग पहन लेता है।
+• दुकान: 29 लुक, ट्यूब पैक, अनडू और रीसेट। 7 दिन का दैनिक इनाम कैलेंडर।
+• अपना नतीजा तस्वीर के रूप में साझा करें। साँस लें: हर 5 लेवल पर विज्ञापन की जगह 36 सेकंड की निर्देशित साँस।
+• अनडू और रीसेट: हर लेवल में कुछ बार मुफ़्त, और ज़्यादा सिक्कों या छोटे वीडियो से।
+• वैकल्पिक रिमाइंडर, रात में कभी नहीं। नरम आवाज़ें, साफ़ बटन।
+</hi-IN>
+<id>
+Versi 1.1.1
+• Peta dunia: setiap 10 level adalah tempat baru, dan game mengenakan warnanya.
+• Toko: 29 gaya, paket tabung, undo dan reset. Kalender hadiah harian 7 hari.
+• Bagikan hasilmu sebagai gambar. Bernapas: 36 detik napas terpandu setiap 5 level, menggantikan iklan.
+• Undo dan reset: beberapa kali gratis tiap level, lebih banyak dengan koin atau video singkat.
+• Pengingat opsional, tidak pernah di malam hari. Suara lebih lembut, tombol lebih jelas.
+</id>
+<pt-BR>
+Versão 1.1.1
+• Mapa do mundo: a cada 10 níveis, um lugar novo, e o jogo veste suas cores.
+• Loja: 29 visuais, pacotes de tubos, desfazer e reiniciar. Calendário de recompensa diária de 7 dias.
+• Compartilhe seu resultado como imagem. Respire: 36 s de respiração guiada a cada 5 níveis, no lugar de um anúncio.
+• Desfazer e reiniciar: alguns usos grátis por nível, mais por moedas ou um vídeo curto.
+• Lembretes opcionais, nunca à noite. Sons mais suaves, botões mais claros.
+</pt-BR>
+<tr-TR>
+Sürüm 1.1.1
+• Dünya haritası: her 10 seviyede yeni bir yer, oyun onun renklerine bürünür.
+• Mağaza: 29 görünüm, tüp paketleri, geri alma ve sıfırlama. 7 günlük ödül takvimi.
+• Sonucunu resim olarak paylaş. Nefes al: her 5 seviyede bir reklam yerine 36 sn rehberli nefes.
+• Geri al ve sıfırla: her seviyede birkaç kez ücretsiz, fazlası para veya kısa bir videoyla.
+• İsteğe bağlı hatırlatmalar, asla gece değil. Daha yumuşak sesler, daha net düğmeler.
+</tr-TR>

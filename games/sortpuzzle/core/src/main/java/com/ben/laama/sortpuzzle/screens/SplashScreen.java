@@ -29,7 +29,7 @@ public final class SplashScreen extends BaseScreen {
 
         Table root = new Table();
         root.setFillParent(true);
-        stage.addActor(root);
+        safeArea.addActor(root);
 
         BrandMark mark = new BrandMark(skin, game.tubes());
         Container<BrandMark> markBox = new Container<>(mark);

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        Draw under the display cutout. "always" exists since API 30 and is the only value Android 15
+        still honours (shortEdges / never / default are deprecated and Play Console reports them).
+        API 27-29 keep the system letterbox above the cutout: harmless for a touch-only game.
+        Kept in a qualified folder so the base theme stays valid below API 30.
+    -->
+    <style name="GdxTheme" parent="android:Theme.Black.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">always</item>
+    </style>
+
+</resources>

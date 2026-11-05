@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.Hinting;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -19,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-import com.ben.laama.sortpuzzle.GameConfig;
 
 /**
  * Builds the entire {@link Skin} in code: the "Nocturne" design system from
@@ -93,9 +91,7 @@ public final class SkinFactory {
         if (densityOverride > 0f) {
             return densityOverride;
         }
-        float byWidth = Gdx.graphics.getWidth() / GameConfig.WORLD_WIDTH;
-        float byHeight = Gdx.graphics.getHeight() / GameConfig.WORLD_HEIGHT;
-        return MathUtils.clamp(Math.min(byWidth, byHeight), 1f, 2.5f);
+        return Responsive.fontDensity(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     // ------------------------------------------------------------------ fonts
@@ -133,6 +129,47 @@ public final class SkinFactory {
         } finally {
             generator.dispose();
         }
+    }
+
+    // -------------------------------------------------------- cosmetic swaps
+    /**
+     * Replaces the shared ball sprite with the one for a finish. Actors already on screen keep
+     * the drawable they were built with; the next screen picks up the new one. The texture it
+     * replaces is disposed here because a replaced skin entry is no longer the skin's to free.
+     *
+     * @param finishId a {@code finish.*} catalogue id
+     */
+    public static void applyBallFinish(Skin skin, String finishId) {
+        Texture previous = skin.optional("tex-ball", Texture.class);
+        Texture ball = Tex.ball(BALL_TEXTURE_SIZE, finishId);
+        skin.add("tex-ball", ball);
+        skin.add("ball", new TextureRegionDrawable(new TextureRegion(ball)), Drawable.class);
+        if (previous != null && previous != ball) {
+            previous.dispose();
+        }
+    }
+
+    /**
+     * Re-bakes the backdrop gradient from the current {@link Palette#BG_TOP} and
+     * {@link Palette#BG_BOTTOM}, after a theme change. Same disposal rule as above.
+     *
+     * @return the new gradient drawable, for a backdrop that is already on screen
+     */
+    public static Drawable rebuildBackground(Skin skin) {
+        // One gradient per colour pair, kept for the skin's lifetime and never disposed here:
+        // a screen still fading out (or one built before the previous screen's hide) may be
+        // drawing the previous gradient, and a disposed texture renders black. A gradient is a
+        // 256-pixel strip and there are only a handful of themes, so the cache stays tiny.
+        String key = "tex-bg-" + Palette.BG_TOP + "-" + Palette.BG_BOTTOM;
+        Texture background = skin.optional(key, Texture.class);
+        if (background == null) {
+            background = Tex.verticalGradient(256, Palette.BG_TOP, Palette.BG_BOTTOM);
+            background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            skin.add(key, background);
+        }
+        Drawable drawable = new TextureRegionDrawable(new TextureRegion(background));
+        skin.add("bg", drawable, Drawable.class);
+        return drawable;
     }
 
     // -------------------------------------------------------------- drawables

@@ -4,7 +4,7 @@
 .DESCRIPTION
     Inputs (produced by capture-desktop.ps1 -Video):
       games\<Game>\lwjgl3\build\capture\frames\00000.png ...   1080x1920 at 30 fps
-      games\<Game>\android\src\main\assets\sfx\music.(ogg|wav) soundtrack (looped)
+      games\<Game>\android\src\main\assets\sfx\music_01.ogg soundtrack (looped)
       play-store\<Game>\graphics\video-background-1920x1080.png landscape backdrop
                                                                 (generate-store-graphics.ps1)
     Outputs in play-store\<Game>\video\:
@@ -42,7 +42,7 @@ $videoOut = ($duration - 0.8).ToString($inv)
 $audioOut = ($duration - 1.5).ToString($inv)
 
 $sfx = Join-Path $root "games\$Game\android\src\main\assets\sfx"
-$music = @('music.ogg', 'music.wav') | ForEach-Object { Join-Path $sfx $_ } | Where-Object { Test-Path $_ } | Select-Object -First 1
+$music = @('music_01.ogg', 'music.ogg', 'music.wav') | ForEach-Object { Join-Path $sfx $_ } | Where-Object { Test-Path $_ } | Select-Object -First 1
 # Dedicated backdrop (title, no art behind the gameplay); the feature graphic is the fallback.
 $feature = Join-Path $root "play-store\$Game\graphics\video-background-1920x1080.png"
 if (-not (Test-Path $feature)) { $feature = Join-Path $root "play-store\$Game\graphics\feature-graphic-1024x500.png" }

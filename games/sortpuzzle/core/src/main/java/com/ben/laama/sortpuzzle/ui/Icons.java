@@ -18,9 +18,10 @@ public final class Icons {
 
     public static final String[] NAMES = {
         "icon-back", "icon-close", "icon-undo", "icon-restart", "icon-hint", "icon-tube",
-        "icon-settings", "icon-home", "icon-sound", "icon-sound-off", "icon-music",
+        "icon-settings", "icon-home", "icon-sound", "icon-sound-off", "icon-music", "icon-music-off",
         "icon-check", "icon-lock", "icon-coin", "icon-play", "icon-grid", "icon-info",
-        "icon-next", "icon-replay", "icon-help", "icon-trash"
+        "icon-next", "icon-replay", "icon-help", "icon-trash", "icon-star", "icon-shop", "icon-goal",
+        "icon-share"
     };
 
     private Icons() {
@@ -48,6 +49,8 @@ public final class Icons {
                 return Tex.fromSdf(SIZE, SIZE, (x, y) -> curvedArrow(x, y, true));
             case "icon-hint":
                 return Tex.fromSdf(SIZE, SIZE, Icons::bulb);
+            case "icon-star":
+                return Tex.fromSdf(SIZE, SIZE, Icons::star);
             case "icon-tube":
                 return Tex.fromSdf(SIZE, SIZE, Icons::tubePlus);
             case "icon-settings":
@@ -65,12 +68,13 @@ public final class Icons {
                         Sdfs.segment(x, y, 58, 36, 80, 60, HALF * 0.8f),
                         Sdfs.segment(x, y, 80, 36, 58, 60, HALF * 0.8f))));
             case "icon-music":
+                return Tex.fromSdf(SIZE, SIZE, Icons::musicNote);
+            case "icon-music-off":
+                // The note with a diagonal slash; a gap is cut around the slash so it reads
+                // as "crossed out" at 34 px instead of merging into the stems.
                 return Tex.fromSdf(SIZE, SIZE, (x, y) -> Sdfs.union(
-                    Sdfs.union(Sdfs.circle(x, y, 36, 66, 11), Sdfs.circle(x, y, 64, 60, 11)),
-                    Sdfs.union(
-                        Sdfs.segment(x, y, 45, 66, 45, 26, HALF * 0.8f),
-                        Sdfs.union(Sdfs.segment(x, y, 73, 60, 73, 20, HALF * 0.8f),
-                            Sdfs.segment(x, y, 45, 26, 73, 20, HALF * 0.9f)))));
+                    Sdfs.subtract(musicNote(x, y), Sdfs.segment(x, y, 18, 18, 80, 80, HALF * 2.2f)),
+                    Sdfs.segment(x, y, 18, 18, 80, 80, HALF * 0.8f)));
             case "icon-check":
                 return Tex.fromSdf(SIZE, SIZE, (x, y) -> Sdfs.union(
                     Sdfs.segment(x, y, 24, 50, 42, 68, HALF),
@@ -110,6 +114,27 @@ public final class Icons {
                     Sdfs.union(Sdfs.segment(x, y, 40, 22, 56, 22, HALF * 0.8f),
                         Sdfs.union(Sdfs.segment(x, y, 42, 46, 42, 68, HALF * 0.55f),
                             Sdfs.segment(x, y, 54, 46, 54, 68, HALF * 0.55f)))));
+            case "icon-shop":
+                // A shopping bag: rounded body, two handles, a short fold line below the mouth.
+                return Tex.fromSdf(SIZE, SIZE, (x, y) -> Sdfs.union(
+                    Sdfs.union(Sdfs.stroke(Sdfs.roundBox(x, y, C, 56, 22, 20, 6), STROKE * 0.8f),
+                        Sdfs.arc(x, y, C, 38, 11, MathUtils.PI, MathUtils.PI, HALF * 0.75f)),
+                    Sdfs.segment(x, y, 30, 46, 66, 46, HALF * 0.5f)));
+            case "icon-share":
+                // An open tray with an arrow rising out of it.
+                return Tex.fromSdf(SIZE, SIZE, (x, y) -> Sdfs.union(
+                    Sdfs.union(Sdfs.segment(x, y, C, 24, C, 58, HALF * 0.8f),
+                        Sdfs.union(Sdfs.segment(x, y, 36, 38, C, 24, HALF * 0.8f),
+                            Sdfs.segment(x, y, C, 24, 60, 38, HALF * 0.8f))),
+                    Sdfs.union(Sdfs.segment(x, y, 28, 50, 28, 74, HALF * 0.8f),
+                        Sdfs.union(Sdfs.segment(x, y, 28, 74, 68, 74, HALF * 0.8f),
+                            Sdfs.segment(x, y, 68, 50, 68, 74, HALF * 0.8f)))));
+            case "icon-goal":
+                // A target: outer ring, inner ring, centre dot.
+                return Tex.fromSdf(SIZE, SIZE, (x, y) -> Sdfs.union(
+                    Sdfs.union(Sdfs.stroke(Sdfs.circle(x, y, C, C, 30), STROKE * 0.8f),
+                        Sdfs.stroke(Sdfs.circle(x, y, C, C, 17), STROKE * 0.7f)),
+                    Sdfs.circle(x, y, C, C, 5f)));
             default:
                 throw new IllegalArgumentException("Unknown icon " + name);
         }
@@ -168,6 +193,30 @@ public final class Icons {
         return Sdfs.union(ring, teeth);
     }
 
+    /**
+     * Filled five-point star, tip up. A star is not convex, so it is the union of five convex
+     * kites (centre, inner point, tip, inner point). The existing glyphs only ever stroke
+     * {@link Sdfs#convexPolygon}, which hides its sign; for a filled shape the points must run
+     * centre, right inner, tip, left inner (counter-clockwise on screen) to come out negative inside.
+     */
+    private static float star(float x, float y) {
+        float outer = 36f;
+        float inner = 15f;
+        float d = Float.MAX_VALUE;
+        for (int k = 0; k < 5; k++) {
+            float tip = -MathUtils.HALF_PI + k * MathUtils.PI2 / 5f;   // y grows downwards
+            float left = tip - MathUtils.PI / 5f;
+            float right = tip + MathUtils.PI / 5f;
+            float kite = Sdfs.convexPolygon(x, y,
+                C, C,
+                C + MathUtils.cos(right) * inner, C + MathUtils.sin(right) * inner,
+                C + MathUtils.cos(tip) * outer, C + MathUtils.sin(tip) * outer,
+                C + MathUtils.cos(left) * inner, C + MathUtils.sin(left) * inner);
+            d = Sdfs.union(d, kite);
+        }
+        return d - 1.5f; // slightly rounded corners
+    }
+
     private static float house(float x, float y) {
         float roof = Sdfs.convexPolygon(x, y, C, 18, 82, 50, 14, 50);
         float roofStroke = Sdfs.stroke(roof, STROKE * 0.8f);
@@ -175,6 +224,16 @@ public final class Icons {
         float wallsOpenTop = y < 48f ? 10f : walls;
         float door = Sdfs.roundBox(x, y, C, 70, 6, 10, 2);
         return Sdfs.union(Sdfs.union(roofStroke, wallsOpenTop), door);
+    }
+
+    /** Two beamed eighth notes. */
+    private static float musicNote(float x, float y) {
+        return Sdfs.union(
+            Sdfs.union(Sdfs.circle(x, y, 36, 66, 11), Sdfs.circle(x, y, 64, 60, 11)),
+            Sdfs.union(
+                Sdfs.segment(x, y, 45, 66, 45, 26, HALF * 0.8f),
+                Sdfs.union(Sdfs.segment(x, y, 73, 60, 73, 20, HALF * 0.8f),
+                    Sdfs.segment(x, y, 45, 26, 73, 20, HALF * 0.9f))));
     }
 
     private static float speaker(float x, float y) {

@@ -82,12 +82,17 @@ public final class LevelGenerator {
      * @return the level's board, with {@link Level#PAR_UNKNOWN} par (cheap, no solver)
      */
     public static Level generate(int level) {
+        return generate(level, seedFor(level));
+    }
+
+    /** Generates a board with the selected level's difficulty and a caller-provided seed. */
+    public static Level generate(int level, long seed) {
         int colors = Difficulty.colorsFor(level);
         int emptyTubes = Difficulty.emptyTubesFor(level);
         int depth = Difficulty.shuffleDepthFor(level);
 
         BoardState board = shuffle(BoardState.solved(colors, emptyTubes), depth,
-            new Random(seedFor(level)), Difficulty.scrambleRatioFor(level));
+            new Random(seed), Difficulty.scrambleRatioFor(level));
 
         return new Level(level, board, colors, emptyTubes, depth, Level.PAR_UNKNOWN);
     }
@@ -104,6 +109,15 @@ public final class LevelGenerator {
      */
     public static Level generateWithPar(int level, long nodeBudget) {
         Level base = generate(level);
+        return withPar(base, nodeBudget);
+    }
+
+    /** Same as {@link #generate(int, long)} with the optimal move count computed. */
+    public static Level generateWithPar(int level, long seed, long nodeBudget) {
+        return withPar(generate(level, seed), nodeBudget);
+    }
+
+    private static Level withPar(Level base, long nodeBudget) {
         Solver.Result optimal = Solver.findOptimal(base.start(), nodeBudget);
         if (optimal.solved()) {
             return base.withPar(optimal.moveCount());

@@ -22,7 +22,9 @@ gradlew :android:assembleRelease
 ```
 
 The desktop window opens at half the virtual resolution (360x640) and can be resized freely; the
-`FitViewport` letterboxes rather than distorting, so what you see is what a phone sees.
+`ExtendViewport` switches to its landscape minimum (1280x800) when the window is wider than tall,
+so resizing previews every form factor. `-PcaptureOut=<dir> -PcaptureSize=WxH` on
+`:lwjgl3:storeCapture` renders all key screens at any size (see the `responsive-ux-review` skill).
 
 If the build complains that `settings.gradle` and `settings.gradle.kts` both exist, an older
 Android Studio scaffold is still in the folder. Delete `settings.gradle`, `build.gradle`,
@@ -42,6 +44,18 @@ core/src/main/java/com/ben/laama/sortpuzzle/
     BoardState.java        immutable board; apply(Move) returns a new one
   logic/                 pure Java, zero libGDX imports
     Difficulty.java        colours / spare tubes / scramble / move limit, from the level index
+    DailyChallenge.java    shared UTC-day selection and deterministic daily seed
+    LevelRating.java       three-star rating from moves versus par
+    WeeklyGoals.java       offline weekly goal definitions and UTC reset key
+    Achievement.java       local milestone definitions and rewards
+    ChallengeRules.java    combinable player-selected challenge rules
+    Cosmetic.java          the cosmetic catalogue (palettes, finishes, tube styles, themes), hex data only
+    Shop.java              ownership, purchase (coins debited once) and equip rules
+    Contrast.java          WCAG contrast arithmetic, used by the catalogue test
+    Breathing.java         4-2-6 guided-breath timing (three cycles, 36 s), offered every 5th level
+    World.java             the world map: a biome (name + theme) per chapter of ten levels
+    DailyRewards.java      the 7-day login calendar (coins, a tube on days 4 and 7)
+    BoosterPacks.java      extra tubes sold singly or by the pack, with the saving shown
     LevelGenerator.java    reverse shuffle from the solved board
     Solver.java            DFS for "a solution", IDA* for "the shortest solution"
     HintEngine.java        the solver pointed at the current position, as advice
@@ -50,13 +64,20 @@ core/src/main/java/com/ben/laama/sortpuzzle/
     WinChecker.java        win and deadlock detection
     Level.java             a generated board plus its parameters
   screens/               everything that draws
-    BaseScreen.java        720x1280 ExtendViewport (grows to 1000x1720), backdrop, ESC/back handling
-    SplashScreen, HomeScreen, LevelSelectScreen, GameScreen, SettingsScreen
+    BaseScreen.java        orientation-aware ExtendViewport (720x1280 portrait, 1280x800 landscape;
+                           ui/Responsive), backdrop, safe area, ESC/back handling
+    SplashScreen, HomeScreen, LevelSelectScreen, GameScreen, SettingsScreen, ShopScreen
   ui/
     Sdfs.java, Tex.java    signed-distance primitives and the textures rasterised from them
     Icons.java             the icon set (undo, hint, settings, ...) as SDFs
     SkinFactory.java       the entire Skin, built in code; Poppins via gdx-freetype at screen density
-    Palette.java           every colour in the game (design system "Nocturne")
+    Palette.java           every colour in the game (design system "Nocturne"); theme, ball and tube
+                           colours are mutated only by its apply* methods
+    Cosmetics.java         applies the equipped catalogue items to Palette, the ball sprite,
+                           the tube rim and the backdrop gradient
+    ShareCard.java         renders the result card (solved board, stars, moves) to a PNG for the
+                           share sheet (services/Share; AndroidShare + FileProvider on Android)
+    BreatheOverlay.java    the guided-breath overlay driven by logic/Breathing
     Ui.java                component kit: buttons, cards, chips, toggle, dialog, toast
     TubeTextures.java      U-shaped tube textures cached per size
     BrandMark.java         the logo, built from tube and ball actors
@@ -76,8 +97,9 @@ that draws lives in `screens` and `ui` and holds no rules of its own — `GameSc
 ## The rules, as implemented
 
 A tube holds four balls. Tapping a tube lifts its top *run* — the contiguous block of one colour
-at the top, not just one ball. Tapping a second tube drops them if that tube is empty, or if it
-already shows the same colour and has room. If the run is longer than the space available, as
+at the top, not just one ball — and tapping a second tube drops them. You can also drag from one
+tube and release over another to move the balls directly. The destination must be empty, or
+already show the same colour and have room. If the run is longer than the space available, as
 many balls as fit make the trip and the rest stay put. A level is won when every non-empty tube
 holds four balls of a single colour.
 
@@ -118,15 +140,72 @@ On Android the rewarded video is AdMob (`android/.../AdMobAdProvider.java`, GMA 
 UMP consent); rewards settle exactly once through `RewardGate`. When no video is available —
 no fill, offline, or a build without ad IDs — `RewardOffer` offers the same reward for coins
 (`GameConfig.HINT_UNLOCK_PRICE`, `EXTRA_MOVES_PRICE`), and says so honestly when the player
-cannot afford it. An interstitial may run when the player leaves the level-cleared card, at
-most every `INTERSTITIAL_EVERY_N_LEVELS` levels and `INTERSTITIAL_MIN_INTERVAL_MS` apart
-(`AdPacing`). Debug builds use Google's demo unit IDs; release builds read `admob.properties`
+cannot afford it. An interstitial may run when the player leaves the level-cleared card, after the first two
+natural breaks, at most every `INTERSTITIAL_EVERY_N_LEVELS` levels, and at least
+`INTERSTITIAL_MIN_INTERVAL_MS` apart (`AdPacing`). The home screen also offers one optional
+rewarded video per UTC day for `DAILY_REWARDED_BONUS_COINS`; it pays only after the ad confirms
+the reward, and declining or an unavailable ad has no penalty. The shop keeps coin purchases
+available and separately offers one rewarded extra tube; after a confirmed tube reward, that
+offer waits `REWARDED_TUBE_COOLDOWN_MS` before becoming available again. Debug builds use Google's
+demo unit IDs; release builds read `admob.properties`
 (git-ignored, see `admob.properties.example`) and ship **without** ads when it is missing.
 
 On the desktop `NoOpAdProvider` **grants every reward immediately** and logs a line saying so.
 That is deliberate: both the hint flow and the out-of-moves flow hang off `showRewarded`, and a
 provider that always refused would leave half the game untestable where there is no ad SDK. It
 is never used on a device (`AdProviders`).
+
+## Play Games, leaderboards and analytics (optional services)
+
+Both services follow the `AdProvider` pattern: an interface in `core` (`services/GameServices`,
+`services/Analytics`), an inert implementation everywhere (`NoOpGameServices`, `NoOpAnalytics`)
+and a real one injected by `AndroidLauncher` only when its configuration file was present at
+build time. Without the files the game builds, runs and looks exactly as before: no SDK call,
+no button.
+
+| Service | Config file (git-ignored) | Android class | What it does |
+|---|---|---|---|
+| Google Play Games Services v2 | `playgames.properties` (see `playgames.properties.example`) | `AndroidGameServices` | Silent sign-in at start, "Sign in with Play Games" button on the Goals & challenges screen and in Settings, three leaderboards: highest level, total stars, daily moves (smaller is better, daily reset). Scores come from `logic/LeaderboardScores`. Profile creation is never auto-prompted (`SUPPRESS_GAME_PROFILE_CREATION`). |
+| Firebase Analytics + Crashlytics | `android/google-services.json` | `FirebaseAnalyticsBridge` | Events named in `services/AnalyticsEvents` (level start/complete/out of moves, daily complete, hints unlocked, rewarded extra moves, sign-in, leaderboard open; a unit test checks the names against Firebase's rules). Collection starts **off** in the manifest and is enabled only when the UMP consent flow allows ad requests, and never in debug builds. |
+
+`gradlew :android:printAdConfig` prints whether each service is configured. Adding either file
+changes what the app collects: update the Play Console **Data safety** form (Play Games player
+ID; Firebase: app interactions, crash logs, device identifiers) and the privacy policy before
+shipping such a build.
+
+## Daily challenge and progression
+
+The first campaign level shows the short how-to-play card. The opening difficulty curve keeps
+the first ten levels at three or four colours with two spare tubes; it already has unit tests for
+colour count, solvability and the increasing scramble curve. Level clears award up to three stars
+based on moves versus par, and the level map preserves each level's best star result.
+
+The home screen also offers one offline daily puzzle. Its UTC date determines a stable seed and
+a shared difficulty profile, so every player gets the same board that day without accounts or
+network requests. The profile cycles through the first 100 level difficulties. The first clear
+for a date pays 35 coins; clearing challenges on three consecutive UTC days unlocks an alternate
+ball palette in Settings. Replays are allowed but never pay twice for the same date. Missing a
+day restarts the streak. Sound, music and haptics can each be disabled in Settings; haptics are
+local device feedback and do not transmit data. Effects and music also have two small switches
+under the purse during play.
+
+**Daily puzzle reminders** are local notifications (no server, nothing collected). From the
+third launch the home screen shows a soft-ask card once per session ("Not now" waits three days,
+three times at most); the Android 13+ system prompt appears only after "Yes", and never again
+after "Don't allow" (the Settings switch then opens the system notification settings). When the
+player leaves, `logic/ReminderPlanner` plans at most one reminder per day at 19:00 local, on days
+0, 1, 2, 4 and 6, matched to the UTC puzzle live at that moment: nothing if it is solved,
+"Almost there" if it was opened but not finished, "Keep your N-day streak" if yesterday's was
+won, otherwise "puzzle is ready". Returning to the game cancels everything; tapping a reminder
+opens the daily puzzle. `android/.../AndroidReminders` uses inexact `setAndAllowWhileIdle`
+alarms (no exact-alarm permission) and `BootReceiver` re-arms the plan after a reboot.
+
+The Goals & Challenges screen adds three weekly campaign goals (new each Monday UTC), five
+one-time achievements, two collectible ball palettes, and optional numeric colour labels for
+accessibility. Weekly goals and achievements pay coins once when they unlock. The player can
+combine four challenge rules before starting a replay of their current campaign level: no undo,
+no hints, no extra tubes, and an exact par move limit. Challenge runs never change campaign
+progress or offer paid continues; they only count toward the challenge achievement.
 
 ## Level generation
 
@@ -229,13 +308,17 @@ the background gradient as anti-aliased pixmaps at start-up (signed distance fie
 is the only place that knows about it. Launcher icons and the Play Store graphics are rendered by
 `tools/store/render-brand-assets.ps1` (workspace root).
 
-Sound effects and a 20-second looping music bed ship as `.wav` files in
+Sound effects and ten distinct 24-32-second ambient music loops ship in
 `android/src/main/assets/sfx/`. They are synthesised, not recorded - `tools/audio/SfxSynth.java`
 at the workspace root generates all of them deterministically, so they are original and carry no
-licence. Regenerate with `java tools\audio\SfxSynth.java games\sortpuzzle\android\src\main\assets\sfx`.
-`SoundManager` prefers an `.ogg` of the same name, so replacing any cue is a file drop. Voice lines
-(`voice_nice`, `voice_great`, `voice_awesome`, `voice_perfect`, `voice_level_complete`) are wired but
-not shipped; `android/src/main/assets/sfx/README.txt` lists every cue.
+third-party licence. A fresh install opens a music picker with previews; the chosen loop is saved
+locally and can be changed in Settings. Existing profiles keep the old default loop instead of
+being interrupted by onboarding. Music can also be disabled there. Regenerate with
+`java tools\audio\SfxSynth.java games\sortpuzzle\android\src\main\assets\sfx`, then encode
+each `music_*.wav` to `.ogg` with FFmpeg (`ffmpeg -i music_01.wav -c:a libvorbis -q:a 3 music_01.ogg`)
+for the smaller shipped music files. Voice lines
+(`voice_nice`, `voice_great`, `voice_awesome`, `voice_perfect`, `voice_level_complete`) are wired
+but not shipped; `android/src/main/assets/sfx/README.txt` lists every cue.
 
 ## Store screenshots and promo video
 
@@ -273,6 +356,33 @@ never blocks. The file is git-ignored along with `*.jks` — do not commit a key
 Release builds run R8 with `proguard-rules.pro`. The rule that matters is the one keeping
 `SaveData`: libGDX `Json` walks its fields reflectively, and stripping them wipes player progress
 on release builds only — a bug that never shows up in debug.
+
+### Orientation, cutouts and large screens
+
+The manifest sets no `android:screenOrientation`: Play Console reports fixed orientations as a
+large-screen restriction and Android 16 ignores them above sw600dp anyway. `AndroidLauncher`
+locks portrait at runtime only while the smallest window width is below 600 dp (re-checked in
+`onConfigurationChanged`, so a foldable unlocks when opened). Tablets, foldables and desktop
+windows rotate freely. In landscape the viewport uses its own 1280x800 minimum (`ui/Responsive`,
+fonts rasterised for it) and screens re-arrange: Home in two columns, the game with status on the
+left, the verbs as a 2x2 pad on the right and the board sized by `ui/BoardLayout`, the world map
+in two columns, and `Ui.dialog` scales any dialog taller than the screen down to fit.
+
+libGDX would render under the display cutout with `LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES` and
+hide the bars with `View.setSystemUiVisibility`, APIs Android 15 deprecated and Play reports. Both
+libGDX switches are therefore off: the theme in `values-v30/styles.xml` sets
+`windowLayoutInDisplayCutoutMode=always` (API 27-29 keep the system letterbox above the cutout) and
+the launcher hides the bars with `WindowInsetsControllerCompat`. `BaseScreen.safeArea`
+shrinks the UI by `Gdx.graphics.getSafeInset*` (converted by `ui/SafeInsets`, unit-tested) while
+the animated backdrop keeps painting edge to edge: menus and the HUD live in `safeArea`, the
+board stays on the stage. To eyeball a landscape tablet without a device:
+
+```
+gradlew :lwjgl3:storeCapture -PcaptureDevice=landscape-check -PcaptureSize=2560x1600
+```
+
+`androidx.fragment:fragment` is pinned explicitly because `play-services-basement` (GMA SDK)
+still pulls 1.1.0, which Play flags as deprecated.
 
 ## Known trade-offs
 

@@ -15,6 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
@@ -23,32 +28,52 @@ import com.ben.laama.sortpuzzle.Main;
 import com.ben.laama.sortpuzzle.ads.AdProvider;
 import com.ben.laama.sortpuzzle.audio.SoundManager;
 import com.ben.laama.sortpuzzle.logic.Difficulty;
+import com.ben.laama.sortpuzzle.logic.DailyChallenge;
+import com.ben.laama.sortpuzzle.logic.DropTarget;
+import com.ben.laama.sortpuzzle.logic.ChallengeRules;
 import com.ben.laama.sortpuzzle.logic.Hint;
 import com.ben.laama.sortpuzzle.logic.HintEngine;
 import com.ben.laama.sortpuzzle.logic.Level;
 import com.ben.laama.sortpuzzle.logic.LevelGenerator;
+import com.ben.laama.sortpuzzle.logic.LevelRating;
 import com.ben.laama.sortpuzzle.logic.MoveValidator;
 import com.ben.laama.sortpuzzle.logic.RewardOffer;
 import com.ben.laama.sortpuzzle.logic.Solver;
+import com.ben.laama.sortpuzzle.logic.LeaderboardScores;
 import com.ben.laama.sortpuzzle.logic.WinChecker;
+import com.ben.laama.sortpuzzle.logic.Breathing;
+import com.ben.laama.sortpuzzle.logic.Cosmetic;
+import com.ben.laama.sortpuzzle.logic.Shop;
+import com.ben.laama.sortpuzzle.logic.StarRoad;
+import com.ben.laama.sortpuzzle.logic.WinSummary;
+import com.ben.laama.sortpuzzle.logic.World;
+import com.ben.laama.sortpuzzle.logic.Assists;
+import com.ben.laama.sortpuzzle.ui.BreatheOverlay;
+import com.ben.laama.sortpuzzle.ui.Ripple;
+import com.ben.laama.sortpuzzle.ui.ShareCard;
+import com.ben.laama.sortpuzzle.services.AnalyticsEvents;
+import com.ben.laama.sortpuzzle.services.GameServices;
 import com.ben.laama.sortpuzzle.model.BoardState;
 import com.ben.laama.sortpuzzle.model.Move;
 import com.ben.laama.sortpuzzle.model.Packed;
 import com.ben.laama.sortpuzzle.save.SaveData;
 import com.ben.laama.sortpuzzle.ui.ArcMoveAction;
 import com.ben.laama.sortpuzzle.ui.BallActor;
+import com.ben.laama.sortpuzzle.ui.BoardLayout;
 import com.ben.laama.sortpuzzle.ui.HudTable;
 import com.ben.laama.sortpuzzle.ui.Palette;
 import com.ben.laama.sortpuzzle.ui.TubeActor;
 import com.ben.laama.sortpuzzle.ui.Ui;
 import com.ben.laama.sortpuzzle.ui.WinBurst;
 
+import java.time.LocalDate;
+
 /**
  * The board itself: layout, input, animation, hints and the win/lose flow.
  *
- * <p>The model ({@link BoardState}) is updated the instant a tap is accepted; the actors then
+ * <p>The model ({@link BoardState}) is updated the instant a move is accepted; the actors then
  * animate towards wherever the model says they belong. Keeping those two apart is what makes
- * fast tapping feel right — a player can start the next move before the previous balls have
+ * fast input feel right — a player can start the next move before the previous balls have
  * landed, and nothing desynchronises, because every ball is simply re-aimed at its new slot.</p>
  *
  * <p>Everything expensive runs on a worker thread: level generation, the par search that sets
@@ -69,11 +94,17 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     private static final float TUBE_GAP = 16f;
     private static final float ROW_GAP = 70f;
     private static final float MAX_TUBE_WIDTH = 108f;
+    private static final float DRAG_THRESHOLD = 18f;
     private static final int MAX_TUBES_PER_ROW = 7;
     /** Two rows of seven. Past this the tubes get too narrow to tap reliably. */
     private static final int MAX_TUBES = 14;
 
     private final int levelIndex;
+    private final boolean dailyChallenge;
+    private final String dailyDate;
+    private final long dailySeed;
+    private final ChallengeRules challengeRules;
+    private final boolean challengeRun;
 
     private final Group tubeGroup = new Group();
     private final Group ballGroup = new Group();
@@ -94,8 +125,16 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     private int parMoves = Level.PAR_UNKNOWN;
     private int moveLimit;
     private int freeBoosters = GameConfig.FREE_BOOSTERS_PER_LEVEL;
+    private int freeUndos = Assists.UNDO.freePerLevel();
+    private int freeResets = Assists.RESET.freePerLevel();
     private float ballSize = 64f;
     private boolean disposed;
+    /** Star-road and chapter skins this win unlocked, announced on the result card (campaign only). */
+    private java.util.List<Cosmetic> starUnlocks = java.util.Collections.emptyList();
+    private int dragPointer = -1;
+    private boolean dragMoved;
+    private float dragDownX;
+    private float dragDownY;
 
     // ---- hints ----
     private int freeHints = GameConfig.FREE_HINTS_PER_LEVEL;
@@ -105,32 +144,65 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     private int suggestedFrom = -1;
     private int suggestedTo = -1;
     private Actor hintGhost;
+    private int dragTube = -1;
+    private float dragStartX;
+    private float dragStartY;
 
     public GameScreen(Main game, int levelIndex) {
+        this(game, levelIndex, null, ChallengeRules.CLASSIC, false);
+    }
+
+    public GameScreen(Main game, LocalDate dailyDate) {
+        this(game, DailyChallenge.levelFor(dailyDate), dailyDate, ChallengeRules.CLASSIC, false);
+    }
+
+    public GameScreen(Main game, int levelIndex, ChallengeRules rules) {
+        this(game, levelIndex, null, rules, true);
+    }
+
+    private GameScreen(Main game, int levelIndex, LocalDate dailyDate,
+                       ChallengeRules rules, boolean challengeRun) {
         super(game);
         this.levelIndex = levelIndex;
+        this.dailyChallenge = dailyDate != null;
+        this.dailyDate = dailyChallenge ? DailyChallenge.dateKey(dailyDate) : "";
+        if (dailyChallenge && this.dailyDate.equals(DailyChallenge.dateKey(DailyChallenge.todayUtc()))) {
+            // Lets tonight's reminder say "almost there" instead of "ready" if it is not finished.
+            game.save().markDailyStarted(this.dailyDate);
+        }
+        this.dailySeed = dailyChallenge ? DailyChallenge.seedFor(dailyDate) : 0L;
+        this.challengeRules = rules == null ? ChallengeRules.CLASSIC : rules;
+        this.challengeRun = challengeRun && !this.challengeRules.isClassic();
 
         background.setIntensity(0.35f); // the board needs the attention, not the backdrop
         ballGroup.setTouchable(Touchable.disabled);
         stage.addActor(tubeGroup);
         stage.addActor(ballGroup);
+        safeArea.toFront(); // the HUD (inside the safe area) draws above the board
 
         hud = new HudTable(skin, this);
-        hud.setLevel(levelIndex, Difficulty.bandName(levelIndex) + "  •  "
-            + Difficulty.colorsFor(levelIndex) + " colours");
+        String title = dailyChallenge ? "DAILY CHALLENGE"
+            : this.challengeRun ? "CUSTOM CHALLENGE" : "Level " + levelIndex;
+        String subtitle = this.challengeRun ? this.challengeRules.summary() + "  •  "
+            + Difficulty.colorsFor(levelIndex) + " colours"
+            : Difficulty.bandName(levelIndex) + "  •  " + Difficulty.colorsFor(levelIndex) + " colours";
+        hud.setLevel(title, subtitle);
         hud.setMoves(0, 0);
         hud.showPar(Level.PAR_UNKNOWN);
+        hud.setAudio(game.sound().areEffectsOn(), game.sound().isMusicOn());
         hud.setCoins(game.save().coins);
         hud.setUndoEnabled(false);
-        hud.setBoosters(availableBoosters());
+        refreshStock();
         hud.setHintCaption(hintCaption());
         hud.setHintEnabled(false);
-        stage.addActor(hud);
+        hud.setLandscape(isLandscape());
+        safeArea.addActor(hud);
 
         loadingHolder = buildLoadingIndicator();
         stage.addActor(loadingHolder);
 
         stage.addActor(burst); // last, so its ShapeRenderer pass sits on top
+        installTubeInput();
 
         startWorker();
     }
@@ -211,7 +283,9 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
      */
     private void startWorker() {
         Thread worker = new Thread(() -> {
-            Level generated = LevelGenerator.generate(levelIndex);
+            Level generated = dailyChallenge
+                ? LevelGenerator.generate(levelIndex, dailySeed)
+                : LevelGenerator.generate(levelIndex);
             Gdx.app.postRunnable(() -> onLevelReady(generated));
 
             Solver.Result optimal = Solver.findOptimal(generated.start(),
@@ -233,14 +307,24 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         if (disposed) {
             return;
         }
+        if (!shown) {
+            // The worker can finish while the previous screen is still fading out. Dealing the
+            // board before show()/resize() would let the first relayout cut the deal-in short
+            // (clearActions) and strand every ball at alpha 0, so wait for the first frame.
+            pendingLevel = generated;
+            return;
+        }
         level = generated;
         state = generated.start();
         phase = Phase.PLAYING;
+        game.analytics().event(AnalyticsEvents.LEVEL_START,
+            AnalyticsEvents.P_LEVEL, levelIndex, AnalyticsEvents.P_MODE, analyticsMode());
         loadingHolder.remove();
-        hud.setHintEnabled(true);
+        hud.setUndoEnabled(false);
+        hud.setHintEnabled(!challengeRules.noHints());
         buildBoard();
 
-        if (!game.save().tutorialSeen && levelIndex == 1) {
+        if (!dailyChallenge && !game.save().tutorialSeen && levelIndex == 1) {
             stage.addAction(Actions.delay(0.7f, Actions.run(() -> {
                 if (!disposed) {
                     showHowToPlay(stage, skin, () -> game.save().markTutorialSeen());
@@ -255,12 +339,21 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
      * under the player's nose.
      */
     private void onParReady(int par) {
-        if (disposed || level == null) {
+        if (disposed) {
+            return;
+        }
+        if (level == null) {
+            if (pendingLevel != null) {
+                // Par beat the deal-in to the render thread; apply it right after the board.
+                pendingPar = par;
+                hasPendingPar = true;
+            }
             return;
         }
         parMoves = par;
         level = level.withPar(par);
-        moveLimit = Difficulty.moveLimitFor(par);
+        moveLimit = challengeRun && challengeRules.parMoveLimit()
+            ? par : Difficulty.moveLimitFor(par);
         hud.showPar(par);
         hud.setMoves(moves, moveLimit);
         if (phase == Phase.PLAYING && isOutOfMoves()) {
@@ -288,7 +381,8 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             int encoded = state.encodedAt(index);
             TubeActor tube = tubes.get(index);
             for (int slot = 0; slot < Packed.size(encoded); slot++) {
-                BallActor ball = new BallActor(skin, Packed.slot(encoded, slot), ballSize);
+                BallActor ball = new BallActor(skin, Packed.slot(encoded, slot), ballSize,
+                    game.save().colorLabels);
                 ball.setPosition(tube.ballX(), tube.ballY(slot));
                 ballGroup.addActor(ball);
                 stack.add(ball);
@@ -306,33 +400,56 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         game.sound().play(SoundManager.Cue.START);
     }
 
-    /** Positions one tube actor per model tube, in one or two centred rows. */
+    /** World units the HUD keeps above the board in the current orientation. */
+    private float hudTopReserve() {
+        return isLandscape() ? HudTable.LANDSCAPE_TOP : HudTable.PORTRAIT_TOP;
+    }
+
+    /**
+     * Positions one tube actor per model tube, centred in the area the HUD leaves free: between
+     * the top bar and the verb row in portrait, between the two side columns in landscape.
+     * {@link BoardLayout} picks the row count that gives the largest balls.
+     */
     private void layoutTubes() {
         int count = state.tubeCount();
-        int rows = count <= 6 ? 1 : 2;
-        int perRow = Math.min(MAX_TUBES_PER_ROW, (count + rows - 1) / rows);
-        if (perRow * rows < count) {
-            perRow = (count + rows - 1) / rows;
-        }
-
         float worldWidth = stage.getWidth();
         float worldHeight = stage.getHeight();
-        float available = Math.min(worldWidth, GameConfig.WORLD_WIDTH + 120f) - 2f * BOARD_MARGIN_X;
-        float tubeWidth = Math.min(MAX_TUBE_WIDTH,
-            (available - TUBE_GAP * (perRow - 1)) / perRow);
-        ballSize = tubeWidth - 2f * TubeActor.INNER_PADDING;
-        float tubeHeight = TubeActor.heightFor(ballSize);
 
-        float stackHeight = rows * tubeHeight + (rows - 1) * ROW_GAP;
-        // The HUD takes ~200 units at the top and ~150 at the bottom; centre the board between.
-        float boardCenterY = 150f + (worldHeight - 150f - 220f) * 0.5f;
+        float areaLeft;
+        float areaRight;
+        float areaBottom;
+        float areaTop = worldHeight - hudTopReserve();
+        int maxPerRow;
+        if (isLandscape()) {
+            areaLeft = HudTable.LANDSCAPE_SIDE;
+            areaRight = worldWidth - HudTable.LANDSCAPE_SIDE;
+            areaBottom = 40f;
+            maxPerRow = 12;
+        } else {
+            float available = Math.min(worldWidth, GameConfig.WORLD_WIDTH + 120f) - 2f * BOARD_MARGIN_X;
+            areaLeft = (worldWidth - available) * 0.5f;
+            areaRight = areaLeft + available;
+            areaBottom = HudTable.PORTRAIT_BOTTOM;
+            maxPerRow = MAX_TUBES_PER_ROW;
+        }
+        BoardLayout fit = BoardLayout.fit(count, areaRight - areaLeft, areaTop - areaBottom,
+            MAX_TUBE_WIDTH, TUBE_GAP, ROW_GAP, maxPerRow, TubeActor.INNER_PADDING, Packed.CAPACITY);
+        int rows = fit.rows;
+        int perRow = fit.perRow;
+        float tubeWidth = fit.tubeWidth;
+        ballSize = fit.ballSize;
+        float tubeHeight = fit.tubeHeight;
+
+        float stackHeight = fit.stackHeight(ROW_GAP);
+        float boardCenterY = (areaBottom + areaTop) * 0.5f;
+        float boardCenterX = (areaLeft + areaRight) * 0.5f;
         float bottomY = boardCenterY - stackHeight * 0.5f;
 
         int placed = 0;
         for (int row = 0; row < rows; row++) {
             int inRow = Math.min(perRow, count - placed);
             float rowWidth = inRow * tubeWidth + TUBE_GAP * (inRow - 1);
-            float rowX = (worldWidth - rowWidth) * 0.5f;
+            float rowX = boardCenterX - rowWidth * 0.5f;
             // Row 0 is the top row, so it gets the higher y.
             float rowY = bottomY + (rows - 1 - row) * (tubeHeight + ROW_GAP);
 
@@ -341,7 +458,6 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                 TubeActor tube = new TubeActor(skin, game.tubes(), index, ballSize);
                 tube.setSize(tubeWidth, tubeHeight);
                 tube.setHome(rowX + column * (tubeWidth + TUBE_GAP), rowY);
-                Ui.click(tube, () -> onTubeTapped(index));
                 tubeGroup.addActor(tube);
                 tubes.add(tube);
             }
@@ -362,6 +478,8 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             for (int slot = 0; slot < stack.size; slot++) {
                 BallActor ball = stack.get(slot);
                 ball.clearActions();
+                ball.getColor().a = 1f; // a cut-short deal-in or fade must never leave a ball hidden
+                ball.setScale(1f);
                 ball.setSize(ballSize, ballSize);
                 ball.setOrigin(Align.center); // origin is derived from size, so it must follow
                 ball.addAction(Actions.moveTo(tube.ballX(), tube.ballY(slot), 0.22f,
@@ -371,6 +489,125 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     }
 
     // -------------------------------------------------------------------- input
+    private void installTubeInput() {
+        stage.getRoot().addCaptureListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y,
+                                     int pointer, int button) {
+                Actor target = event.getTarget();
+                TubeActor tube = target.firstAscendant(TubeActor.class);
+                if (phase != Phase.PLAYING || tube == null) return false;
+                dragTube = tube.index();
+                dragPointer = pointer;
+                dragMoved = false;
+                dragDownX = event.getStageX();
+                dragDownY = event.getStageY();
+                dragStartX = dragDownX;
+                dragStartY = dragDownY;
+                return true;
+            }
+
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                if (pointer != dragPointer || dragTube < 0 || phase != Phase.PLAYING) return;
+                float deltaX = event.getStageX() - dragDownX;
+                float deltaY = event.getStageY() - dragDownY;
+                if (!dragMoved && deltaX * deltaX + deltaY * deltaY
+                    >= DRAG_THRESHOLD * DRAG_THRESHOLD
+                    && state.encodedAt(dragTube) != Packed.EMPTY) {
+                    if (selected != dragTube) {
+                        deselect();
+                        select(dragTube);
+                    }
+                    dragMoved = true;
+                }
+                if (dragMoved) {
+                    positionDraggedRun(dragTube, event.getStageX() - dragStartX,
+                        event.getStageY() - dragStartY);
+                }
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                if (pointer != dragPointer || dragTube < 0) return;
+                int source = dragTube;
+                if (dragMoved && phase == Phase.PLAYING) {
+                    positionDraggedRun(source, event.getStageX() - dragStartX,
+                        event.getStageY() - dragStartY);
+                    // Aim with the balls the player sees, not the finger: the run is drawn
+                    // lifted above the touch, so on a two-row board the finger often sits in
+                    // the gap between rows, or on a tube of the other row.
+                    int destination = dropTargetFor(source, event.getStageX() - dragStartX,
+                        event.getStageY() - dragStartY);
+                    if (destination >= 0
+                        && MoveValidator.moveFor(state, source, destination) != null) {
+                        onTubeTapped(destination);
+                    } else {
+                        positionDraggedRun(source, 0f, 0f);
+                        if (destination >= 0) {
+                            onTubeTapped(destination);
+                        } else {
+                            deselect();
+                        }
+                    }
+                } else {
+                    onTubeTapped(source);
+                }
+                dragTube = -1;
+                dragPointer = -1;
+                dragMoved = false;
+            }
+        });
+    }
+
+    private void positionDraggedRun(int index, float deltaX, float deltaY) {
+        if (selected != index) return;
+        int encoded = state.encodedAt(index);
+        int size = Packed.size(encoded);
+        int run = Packed.topRun(encoded);
+        TubeActor tube = tubes.get(index);
+        Array<BallActor> stack = stacks.get(index);
+        for (int slot = size - run; slot < size; slot++) {
+            BallActor ball = stack.get(slot);
+            ball.clearActions();
+            ball.setScale(1f);
+            ball.setPosition(tube.ballX() + deltaX,
+                tube.ballY(slot) + GameConfig.BALL_LIFT_HEIGHT + deltaY);
+            ball.toFront();
+        }
+    }
+
+    /**
+     * @return the tube under the centre of the dragged run (drawn by
+     *     {@link #positionDraggedRun}), or -1 when it is over no tube
+     */
+    private int dropTargetFor(int source, float deltaX, float deltaY) {
+        int encoded = state.encodedAt(source);
+        int size = Packed.size(encoded);
+        int run = Packed.topRun(encoded);
+        TubeActor from = tubes.get(source);
+        float lowest = from.ballY(size - run);
+        float highest = from.ballY(size - 1);
+        float centreX = from.ballX() + deltaX + ballSize * 0.5f;
+        float centreY = (lowest + highest) * 0.5f + GameConfig.BALL_LIFT_HEIGHT + deltaY
+            + ballSize * 0.5f;
+
+        int count = tubes.size;
+        float[] x = new float[count];
+        float[] y = new float[count];
+        float[] width = new float[count];
+        float[] height = new float[count];
+        for (int i = 0; i < count; i++) {
+            TubeActor tube = tubes.get(i);
+            x[i] = tube.getX();
+            y[i] = tube.getY();
+            width[i] = tube.getWidth();
+            height[i] = tube.getHeight();
+        }
+        return DropTarget.pick(centreX, centreY, x, y, width, height, TUBE_GAP * 0.5f,
+            GameConfig.BALL_LIFT_HEIGHT + ballSize * 0.5f);
+    }
+
     private void onTubeTapped(int index) {
         if (phase != Phase.PLAYING) {
             return;
@@ -393,7 +630,9 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             // source — so say no clearly, then pick it up rather than making the player tap
             // twice.
             tubes.get(index).shake();
+            tubes.get(index).flash(Palette.DANGER, 0.3f);
             game.sound().play(SoundManager.Cue.INVALID);
+            haptic(18);
             deselect();
             if (state.encodedAt(index) != Packed.EMPTY) {
                 select(index);
@@ -438,15 +677,19 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             Action rise = Actions.moveTo(tube.ballX(), tube.ballY(slot) + lift, 0.12f,
                 Interpolation.swingOut);
             if (lift > 0f) {
-                // Held balls bob gently, slightly out of step, so the selection feels alive.
+                // Held balls grow a touch and bob gently, slightly out of step, so the
+                // selection reads as "picked up" rather than merely moved.
                 float bob = GameConfig.BALL_LIFT_HEIGHT * 0.12f;
-                ball.addAction(Actions.sequence(rise,
+                ball.addAction(Actions.sequence(
+                    Actions.parallel(rise,
+                        Actions.scaleTo(1.07f, 1.07f, 0.12f, Interpolation.swingOut)),
                     Actions.delay(0.04f * (size - 1 - slot)),
                     Actions.forever(Actions.sequence(
                         Actions.moveBy(0f, bob, 0.42f, Interpolation.sine),
                         Actions.moveBy(0f, -bob, 0.42f, Interpolation.sine)))));
             } else {
-                ball.addAction(rise);
+                ball.addAction(Actions.parallel(rise,
+                    Actions.scaleTo(1f, 1f, 0.12f, Interpolation.sineOut)));
             }
         }
     }
@@ -464,9 +707,10 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
 
         if (record) {
             moves++;
+            haptic(12);
         }
         hud.setMoves(moves, moveLimit);
-        hud.setUndoEnabled(stateHistory.size > 0);
+        hud.setUndoEnabled(!challengeRules.noUndo() && stateHistory.size > 0);
         // The drop sound plays per ball as it lands - see transferBalls.
 
         boolean won = WinChecker.isWon(state);
@@ -478,6 +722,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         }
 
         if (won) {
+            haptic(35);
             onWin();
             return;
         }
@@ -490,13 +735,19 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         }
     }
 
+    private void haptic(int milliseconds) {
+        if (game.save().vibrate) {
+            Gdx.input.vibrate(milliseconds);
+        }
+    }
+
     /** Animates {@code count} balls from the top of one tube onto another. */
     private void transferBalls(int from, int to, int count) {
         Array<BallActor> source = stacks.get(from);
         Array<BallActor> target = stacks.get(to);
         TubeActor sourceTube = tubes.get(from);
         TubeActor targetTube = tubes.get(to);
-        float clearance = Math.max(sourceTube.liftY(), targetTube.liftY());
+        float column = ballSize * 0.5f;
 
         for (int i = 0; i < count; i++) {
             BallActor ball = source.pop();
@@ -504,7 +755,23 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             target.add(ball);
 
             float destinationY = targetTube.ballY(slot);
-            float arc = Math.max(0f, clearance - Math.max(ball.getY(), destinationY)) + 18f;
+            // Only clear the glass the ball is actually behind. A ball still in its source
+            // column must climb out of it; a ball the player has already dragged away only
+            // needs to get over the target's mouth - it must not climb back over the other
+            // row first. A ball dragged straight above its slot just drops in.
+            boolean inSource = Math.abs(ball.getX() - sourceTube.ballX()) < column
+                && ball.getY() < sourceTube.liftY();
+            boolean aboveSlot = Math.abs(ball.getX() - targetTube.ballX()) < column
+                && ball.getY() >= destinationY;
+            float arc;
+            if (inSource) {
+                float clearance = Math.max(sourceTube.liftY(), targetTube.liftY());
+                arc = Math.max(0f, clearance - Math.max(ball.getY(), destinationY)) + 18f;
+            } else if (aboveSlot) {
+                arc = 0f;
+            } else {
+                arc = Math.max(0f, targetTube.liftY() - Math.max(ball.getY(), destinationY)) + 6f;
+            }
 
             ball.clearActions();
             ball.toFront();
@@ -515,7 +782,13 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                 Actions.delay(i * GameConfig.BALL_MOVE_STAGGER),
                 ArcMoveAction.arcTo(targetTube.ballX(), destinationY, arc,
                     GameConfig.BALL_MOVE_DURATION),
-                Actions.run(() -> game.sound().play(SoundManager.Cue.DROP, pitch)),
+                Actions.run(() -> {
+                    game.sound().play(SoundManager.Cue.DROP, pitch);
+                    // Contact: a soft ring in the ball's colour spreads from the landing spot.
+                    Ripple.at(skin, ballGroup, ball.getX() + ball.getWidth() * 0.5f,
+                        ball.getY() + ball.getHeight() * 0.12f, ball.getWidth(), ball.getColor());
+                    ball.toFront();
+                }),
                 Actions.scaleTo(1.16f, 0.84f, 0.05f, Interpolation.sineOut),
                 Actions.scaleTo(1f, 1f, 0.18f, Interpolation.swingOut)));
         }
@@ -550,6 +823,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         burst.sparkle(tube.getX() + tube.getWidth() * 0.5f, topY,
             Packed.top(state.encodedAt(index)), 26);
         game.sound().play(SoundManager.Cue.TUBE);
+        tube.flash(Palette.GOLD, 0.7f); // the tube itself glows, not only its balls
 
         int step = Math.min(tubesCompleted, PRAISE.length - 1);
         tubesCompleted++;
@@ -581,7 +855,8 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         float halfWidth = box.getWidth() * 0.5f;
         float x = Math.max(halfWidth + 16f, Math.min(stage.getWidth() - halfWidth - 16f, centerX));
         // In the gap between the board and the HUD; it rises 60 px, so leave room under the HUD.
-        float y = Math.min(boardTop + 12f, stage.getHeight() - 210f - box.getHeight() - 60f);
+        float y = Math.min(boardTop + 12f,
+            stage.getHeight() - hudTopReserve() + 10f - box.getHeight() - 60f);
         box.setPosition(x - halfWidth, y);
         box.setTouchable(Touchable.disabled);
         box.setScale(0.2f);
@@ -602,9 +877,21 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
 
     @Override
     public void onUndo() {
-        if (phase != Phase.PLAYING || stateHistory.size == 0) {
+        if (challengeRules.noUndo() || phase != Phase.PLAYING || stateHistory.size == 0) {
             return;
         }
+        // Free undos first, then the stock; when both are gone, offer a video or a pack.
+        int taken = Assists.take(freeUndos, game.save().stockOf(Assists.UNDO));
+        if (taken == 0) {
+            offerAssist(Assists.UNDO);
+            return;
+        }
+        if (taken == 1) {
+            freeUndos--;
+        } else {
+            game.save().consumeAssist(Assists.UNDO);
+        }
+        refreshStock();
         deselect();
         clearSuggestion();
         Move move = moveHistory.pop();
@@ -617,7 +904,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         // move would make the button a trap rather than a safety net.
         moves = Math.max(0, moves - 1);
         hud.setMoves(moves, moveLimit);
-        hud.setUndoEnabled(stateHistory.size > 0);
+        hud.setUndoEnabled(!challengeRules.noUndo() && stateHistory.size > 0);
         game.sound().play(SoundManager.Cue.BUTTON);
 
         if (hintsUnlocked) {
@@ -630,6 +917,20 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         if (phase == Phase.WON || level == null) {
             return;
         }
+        if (moves == 0 && stateHistory.size == 0) {
+            return; // nothing to reset: don't charge for a no-op
+        }
+        // One free reset per level, then the stock; when both are gone, offer a video or a pack.
+        int taken = Assists.take(freeResets, game.save().stockOf(Assists.RESET));
+        if (taken == 0) {
+            offerAssist(Assists.RESET);
+            return;
+        }
+        if (taken == 1) {
+            freeResets--;
+        } else {
+            game.save().consumeAssist(Assists.RESET);
+        }
         deselect();
         clearSuggestion();
         stateHistory.clear();
@@ -637,14 +938,15 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         state = level.start();
         moves = 0;
         freeBoosters = GameConfig.FREE_BOOSTERS_PER_LEVEL;
+        freeUndos = Assists.UNDO.freePerLevel();
         freeHints = GameConfig.FREE_HINTS_PER_LEVEL;
         phase = Phase.PLAYING;
 
         hud.setMoves(0, moveLimit);
         hud.setUndoEnabled(false);
-        hud.setBoosters(availableBoosters());
+        refreshStock();
         hud.setHintCaption(hintCaption());
-        hud.setHintEnabled(true);
+        hud.setHintEnabled(!challengeRules.noHints());
         hud.showPar(parMoves);
         buildBoard();
         game.sound().play(SoundManager.Cue.BUTTON);
@@ -652,7 +954,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
 
     @Override
     public void onBooster() {
-        if (phase != Phase.PLAYING) {
+        if (challengeRules.noBoosters() || phase != Phase.PLAYING) {
             return;
         }
         if (state.tubeCount() >= MAX_TUBES) {
@@ -661,18 +963,16 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             return;
         }
         SaveData save = game.save();
-        if (freeBoosters > 0) {
-            freeBoosters--;
-        } else if (save.boosters > 0) {
-            save.consumeBooster();
-        } else if (save.coins >= GameConfig.BOOSTER_PRICE) {
-            save.buyBooster();
-            save.consumeBooster();
-        } else {
-            hud.setBoosters(0);
-            game.sound().play(SoundManager.Cue.INVALID);
-            toast("Not enough coins for another tube", Palette.DANGER);
+        // Free tubes first, then the stock; when both are gone, offer a video or a pack.
+        int taken = Assists.take(freeBoosters, save.stockOf(Assists.TUBE));
+        if (taken == 0) {
+            offerAssist(Assists.TUBE);
             return;
+        }
+        if (taken == 1) {
+            freeBoosters--;
+        } else {
+            save.consumeAssist(Assists.TUBE);
         }
 
         deselect();
@@ -680,7 +980,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         stacks.add(new Array<>(Packed.CAPACITY));
         relayout();
 
-        hud.setBoosters(availableBoosters());
+        refreshStock();
         hud.setCoins(save.coins);
         game.sound().play(SoundManager.Cue.BUTTON);
         if (hintsUnlocked) {
@@ -693,14 +993,108 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         game.goHome();
     }
 
+    // --------------------------------------------------------------------- audio
+    // Same switches as Settings (persisted in SaveData), reachable without leaving the level.
+    @Override
+    public void onToggleEffects() {
+        boolean on = !game.sound().areEffectsOn();
+        game.sound().setEffectsEnabled(on);
+        hud.setAudio(on, game.sound().isMusicOn());
+        game.sound().play(SoundManager.Cue.BUTTON); // audible confirmation only when turned on
+    }
+
+    @Override
+    public void onToggleMusic() {
+        boolean on = !game.sound().isMusicOn();
+        game.sound().setMusicEnabled(on);
+        hud.setAudio(game.sound().areEffectsOn(), on);
+        game.sound().play(SoundManager.Cue.BUTTON);
+    }
+
     private int availableBoosters() {
-        return freeBoosters + game.save().boosters;
+        return challengeRules.noBoosters() ? 0 : freeBoosters + game.save().boosters;
+    }
+
+    /** The stock strip: free uses left this level plus what the save holds. */
+    private void refreshStock() {
+        SaveData save = game.save();
+        hud.setStock(availableBoosters(),
+            challengeRules.noUndo() ? 0 : freeUndos + save.stockOf(Assists.UNDO),
+            freeResets + save.stockOf(Assists.RESET));
+    }
+
+    /**
+     * Out of an assist: one card, two honest ways to get more - a video when a network has one
+     * ready (and, for tubes, the cooldown has passed), or coins - and a way to say no.
+     */
+    private void offerAssist(final Assists assist) {
+        SaveData save = game.save();
+        boolean videoReady = game.ads().isRewardedReady()
+            && (assist != Assists.TUBE || save.rewardedTubeCooldownRemaining(System.currentTimeMillis()) == 0L);
+        boolean canBuy = save.coins >= assist.packPrice();
+        game.sound().play(SoundManager.Cue.INVALID);
+        Dialog dialog = Ui.dialog(skin, "Out of " + assist.plural(2), choice -> {
+            if ("video".equals(choice)) {
+                watchForAssist(assist);
+            } else if ("buy".equals(choice) && !disposed && save.buyAssistPack(assist)) {
+                hud.setCoins(save.coins);
+                game.sound().play(SoundManager.Cue.COIN);
+                refreshStock();
+                toast("+" + assist.packLabel() + " in stock", Palette.SUCCESS);
+            }
+        });
+        Table content = dialog.getContentTable();
+        String ways = videoReady && canBuy ? "Watch a short video for " + assist.videoLabel()
+            + ", or pay " + assist.packPrice() + " coins for " + assist.packLabel() + "."
+            : videoReady ? "Watch a short video for " + assist.videoLabel() + "."
+            : canBuy ? assist.packLabel() + " for " + assist.packPrice() + " coins."
+            : assist.packLabel() + " cost " + assist.packPrice() + " coins. Clear levels to earn "
+                + "more, or come back when a video is ready.";
+        content.add(Ui.paragraph(skin, ways, "dim", 420f)).width(420f).padTop(6f).row();
+        dialog.button(Ui.button(skin, "NOT NOW", "ghost", () -> { }), "no");
+        if (videoReady) {
+            dialog.button(Ui.iconTextButton(skin, "icon-play", "WATCH", "primary", () -> { }), "video");
+        }
+        if (canBuy) {
+            dialog.button(Ui.iconTextButton(skin, "icon-coin", "BUY  " + assist.packPrice(), "gold",
+                () -> { }), "buy");
+        }
+        dialog.show(stage);
+    }
+
+    private void watchForAssist(final Assists assist) {
+        game.pacing().onFullScreenAdShown();
+        game.ads().showRewarded(new AdProvider.RewardListener() {
+            @Override
+            public void onRewarded(int coins) {
+                if (disposed) return;
+                SaveData save = game.save();
+                if (assist == Assists.TUBE) {
+                    save.claimRewardedTube(System.currentTimeMillis());
+                } else {
+                    save.addAssist(assist, assist.videoReward());
+                }
+                game.analytics().event(AnalyticsEvents.REWARDED_EXTRA_MOVES, AnalyticsEvents.P_LEVEL,
+                    levelIndex, AnalyticsEvents.P_SOURCE, "rewarded", AnalyticsEvents.P_MODE,
+                    "assist." + assist.id());
+                refreshStock();
+                game.sound().play(SoundManager.Cue.TUBE);
+                toast("+" + assist.videoLabel() + " in stock", Palette.SUCCESS);
+            }
+
+            @Override
+            public void onFailed() {
+                if (!disposed) {
+                    toast("Video closed early — nothing added this time", Palette.TEXT_DIM);
+                }
+            }
+        });
     }
 
     // --------------------------------------------------------------------- hints
     @Override
     public void onHint() {
-        if (phase != Phase.PLAYING || hintPending) {
+        if (challengeRules.noHints() || phase != Phase.PLAYING || hintPending) {
             return;
         }
         if (hintsUnlocked) {
@@ -733,7 +1127,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                     @Override
                     public void onFailed() {
                         if (!disposed) {
-                            hud.setHintEnabled(true);
+                            hud.setHintEnabled(!challengeRules.noHints());
                             toast("Video closed early — no hint this time", Palette.TEXT_DIM);
                         }
                     }
@@ -768,9 +1162,11 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     }
 
     private void unlockHints() {
+        game.analytics().event(AnalyticsEvents.HINTS_UNLOCKED,
+            AnalyticsEvents.P_LEVEL, levelIndex, AnalyticsEvents.P_MODE, analyticsMode());
         hintsUnlocked = true;
         hud.setHintCaption(hintCaption());
-        hud.setHintEnabled(true);
+        hud.setHintEnabled(!challengeRules.noHints());
         requestHint(true);
     }
 
@@ -853,7 +1249,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         float arc = Math.max(0f,
             Math.max(source.liftY(), target.liftY()) - Math.max(startY, endY)) + 18f;
 
-        BallActor ghost = new BallActor(skin, move.colorIndex(), ballSize);
+        BallActor ghost = new BallActor(skin, move.colorIndex(), ballSize, game.save().colorLabels);
         ghost.getColor().a = 0f;
         ghost.setPosition(startX, startY);
         ballGroup.addActor(ghost);
@@ -896,6 +1292,9 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     }
 
     private String hintCaption() {
+        if (challengeRules.noHints()) {
+            return "Hint off";
+        }
         if (hintsUnlocked) {
             return "Hint ∞";
         }
@@ -910,8 +1309,15 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         return moveLimit > 0 && moves >= moveLimit;
     }
 
+    private String analyticsMode() {
+        return dailyChallenge ? "daily" : challengeRun ? "challenge" : "campaign";
+    }
+
     private void outOfMoves() {
         phase = Phase.OUT_OF_MOVES;
+        game.analytics().event(AnalyticsEvents.LEVEL_OUT_OF_MOVES,
+            AnalyticsEvents.P_LEVEL, levelIndex, AnalyticsEvents.P_MOVES, moves,
+            AnalyticsEvents.P_MODE, analyticsMode());
         deselect();
         clearSuggestion();
         hud.setHintEnabled(false);
@@ -920,6 +1326,21 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     }
 
     private void showOutOfMovesDialog() {
+        if (challengeRun) {
+            Dialog ended = Ui.dialog(skin, "Challenge ended", choice -> {
+                if ("retry".equals(choice)) {
+                    onRestart();
+                } else {
+                    game.goHome();
+                }
+            });
+            ended.getContentTable().add(new Label("This ruleset gives you no extra moves.",
+                skin, "dim")).padTop(8f).row();
+            ended.button(Ui.button(skin, "HOME", "ghost", () -> { }), "home");
+            ended.button(Ui.button(skin, "RETRY", "primary", () -> { }), "retry");
+            ended.show(stage);
+            return;
+        }
         RewardOffer offer = RewardOffer.decide(game.ads().isRewardedReady(),
             game.save().coins, GameConfig.EXTRA_MOVES_PRICE);
 
@@ -981,9 +1402,11 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
 
     private void grantExtraMoves() {
         moveLimit += GameConfig.EXTRA_MOVES_PER_AD;
+        game.analytics().event(AnalyticsEvents.REWARDED_EXTRA_MOVES,
+            AnalyticsEvents.P_LEVEL, levelIndex, AnalyticsEvents.P_MODE, analyticsMode());
         phase = Phase.PLAYING;
         hud.setMoves(moves, moveLimit);
-        hud.setHintEnabled(true);
+        hud.setHintEnabled(!challengeRules.noHints());
         toast("+" + GameConfig.EXTRA_MOVES_PER_AD + " moves", Palette.SUCCESS);
         game.sound().play(SoundManager.Cue.COIN);
     }
@@ -1028,41 +1451,460 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             : SoundManager.Cue.VOICE_LEVEL_COMPLETE;
         game.sound().play(voice);
 
-        int earned = game.save().recordWin(levelIndex, moves, parMoves);
-        hud.setCoins(game.save().coins);
+        boolean paletteWasUnlocked = game.save().dailyPaletteUnlocked;
+        // Summarise the run before the save moves on, so "new record" compares with the old best.
+        int previousBest = dailyChallenge || challengeRun ? 0 : game.save().bestMovesFor(levelIndex);
+        final WinSummary summary = WinSummary.of(moves, parMoves, previousBest);
+        int earned;
+        if (dailyChallenge) {
+            earned = game.save().recordDailyWin(dailyDate);
+        } else if (challengeRun) {
+            earned = game.save().recordChallengeWin();
+        } else {
+            // Star-road and chapter skins this win unlocks: owned after, not before.
+            java.util.List<Cosmetic> ownedBefore = Shop.ownedProgressionItems(game.save());
+            earned = game.save().recordWin(levelIndex, moves, parMoves);
+            java.util.List<Cosmetic> unlockedNow = Shop.ownedProgressionItems(game.save());
+            unlockedNow.removeAll(ownedBefore);
+            starUnlocks = unlockedNow;
+        }
+        // Leaderboards and analytics: fire-and-forget, inert without the platform services.
+        GameServices services = game.services();
+        services.submitScore(GameServices.Leaderboard.HIGHEST_LEVEL,
+            LeaderboardScores.highestLevel(game.save().highestUnlocked));
+        services.submitScore(GameServices.Leaderboard.TOTAL_STARS,
+            LeaderboardScores.totalStars(game.save().totalStars()));
+        if (dailyChallenge) {
+            services.submitScore(GameServices.Leaderboard.DAILY_FEWEST_MOVES,
+                LeaderboardScores.dailyMoves(moves));
+        }
+        game.analytics().event(dailyChallenge ? AnalyticsEvents.DAILY_COMPLETE : AnalyticsEvents.LEVEL_COMPLETE,
+            AnalyticsEvents.P_LEVEL, levelIndex, AnalyticsEvents.P_MOVES, moves,
+            AnalyticsEvents.P_PAR, parMoves, AnalyticsEvents.P_STARS, summary.stars,
+            AnalyticsEvents.P_PERFECT, summary.perfect, AnalyticsEvents.P_MODE, analyticsMode());
+        boolean paletteUnlockedNow = !paletteWasUnlocked && game.save().dailyPaletteUnlocked;
+        // The purse counts up as the coins land on it (see showResult), so the HUD keeps the
+        // old total until then.
+        final int coinsBefore = Math.max(0, game.save().coins - earned);
+        hud.setCoins(coinsBefore);
+        final int awardedCoins = earned;
         stage.addAction(Actions.delay(0.9f, Actions.run(() -> {
             if (!disposed) {
-                showResult(earned, perfect);
+                showResult(summary, awardedCoins, coinsBefore, paletteUnlockedNow);
             }
         })));
     }
 
-    private void showResult(int coinsEarned, boolean perfect) {
-        Dialog dialog = Ui.dialog(skin, perfect ? "Perfect!" : "Level " + levelIndex + " cleared",
-            choice -> {
-                if ("next".equals(choice)) {
-                    afterBreak(() -> game.goToLevel(levelIndex + 1));
-                } else if ("replay".equals(choice)) {
-                    afterBreak(() -> game.goToLevel(levelIndex));
-                } else {
-                    game.goHome();
+    /**
+     * Renders the result card in the player's current look and hands it to the share sheet.
+     * Off Android there is no sheet: the button says so instead of doing nothing.
+     */
+    private void shareResult(WinSummary summary) {
+        if (!game.share().isAvailable()) {
+            Ui.toast(stage, skin, "Sharing works in the phone version", Palette.TEXT_DIM);
+            return;
+        }
+        String heading;
+        if (dailyChallenge) {
+            heading = "Daily puzzle  •  " + LocalDate.parse(dailyDate).format(
+                java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.ENGLISH));
+        } else if (challengeRun) {
+            heading = "Challenge  •  level " + levelIndex;
+        } else {
+            heading = "Level " + levelIndex + "  •  " + level.colors() + " colours";
+        }
+        int par = parMoves == Level.PAR_UNKNOWN ? 0 : parMoves;
+        ShareCard.Result result = new ShareCard.Result(heading, level.colors(), level.emptyTubes(),
+            summary.stars, moves, par, summary.perfect);
+        com.badlogic.gdx.files.FileHandle png;
+        try {
+            png = ShareCard.render(skin, game.tubes(), game.batch(), stage.getViewport(), result);
+        } catch (RuntimeException failed) {
+            com.badlogic.gdx.Gdx.app.error("Share", "Result card failed: " + failed.getMessage());
+            Ui.toast(stage, skin, "Couldn't build the picture. Try again.", Palette.TEXT_DIM);
+            return;
+        }
+        String what = dailyChallenge ? "today's Tidy Tubes puzzle"
+            : "level " + levelIndex + " of Tidy Tubes";
+        String text = "I solved " + what + " in " + moves + " move" + (moves == 1 ? "" : "s")
+            + (par > 0 ? " (best possible " + par + ")" : "") + ". Can you beat it? "
+            + GameConfig.STORE_URL;
+        game.analytics().event(AnalyticsEvents.SHARE_RESULT, AnalyticsEvents.P_LEVEL, levelIndex,
+            AnalyticsEvents.P_MODE, analyticsMode());
+        game.share().shareImage(png, text, "Share your result");
+    }
+
+    /**
+     * Thirty-six seconds of guided breathing over the board, then straight on to the next
+     * level: the breath is the break, so no interstitial follows it.
+     */
+    private void startBreath() {
+        game.analytics().event(AnalyticsEvents.BREATHE_START, AnalyticsEvents.P_LEVEL, levelIndex);
+        BreatheOverlay overlay = new BreatheOverlay(skin, stage.getWidth(), stage.getHeight(),
+            completed -> {
+                game.analytics().event(AnalyticsEvents.BREATHE_DONE, AnalyticsEvents.P_LEVEL,
+                    levelIndex, AnalyticsEvents.P_RESULT, completed ? "done" : "skipped");
+                if (!disposed) {
+                    game.goToLevel(levelIndex + 1);
                 }
             });
+        stage.addActor(overlay);
+    }
+
+    /** "1 more daily win" / "2 more daily wins", towards the streak palette. */
+    private String remainingDailyWins() {
+        int left = Math.max(1, GameConfig.DAILY_PALETTE_STREAK - game.save().dailyWinStreak);
+        return left + " more daily win" + (left == 1 ? "" : "s");
+    }
+
+    private static final float STAR_SIZE = 68f;
+    private static final float STAR_DELAY = 0.1f;
+    private static final float STAR_STAGGER = 0.22f;
+    private static final float STAR_DROP = 0.3f;
+
+    /**
+     * The result card: stars drop in one by one, a record badge pops, the coins fly up into the
+     * HUD purse (which counts up as they land), and NEXT breathes to invite the next level.
+     * Nothing here blocks input; the buttons work from the first frame.
+     */
+    private void showResult(WinSummary summary, int coinsEarned, int coinsBefore,
+                            boolean paletteUnlockedNow) {
+        boolean perfect = summary.perfect;
+        // Three ways on, three different places - no two lead to the same screen:
+        //   NEXT  -> campaign: next level / daily: back to the campaign level /
+        //            challenge: the challenges list to pick another one;
+        //   REPLAY -> this same board again;  HOME -> home;  SHARE keeps the card open.
+        final Runnable goNext = () -> {
+            if (dailyChallenge) {
+                afterBreak(() -> game.goToLevel(game.save().currentLevel));
+            } else if (challengeRun) {
+                game.goToChallenges();
+            } else {
+                afterBreak(() -> game.goToLevel(levelIndex + 1));
+            }
+        };
+        final Runnable goReplay = () -> {
+            if (dailyChallenge) {
+                game.goToDailyChallenge(LocalDate.parse(dailyDate));
+            } else if (challengeRun) {
+                game.goToChallenge(challengeRules); // replay it, not the list
+            } else {
+                afterBreak(() -> game.goToLevel(levelIndex));
+            }
+        };
+        final Dialog[] resultDialog = new Dialog[1];
+        Dialog dialog = Ui.dialog(skin, null, choice -> { }); // buttons wire themselves below
+        resultDialog[0] = dialog;
         Table content = dialog.getContentTable();
+        content.pad(26f, 30f, 22f, 30f);
+
+        // --- header: what was played, then the big word, which pops in like the praise did
+        String context = dailyChallenge ? "DAILY CHALLENGE"
+            : challengeRun ? "CHALLENGE" : "LEVEL " + levelIndex;
+        Label contextLabel = new Label(context, skin, "accent");
+        content.add(contextLabel).row();
+        Label word = new Label(perfect ? "Perfect!" : dailyChallenge ? "Done!" : "Cleared!",
+            skin, "display");
+        if (perfect) word.setColor(Palette.GOLD);
+        Container<Label> wordBox = new Container<>(word);
+        wordBox.setTransform(true);
+        wordBox.pack();
+        wordBox.setOrigin(Align.center);
+        wordBox.setScale(0.6f);
+        wordBox.getColor().a = 0f;
+        wordBox.addAction(Actions.parallel(
+            Actions.fadeIn(0.15f),
+            Actions.scaleTo(1f, 1f, 0.32f, Interpolation.swingOut)));
+        content.add(wordBox).padTop(-6f).row();
+
+        // --- stars: the earned ones drop in from above, one after another, each a note higher
+        Table starsRow = new Table();
+        float starsDone = STAR_DELAY + STAR_DROP;
+        for (int i = 0; i < 3; i++) {
+            Image star = new Image(skin.getDrawable("icon-star"));
+            star.setSize(STAR_SIZE, STAR_SIZE);
+            star.setOrigin(Align.center);
+            boolean earnedStar = i < summary.stars;
+            if (earnedStar) {
+                final float pitch = 1f + 0.12f * i;
+                star.setColor(Palette.GOLD);
+                star.getColor().a = 0f;
+                star.setScale(2.2f);
+                star.addAction(Actions.sequence(
+                    Actions.delay(STAR_DELAY + i * STAR_STAGGER),
+                    Actions.run(() -> game.sound().play(SoundManager.Cue.DROP, pitch)),
+                    Actions.parallel(
+                        Actions.fadeIn(0.1f),
+                        Actions.scaleTo(1f, 1f, STAR_DROP, Interpolation.swingOut))));
+                starsDone = STAR_DELAY + i * STAR_STAGGER + STAR_DROP;
+            } else {
+                star.setColor(Palette.EDGE);
+                star.getColor().a = 0.35f;
+            }
+            starsRow.add(star).size(STAR_SIZE).pad(0f, 6f, 0f, 6f).padTop(i == 1 ? 0f : 10f);
+        }
+        // A warm halo behind the stars, so the card has a centre of light, not just text.
+        Image halo = new Image(skin.getDrawable("glow"));
+        halo.setColor(Palette.GOLD.r, Palette.GOLD.g, Palette.GOLD.b, summary.stars > 0 ? 0.30f : 0.10f);
+        com.badlogic.gdx.scenes.scene2d.ui.Stack starStack = new com.badlogic.gdx.scenes.scene2d.ui.Stack();
+        starStack.add(halo);
+        starStack.add(starsRow);
+        content.add(starStack).size(340f, 150f).padTop(4f).row();
 
         String detail = moves == 1 ? "1 move" : moves + " moves";
         if (parMoves != Level.PAR_UNKNOWN) {
-            detail += perfect ? "  •  best possible" : "  •  best possible " + parMoves;
+            detail += perfect ? "  •  can't be beaten" : "  •  best possible " + parMoves;
         }
-        content.add(new Label(detail, skin, "dim")).padTop(4f).row();
+        content.add(new Label(detail, skin, "dim")).padTop(10f).row();
 
-        Label reward = new Label("+" + coinsEarned, skin, "gold");
-        content.add(Ui.chip(skin, "icon-coin", Palette.GOLD, reward)).padTop(16f).row();
+        // --- record line (campaign only): a badge that pops once the stars have landed
+        if (!dailyChallenge && !challengeRun) {
+            if (summary.newRecord) {
+                Label record = new Label("NEW RECORD!  was " + summary.previousBest, skin, "gold");
+                Container<Label> badge = new Container<>(record);
+                badge.setTransform(true);
+                badge.pack();
+                badge.setOrigin(Align.center);
+                badge.setScale(0f);
+                badge.addAction(Actions.sequence(
+                    Actions.delay(starsDone + 0.05f),
+                    Actions.run(() -> game.sound().play(SoundManager.Cue.TUBE)),
+                    Actions.scaleTo(1.15f, 1.15f, 0.18f, Interpolation.pow2Out),
+                    Actions.scaleTo(1f, 1f, 0.16f, Interpolation.swingOut)));
+                content.add(badge).padTop(8f).row();
+            } else if (!summary.firstClear) {
+                content.add(new Label("Your best: " + summary.bestAfter + " moves", skin, "caption"))
+                    .padTop(8f).row();
+            }
+        }
 
-        dialog.button(Ui.iconButton(skin, "icon-home", () -> { }), "home");
-        dialog.button(Ui.button(skin, "REPLAY", "ghost", () -> { }), "replay");
-        dialog.button(Ui.button(skin, "NEXT", "primary", () -> { }), "next");
+        // --- coins: the chip shows the award; the sprites fly from it to the purse
+        Table rewardChip = null;
+        if (dailyChallenge && coinsEarned == 0) {
+            content.add(new Label("Daily reward already claimed", skin, "caption"))
+                .padTop(12f).row();
+        } else if (challengeRun && coinsEarned == 0) {
+            content.add(new Label("Challenge completed  •  no new achievement reward",
+                skin, "caption")).padTop(12f).row();
+        } else {
+            Label reward = new Label("+" + coinsEarned, skin, "gold");
+            rewardChip = Ui.chip(skin, "icon-coin", Palette.GOLD, reward);
+            content.add(rewardChip).padTop(12f).row();
+            // Opt-in "double it" video: the best-performing rewarded placement in casual games,
+            // offered only when a video is ready, granted once, after the SDK confirms.
+            if (coinsEarned > 0 && game.ads().isRewardedReady()) {
+                content.add(doubleCoinsButton(reward, coinsEarned)).padTop(10f).row();
+            }
+        }
+        if (challengeRun && coinsEarned > 0) {
+            content.add(new Label("Achievement reward", skin, "caption")).padTop(8f).row();
+        }
+        if (dailyChallenge && coinsEarned > 0) {
+            String streakMessage = paletteUnlockedNow
+                ? "3-day streak! New ball colours unlocked."
+                : game.save().dailyPaletteUnlocked ? "Daily colour style unlocked."
+                : remainingDailyWins() + " to unlock colours.";
+            content.add(new Label(streakMessage, skin, "caption")).padTop(8f).row();
+        }
+
+        // --- star road: a skin unlocked by this level's stars, else how far the next one is
+        if (!dailyChallenge && !challengeRun) {
+            if (!starUnlocks.isEmpty()) {
+                for (Cosmetic item : starUnlocks) {
+                    Table unlocked = new Table();
+                    unlocked.setBackground(skin.newDrawable("pill", Palette.GOLD));
+                    unlocked.pad(8f, 16f, 8f, 18f);
+                    boolean chapterReward = item.unlock() == Cosmetic.Unlock.CHAPTER;
+                    unlocked.add(new Image(skin.newDrawable(chapterReward ? "icon-grid" : "icon-star",
+                        Palette.ON_GOLD))).size(22f).padRight(8f);
+                    Label text = new Label("New skin unlocked: " + item.displayName() + "  •  "
+                        + item.category().title(), skin, "label");
+                    text.setColor(Palette.ON_GOLD);
+                    unlocked.add(text);
+                    content.add(unlocked).padTop(10f).row();
+                }
+                game.sound().play(SoundManager.Cue.COIN);
+            } else {
+                StarRoad.Milestone next = StarRoad.next(game.save().totalStars());
+                if (next != null) {
+                    int missing = next.stars - game.save().totalStars();
+                    Label road = new Label(missing + (missing == 1 ? " star" : " stars")
+                        + " to unlock " + next.reward.displayName() + " ("
+                        + next.reward.category().title().toLowerCase(java.util.Locale.ROOT) + ")",
+                        skin, "caption");
+                    road.setColor(Palette.GOLD);
+                    content.add(road).padTop(8f).row();
+                }
+            }
+        }
+
+        // --- shop nudge: the first item the purse can now afford, announced once ever
+        if (coinsEarned > 0) {
+            java.util.List<Cosmetic> fresh = Shop.newlyAffordable(game.save());
+            if (!fresh.isEmpty()) {
+                Cosmetic item = fresh.get(0);
+                game.save().markShopNotified(item.id());
+                Label nudge = new Label("New in the shop: " + item.displayName() + "  •  "
+                    + item.price() + " coins", skin, "caption");
+                nudge.setColor(Palette.GOLD);
+                content.add(nudge).padTop(10f).row();
+            }
+        }
+
+        // --- a breath every few levels: the calm the tagline promises, offered, never imposed
+        if (!dailyChallenge && !challengeRun && summary.firstClear
+            && Breathing.offersBreathAfter(levelIndex, GameConfig.BREATHE_EVERY_N_LEVELS)) {
+            Table breath = new Table();
+            breath.add(new Label(levelIndex + " levels in. Take a breath?", skin, "caption"))
+                .padRight(12f);
+            breath.add(Ui.button(skin, "BREATHE  •  " + (int) Breathing.TOTAL_SECONDS + " s",
+                "ghost", () -> {
+                    resultDialog[0].hide();
+                    startBreath();
+                })).height(48f);
+            content.add(breath).padTop(14f).row();
+        }
+
+        // --- actions: one big way forward, then two labelled choices, then a quiet way home.
+        // Every button says what it does in words; the glyph is only a hint.
+        final float actionsWidth = 470f;
+        content.add(Ui.divider(skin)).height(2f).width(actionsWidth).padTop(18f).row();
+        // Daily: back to the campaign where the player left it; the level number is the home
+        // screen's business, here it only reads like a jump to a random level.
+        String primary = dailyChallenge ? "CONTINUE" : challengeRun ? "CHALLENGES" : "NEXT LEVEL";
+        com.badlogic.gdx.scenes.scene2d.ui.Button next = Ui.iconTextButton(skin, "icon-play",
+            primary, "primary", goNext);
+        content.add(next).width(actionsWidth).height(74f).padTop(18f).row();
+
+        Table secondary = new Table();
+        secondary.add(Ui.iconTextButton(skin, "icon-replay", "REPLAY", "ghost", goReplay))
+            .width((actionsWidth - 12f) * 0.5f).height(60f).padRight(12f);
+        secondary.add(Ui.iconTextButton(skin, "icon-share", "SHARE", "ghost",
+            () -> shareResult(summary))) // the card stays; the share sheet opens over it
+            .width((actionsWidth - 12f) * 0.5f).height(60f);
+        content.add(secondary).padTop(12f).row();
+
+        TextButton home = Ui.button(skin, "HOME", "ghost", game::goHome);
+        home.getLabel().setColor(Palette.TEXT_DIM);
+        content.add(home).width(actionsWidth * 0.5f).height(52f).padTop(10f).row();
+
+        dialog.getButtonTable().pad(0f); // no scene2d button row: the actions live in the card
         dialog.show(stage);
+
+        // The actions arrive after the stars, so the eye reads the result first.
+        for (com.badlogic.gdx.scenes.scene2d.Actor action
+            : new com.badlogic.gdx.scenes.scene2d.Actor[] {next, secondary, home}) {
+            action.getColor().a = 0f;
+            action.addAction(Actions.delay(starsDone * 0.5f, Actions.fadeIn(0.25f, Interpolation.fade)));
+        }
+        // NEXT breathes gently once the card has settled: the eye lands on the way forward.
+        next.setTransform(true);
+        next.setOrigin(Align.center);
+        next.addAction(Actions.sequence(
+            Actions.delay(starsDone + 0.6f),
+            Actions.forever(Actions.sequence(
+                Actions.scaleTo(1.03f, 1.03f, 0.7f, Interpolation.sine),
+                Actions.scaleTo(1f, 1f, 0.7f, Interpolation.sine)))));
+
+        if (rewardChip != null && coinsEarned > 0) {
+            final Table source = rewardChip;
+            stage.addAction(Actions.delay(starsDone + 0.15f,
+                Actions.run(() -> flyCoins(source, coinsEarned, coinsBefore))));
+        }
+    }
+
+    /**
+     * "WATCH • ×2" under the win reward: one rewarded video doubles the level's coins. The bonus
+     * is credited once (button gone, flag set) and only from the SDK's reward callback, never on
+     * a dismissed or failed video. It also counts as a full-screen ad for interstitial pacing.
+     */
+    private Actor doubleCoinsButton(Label rewardLabel, int coinsEarned) {
+        final boolean[] doubled = {false};
+        final Button[] holder = new Button[1];
+        holder[0] = Ui.iconTextButton(skin, "icon-play", "WATCH  •  ×2  COINS", "gold", () -> {
+            if (doubled[0] || holder[0].isDisabled()) {
+                return;
+            }
+            holder[0].setDisabled(true);
+            game.sound().play(SoundManager.Cue.BUTTON);
+            game.pacing().onFullScreenAdShown();
+            game.ads().showRewarded(new AdProvider.RewardListener() {
+                @Override
+                public void onRewarded(int coins) {
+                    if (doubled[0] || disposed) {
+                        return;
+                    }
+                    doubled[0] = true;
+                    game.save().addCoins(coinsEarned);
+                    rewardLabel.setText("+" + (coinsEarned * 2) + "  ×2");
+                    hud.setCoins(game.save().coins);
+                    holder[0].addAction(Actions.sequence(Actions.fadeOut(0.18f), Actions.visible(false)));
+                    game.sound().play(SoundManager.Cue.COIN);
+                    game.analytics().event(AnalyticsEvents.REWARDED_DOUBLE_COINS,
+                        AnalyticsEvents.P_LEVEL, levelIndex, AnalyticsEvents.P_COINS, game.save().coins);
+                }
+
+                @Override
+                public void onFailed() {
+                    if (!disposed && !doubled[0]) {
+                        holder[0].setDisabled(false);
+                        Ui.toast(stage, skin, "No video right now. Try again in a moment.", Palette.GOLD);
+                    }
+                }
+            });
+        });
+        return holder[0];
+    }
+
+    /**
+     * Sends a handful of coin sprites from {@code source} up to the HUD purse in staggered arcs;
+     * each landing adds its share to the purse (which pops) and the last one lands exactly on
+     * the saved total. The sprites sit above the dialog; the burst stays the last actor.
+     */
+    private void flyCoins(Table source, int coinsEarned, int coinsBefore) {
+        if (disposed) {
+            return;
+        }
+        int count = WinSummary.coinSprites(coinsEarned);
+        Vector2 from = source.localToStageCoordinates(
+            new Vector2(source.getWidth() * 0.5f, source.getHeight() * 0.5f));
+        Vector2 to = hud.purseCenter(new Vector2());
+        final float size = 34f;
+        final int[] landed = {0};
+        for (int k = 0; k < count; k++) {
+            final int index = k;
+            Image coin = new Image(skin.getDrawable("icon-coin"));
+            coin.setColor(Palette.GOLD);
+            coin.setSize(size, size);
+            coin.setOrigin(Align.center);
+            coin.setTouchable(Touchable.disabled);
+            // Fan the take-off points a little so the coins don't leave as one blob.
+            coin.setPosition(from.x - size * 0.5f + (k % 3 - 1) * 14f,
+                from.y - size * 0.5f + (k % 2) * 10f);
+            coin.setScale(0.6f);
+            coin.getColor().a = 0f;
+            stage.addActor(coin);
+            coin.addAction(Actions.sequence(
+                Actions.delay(k * 0.06f),
+                Actions.parallel(Actions.fadeIn(0.08f),
+                    Actions.scaleTo(1f, 1f, 0.12f, Interpolation.swingOut)),
+                Actions.parallel(
+                    ArcMoveAction.arcTo(to.x - size * 0.5f, to.y - size * 0.5f,
+                        110f + k * 8f, 0.55f),
+                    Actions.sequence(Actions.delay(0.4f),
+                        Actions.scaleTo(0.45f, 0.45f, 0.15f, Interpolation.pow2In))),
+                Actions.run(() -> {
+                    landed[0] += WinSummary.coinsForSprite(coinsEarned, count, index);
+                    boolean last = index == count - 1;
+                    hud.setCoins(last ? game.save().coins
+                        : Math.min(game.save().coins, coinsBefore + landed[0]));
+                    if (index == 0) {
+                        game.sound().play(SoundManager.Cue.COIN);
+                    }
+                }),
+                Actions.removeActor()));
+        }
+        burst.toFront(); // the burst interrupts the batch, so it has to stay last
     }
 
     /**
@@ -1071,7 +1913,9 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
      * navigation always happens; the ad only delays it.
      */
     private void afterBreak(Runnable then) {
-        if (game.pacing().onBreak() && game.ads().isInterstitialReady()) {
+        // Onboarding is ad-free: the first levels decide whether the player comes back.
+        boolean onboarding = game.save().completedCount() < GameConfig.INTERSTITIAL_MIN_CLEARED;
+        if (!onboarding && game.pacing().onBreak() && game.ads().isInterstitialReady()) {
             game.pacing().onFullScreenAdShown();
             game.ads().showInterstitial(then);
         } else {
@@ -1093,9 +1937,10 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         });
         Table content = dialog.getContentTable();
         String[] steps = {
-            "Tap a tube to lift the balls on top.",
-            "Tap another tube to drop them there. It must be empty, or show the same colour.",
-            "Fill every tube with a single colour to win. Undo is free, always."
+            "Tap a tube, or drag its top balls, to pick them up.",
+            "Tap another tube or drag-and-drop onto it. It must be empty, or show the same colour.",
+            "Fill every tube with a single colour to win. Undo is free, always.",
+            "You get one free hint per level. Watch the move limit; a rewarded continue is optional."
         };
         for (int i = 0; i < steps.length; i++) {
             Table row = new Table();
@@ -1112,6 +1957,16 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     // ------------------------------------------------------------------ lifecycle
     @Override
     public void render(float delta) {
+        if (pendingLevel != null) {
+            // show() and resize() have both run by now: safe to deal the board.
+            Level generated = pendingLevel;
+            pendingLevel = null;
+            onLevelReady(generated);
+            if (hasPendingPar) {
+                hasPendingPar = false;
+                onParReady(pendingPar);
+            }
+        }
         // The rewarded ad usually finishes loading a few seconds after the screen is built, so
         // the hint caption follows its availability instead of being baked in once.
         boolean ready = game.ads().isRewardedReady();
@@ -1123,6 +1978,17 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     }
 
     private boolean lastRewardedReady;
+    /** Set on the first {@link #show()}; a level that arrives earlier waits in {@link #pendingLevel}. */
+    private boolean shown;
+    private Level pendingLevel;
+    private int pendingPar;
+    private boolean hasPendingPar;
+
+    @Override
+    public void show() {
+        super.show();
+        shown = true;
+    }
 
     /**
      * The world size changes with the window (desktop) or with a fold/rotation on large screens
@@ -1130,6 +1996,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
      */
     @Override
     protected void onResized(float worldWidth, float worldHeight) {
+        hud.setLandscape(isLandscape());
         if (phase == Phase.LOADING || state == null || tubes.size == 0) {
             return;
         }
@@ -1140,6 +2007,26 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     @Override
     protected void onBackPressed() {
         game.goHome();
+    }
+
+    /**
+     * The world map: a campaign level is played in its chapter's biome, unless the player chose
+     * a theme of their own in the shop. Applied by {@link BaseScreen#applyLook()} on show.
+     */
+    @Override
+    protected Cosmetic themeOverride() {
+        if (dailyChallenge || challengeRun || Shop.equipped(game.save(), Cosmetic.Category.THEME)
+            != Cosmetic.defaultFor(Cosmetic.Category.THEME)) {
+            return null;
+        }
+        return Cosmetic.byId(World.biomeFor(levelIndex).themeId);
+    }
+
+    @Override
+    public void hide() {
+        // No look restore here: the next screen applies its own in show(). Restoring here ran
+        // after the next screen was built and swapped its theme (and backdrop) under it.
+        super.hide();
     }
 
     @Override

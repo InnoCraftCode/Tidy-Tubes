@@ -34,8 +34,8 @@ public final class AnimatedBackground extends Actor {
     private static final float BASE_ALPHA = 0.12f;
     private static final float AURORA_ALPHA = 0.20f;
 
-    private final Drawable gradient;
-    private final Drawable ball;
+    private Drawable gradient;
+    private Drawable ball;
     private final Drawable glow;
     private final Color tint = new Color();
 
@@ -57,7 +57,7 @@ public final class AnimatedBackground extends Actor {
         this.ball = skin.getDrawable("ball");
         this.glow = skin.getDrawable("glow");
         setTouchable(Touchable.disabled);
-        setBounds(0f, 0f, GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
+        setBounds(0f, 0f, GameConfig.WORLD_LANDSCAPE_WIDTH, GameConfig.WORLD_HEIGHT); // resized by BaseScreen
 
         for (int i = 0; i < BALL_COUNT; i++) {
             spawn(i);
@@ -78,6 +78,15 @@ public final class AnimatedBackground extends Actor {
         float depth = 1f - (radius[i] - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS);
         alpha[i] = BASE_ALPHA * (0.45f + 0.55f * depth);
         colorIndex[i] = MathUtils.random(Palette.ballCount() - 1);
+    }
+
+    /**
+     * A cosmetic was applied (theme gradient re-baked, ball sprite swapped): pick up the skin's
+     * current drawables, since the ones held so far may now point at disposed textures.
+     */
+    public void refresh(Skin skin) {
+        gradient = skin.getDrawable("bg");
+        ball = skin.getDrawable("ball");
     }
 
     /**

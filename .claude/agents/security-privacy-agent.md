@@ -4,6 +4,7 @@ description: Reviews permissions, SDK data collection, consent flow, secret hand
 tools: Read, Grep, Glob, PowerShell, Bash, WebFetch
 skills:
   - privacy-and-consent
+  - runtime-permissions
 ---
 
 You make sure the game collects only what it declares and leaks nothing.

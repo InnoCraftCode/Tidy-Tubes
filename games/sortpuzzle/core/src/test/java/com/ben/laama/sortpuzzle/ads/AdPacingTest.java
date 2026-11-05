@@ -1,6 +1,7 @@
 package com.ben.laama.sortpuzzle.ads;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,9 +18,9 @@ class AdPacingTest {
     private final AtomicLong now = new AtomicLong(1_000_000L);
 
     @Test
-    @DisplayName("only every Nth break qualifies, and never the first")
+    @DisplayName("only every Nth break qualifies, after the first two")
     void everyNth() {
-        AdPacing pacing = new AdPacing(3, 0, now::get);
+        AdPacing pacing = new AdPacing(2, 3, 0, now::get);
         assertFalse(pacing.onBreak()); // 1
         assertFalse(pacing.onBreak()); // 2
         assertTrue(pacing.onBreak());  // 3
@@ -29,9 +30,10 @@ class AdPacingTest {
     }
 
     @Test
-    @DisplayName("every-break pacing still skips the very first break")
+    @DisplayName("even every-break pacing skips the first two breaks")
     void neverFirst() {
-        AdPacing pacing = new AdPacing(1, 0, now::get);
+        AdPacing pacing = new AdPacing(2, 1, 0, now::get);
+        assertFalse(pacing.onBreak());
         assertFalse(pacing.onBreak());
         assertTrue(pacing.onBreak());
     }
@@ -39,25 +41,32 @@ class AdPacingTest {
     @Test
     @DisplayName("the minimum interval blocks back-to-back full-screen ads, rewarded included")
     void minInterval() {
-        AdPacing pacing = new AdPacing(1, 60_000, now::get);
+        AdPacing pacing = new AdPacing(0, 1, 120_000, now::get);
         pacing.onBreak();
         pacing.onFullScreenAdShown(); // e.g. the player watched a rewarded ad
         now.addAndGet(30_000);
         assertFalse(pacing.onBreak());
-        now.addAndGet(30_000);
+        now.addAndGet(90_000);
         assertTrue(pacing.onBreak());
     }
 
     @Test
-    @DisplayName("the shipped caps are sane: at most one interstitial per three levels, >= 60 s apart")
+    @DisplayName("the shipped caps skip two breaks and keep interstitials 120 s apart")
     void shippedCaps() {
+        assertEquals(2, GameConfig.INTERSTITIAL_INITIAL_BREAKS_TO_SKIP);
         assertTrue(GameConfig.INTERSTITIAL_EVERY_N_LEVELS >= 3);
-        assertTrue(GameConfig.INTERSTITIAL_MIN_INTERVAL_MS >= 60_000L);
+        assertEquals(120_000L, GameConfig.INTERSTITIAL_MIN_INTERVAL_MS);
     }
 
     @Test
     @DisplayName("a non-positive frequency is rejected")
     void rejectsZero() {
-        assertThrows(IllegalArgumentException.class, () -> new AdPacing(0, 0, now::get));
+        assertThrows(IllegalArgumentException.class, () -> new AdPacing(0, 0, 0, now::get));
+    }
+
+    @Test
+    @DisplayName("a negative number of initial breaks is rejected")
+    void rejectsNegativeInitialBreaks() {
+        assertThrows(IllegalArgumentException.class, () -> new AdPacing(-1, 3, 0, now::get));
     }
 }

@@ -69,7 +69,11 @@ tasks.register<JavaExec>("storeCapture") {
     val mode = providers.gradleProperty("captureMode").getOrElse("screens")
     val device = providers.gradleProperty("captureDevice").getOrElse("phone")
     val size = providers.gradleProperty("captureSize").getOrElse("1080x1920")
-    val out = if (mode == "video") {
+    // -PcaptureOut=<dir> renders elsewhere (responsive checks) without touching the store kit.
+    val customOut = providers.gradleProperty("captureOut").orNull
+    val out = if (customOut != null) {
+        file(customOut)
+    } else if (mode == "video") {
         layout.buildDirectory.dir("capture/frames").get().asFile
     } else {
         rootProject.file("../../play-store/sortpuzzle/screenshots/$device")

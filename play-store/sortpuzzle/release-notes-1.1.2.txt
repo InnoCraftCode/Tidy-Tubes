@@ -1,0 +1,81 @@
+<en-US>
+Version 1.1.2
+• 400 looks: 100 ball colours, 100 finishes, 100 tubes, 100 themes.
+• Star road: every star you earn unlocks exclusive looks. Clearing a chapter gives one too.
+• Shop filters: all, owned, for coins, to earn. Free coins for a short video, 5 a day.
+• Double your coins after a level with an optional video.
+• Made for tablets and foldables: two-column layouts in landscape.
+• Fixes: black background between levels, settings layout.
+</en-US>
+<fr-FR>
+Version 1.1.2
+• 400 styles : 100 couleurs de boules, 100 finitions, 100 tubes, 100 thèmes.
+• Route des étoiles : chaque étoile gagnée débloque des styles exclusifs. Un chapitre fini en offre un aussi.
+• Filtres de la boutique : tout, possédés, en pièces, à gagner. Pièces gratuites contre une courte vidéo, 5 par jour.
+• Doublez vos pièces après un niveau avec une vidéo facultative.
+• Tablettes et pliables : deux colonnes en paysage.
+• Corrections : fond noir entre les niveaux, réglages.
+</fr-FR>
+<ar>
+الإصدار 1.1.2
+• 400 مظهر: 100 لون للكرات، 100 لمسة نهائية، 100 أنبوب، 100 سمة.
+• طريق النجوم: كل نجمة تكسبها تفتح مظاهر حصرية، وإنهاء فصل يمنحك واحدًا أيضًا.
+• فلاتر المتجر: الكل، المملوكة، بالعملات، للكسب. عملات مجانية مقابل فيديو قصير، 5 مرات يوميًا.
+• ضاعف عملاتك بعد كل مستوى بفيديو اختياري.
+• مصممة للأجهزة اللوحية والقابلة للطي: عمودان في الوضع الأفقي.
+• إصلاحات: الخلفية السوداء بين المستويات، وتخطيط الإعدادات.
+</ar>
+<es-ES>
+Versión 1.1.2
+• 400 estilos: 100 colores de bolas, 100 acabados, 100 tubos, 100 temas.
+• Camino de estrellas: cada estrella que ganas desbloquea estilos exclusivos. Completar un capítulo también da uno.
+• Filtros en la tienda: todo, tuyos, por monedas, por ganar. Monedas gratis por un vídeo corto, 5 al día.
+• Duplica tus monedas tras un nivel con un vídeo opcional.
+• Pensado para tablets y plegables: dos columnas en horizontal.
+• Correcciones: fondo negro entre niveles, ajustes.
+</es-ES>
+<pt-BR>
+Versão 1.1.2
+• 400 visuais: 100 cores de bolas, 100 acabamentos, 100 tubos, 100 temas.
+• Caminho das estrelas: cada estrela conquistada desbloqueia visuais exclusivos. Concluir um capítulo também dá um.
+• Filtros na loja: todos, seus, por moedas, a conquistar. Moedas grátis por um vídeo curto, 5 por dia.
+• Dobre suas moedas após um nível com um vídeo opcional.
+• Feito para tablets e dobráveis: duas colunas na horizontal.
+• Correções: fundo preto entre níveis, configurações.
+</pt-BR>
+<de-DE>
+Version 1.1.2
+• 400 Looks: 100 Kugelfarben, 100 Oberflächen, 100 Röhren, 100 Themes.
+• Sternenweg: Jeder verdiente Stern schaltet exklusive Looks frei. Ein abgeschlossenes Kapitel auch.
+• Shop-Filter: alle, eigene, für Münzen, zu verdienen. Gratis-Münzen für ein kurzes Video, 5 pro Tag.
+• Verdopple deine Münzen nach einem Level mit einem optionalen Video.
+• Für Tablets und Foldables: zwei Spalten im Querformat.
+• Behoben: schwarzer Hintergrund zwischen Leveln, Einstellungen.
+</de-DE>
+<id>
+Versi 1.1.2
+• 400 gaya: 100 warna bola, 100 hasil akhir, 100 tabung, 100 tema.
+• Jalur bintang: setiap bintang yang kamu dapat membuka gaya eksklusif. Menyelesaikan bab juga memberi satu.
+• Filter toko: semua, dimiliki, dengan koin, untuk diraih. Koin gratis dengan video singkat, 5 per hari.
+• Gandakan koinmu setelah level dengan video opsional.
+• Untuk tablet dan ponsel lipat: dua kolom saat lanskap.
+• Perbaikan: latar hitam antar level, tata letak pengaturan.
+</id>
+<tr-TR>
+Sürüm 1.1.2
+• 400 görünüm: 100 top rengi, 100 yüzey, 100 tüp, 100 tema.
+• Yıldız yolu: kazandığın her yıldız özel görünümlerin kilidini açar. Bir bölümü bitirmek de bir tane verir.
+• Mağaza filtreleri: tümü, sahip olunan, parayla, kazanılacak. Kısa bir video için bedava para, günde 5.
+• Seviye sonrası paranı isteğe bağlı bir videoyla ikiye katla.
+• Tablet ve katlanabilirler için: yatayda iki sütun.
+• Düzeltmeler: seviyeler arası siyah arka plan, ayarlar.
+</tr-TR>
+<hi-IN>
+संस्करण 1.1.2
+• 400 लुक: 100 गेंद रंग, 100 फ़िनिश, 100 ट्यूब, 100 थीम।
+• सितारों की राह: कमाया हर सितारा खास लुक खोलता है। अध्याय पूरा करने पर भी एक मिलता है।
+• दुकान फ़िल्टर: सभी, आपके, सिक्कों से, कमाने को। छोटे वीडियो पर मुफ़्त सिक्के, दिन में 5 बार।
+• लेवल के बाद वैकल्पिक वीडियो से सिक्के दोगुने करें।
+• टैबलेट और फ़ोल्डेबल के लिए: लैंडस्केप में दो कॉलम।
+• सुधार: लेवल के बीच काली पृष्ठभूमि, सेटिंग्स लेआउट।
+</hi-IN>

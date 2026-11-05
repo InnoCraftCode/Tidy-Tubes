@@ -16,6 +16,8 @@ out/
 local.properties
 keystore.properties
 admob.properties
+playgames.properties
+android/google-services.json
 *.jks
 *.keystore
 
@@ -25,3 +27,6 @@ Thumbs.db
 
 # libGDX / desktop
 lwjgl3/hs_err_pid*.log
+
+# Share-card PNG written by the desktop capture run (Gdx.files.local = assets on desktop)
+android/src/main/assets/share/

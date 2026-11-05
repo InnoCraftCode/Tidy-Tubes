@@ -2,7 +2,7 @@
   "appName": "__APP_NAME__",
   "packageId": "__PACKAGE_ID__",
   "versionName": "1.0.0",
-  "versionCode": 1,
+  "versionCode": 5,
   "category": "Jeux > <catégorie : Réflexion, Arcade, Simulation, Occasionnel...>",
   "tags": ["<tag 1>", "<tag 2>", "<tag 3>"],
   "contactEmail": "<à compléter : e-mail affiché sur la fiche>",

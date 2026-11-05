@@ -48,6 +48,29 @@ val releaseAdsConfigured = admob.getProperty("admob.appId", "").isNotBlank()
 
 fun quoted(s: String) = "\"" + s.replace("\"", "") + "\""
 
+/**
+ * Google Play Games Services (sign-in + leaderboards). IDs come from `playgames.properties`
+ * (see playgames.properties.example, Play Console > Play Games Services > Configuration). Without
+ * the file the game gets the inert `NoOpGameServices` and never touches the SDK; the manifest
+ * still needs an APP_ID entry, so a harmless "0" is injected.
+ */
+val playGames = loadProps("playgames.properties")
+val playGamesAppId = playGames.getProperty("playgames.appId", "").trim()
+val playGamesConfigured = playGamesAppId.isNotBlank()
+
+/**
+ * Firebase (Analytics + Crashlytics) switches itself on when `android/google-services.json` is
+ * present: only then are the Google services and Crashlytics plugins applied. The libraries are
+ * always on the classpath so the bridge compiles; at runtime a missing config means no
+ * FirebaseApp and therefore the inert `NoOpAnalytics`. Collection is off in the manifest and is
+ * enabled by AndroidLauncher once the consent flow allows it (never in debug builds).
+ */
+val firebaseConfigured = file("google-services.json").exists()
+if (firebaseConfigured) {
+    apply(plugin = libs.plugins.google.services.get().pluginId)
+    apply(plugin = libs.plugins.firebase.crashlytics.get().pluginId)
+}
+
 android {
     namespace = "com.ben.laama.sortpuzzle"
     // Google Play requires targetSdk >= 36 since 2026-08-31. Platform 36 is not installed on
@@ -59,8 +82,20 @@ android {
         applicationId = "com.ben.laama.sortpuzzle"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
+        versionCode = 12
         versionName = rootProject.version.toString()
+
+        // A string resource, as Google's guide does: a bare numeric manifest value is parsed as an
+        // Integer and the Games SDK then logs "expected String" warnings on every start.
+        resValue("string", "game_services_project_id", if (playGamesConfigured) playGamesAppId else "0")
+        buildConfigField("boolean", "PLAY_GAMES_ENABLED", playGamesConfigured.toString())
+        buildConfigField("String", "LEADERBOARD_HIGHEST_LEVEL",
+            quoted(playGames.getProperty("playgames.leaderboard.highestLevel", "")))
+        buildConfigField("String", "LEADERBOARD_TOTAL_STARS",
+            quoted(playGames.getProperty("playgames.leaderboard.totalStars", "")))
+        buildConfigField("String", "LEADERBOARD_DAILY_MOVES",
+            quoted(playGames.getProperty("playgames.leaderboard.dailyMoves", "")))
+        buildConfigField("boolean", "FIREBASE_CONFIGURED", firebaseConfigured.toString())
     }
 
     buildFeatures {
@@ -105,6 +140,9 @@ android {
         named("release") {
             isMinifyEnabled = true
             isShrinkResources = true
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro")
@@ -139,6 +177,16 @@ dependencies {
     // AdMob (GMA Next-Gen SDK) + User Messaging Platform (consent). Only AdMobAdProvider uses them.
     implementation(libs.gma.nextgen)
     implementation(libs.ump)
+    // Overrides the fragment 1.1.0 that play-services-basement pins (Play flags it as deprecated).
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.core) // WindowInsetsControllerCompat in AndroidLauncher
+    // Play Games Services v2: only AndroidGameServices uses it (inert without playgames.properties).
+    implementation(libs.play.games)
+    // Firebase Analytics + Crashlytics: only FirebaseAnalyticsBridge uses them (inert without
+    // google-services.json). Versions come from the BoM.
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     natives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a")
     natives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a")
@@ -188,5 +236,7 @@ tasks.register("printAdConfig") {
         println("ads.enabled=$adsEnabled  release admob.properties present=$releaseAdsConfigured")
         println("debug: ADS_ENABLED=$adsEnabled (Google demo IDs)")
         println("release: ADS_ENABLED=${adsEnabled && releaseAdsConfigured}")
+        println("play games: ${if (playGamesConfigured) "configured (playgames.properties)" else "OFF - no playgames.properties"}")
+        println("firebase: ${if (firebaseConfigured) "configured (google-services.json)" else "OFF - no android/google-services.json"}")
     }
 }

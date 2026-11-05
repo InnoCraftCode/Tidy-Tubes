@@ -15,8 +15,14 @@ public final class GameConfig {
     /** Display name shown in-game. The Android launcher label lives in {@code strings.xml}. */
     public static final String APP_NAME = "Tidy Tubes";
     public static final String TAGLINE = "Sort. Breathe. Repeat.";
+    public static final int RELAXING_MUSIC_TRACK_COUNT = 10;
     /** Shown on the About card. Kept in sync with {@code build.gradle.kts} by hand. */
-    public static final String VERSION_NAME = "1.0.0";
+    public static final String VERSION_NAME = "1.1.2";
+    /** Store page, used in the share text. */
+    public static final String STORE_URL =
+        "https://play.google.com/store/apps/details?id=com.ben.laama.sortpuzzle";
+    /** A guided breath is offered after every Nth campaign level (first clear only). */
+    public static final int BREATHE_EVERY_N_LEVELS = 5;
     /**
      * Public privacy policy URL: the root {@code index.html} of the Tidy-Tubes GitHub repository,
      * served by GitHub Pages ("main" branch, root folder). The same page also lives under
@@ -29,9 +35,23 @@ public final class GameConfig {
     public static final float WORLD_WIDTH = 720f;
     /** Minimum virtual height. The viewport extends beyond it on taller (20:9) screens. */
     public static final float WORLD_HEIGHT = 1280f;
-    /** Upper bounds for the extension, so a 4:3 tablet or a 21:9 phone still looks designed. */
-    public static final float WORLD_MAX_WIDTH = 1000f;
+    /**
+     * Upper bounds for the extension. Height: a 21:9 phone still looks designed. Width: a
+     * landscape tablet, foldable or desktop window (Android 16 rotates freely above 600 dp)
+     * fills its width instead of showing pillars; screens centre their content, so the extra
+     * width is just backdrop.
+     */
+    public static final float WORLD_MAX_WIDTH = 2200f;
     public static final float WORLD_MAX_HEIGHT = 1720f;
+    /**
+     * Landscape minimum (phone turned sideways, tablet, unfolded foldable). 800 units of height
+     * keep text at about 90 % of its portrait size on a 2400x1080 phone and at exactly the
+     * portrait size on a 16:10 tablet, instead of shrinking the portrait column to fit.
+     */
+    public static final float WORLD_LANDSCAPE_WIDTH = 1280f;
+    public static final float WORLD_LANDSCAPE_HEIGHT = 800f;
+    public static final float WORLD_LANDSCAPE_MAX_WIDTH = 2400f;
+    public static final float WORLD_LANDSCAPE_MAX_HEIGHT = 1100f;
 
     // ------------------------------------------------------------------- rules
     /** Balls per tube. */
@@ -59,10 +79,25 @@ public final class GameConfig {
     public static final int EXTRA_MOVES_PRICE = 60;
 
     // --------------------------------------------------------------------- ads
+    /** Natural breaks skipped before interstitials are considered in a session. */
+    public static final int INTERSTITIAL_INITIAL_BREAKS_TO_SKIP = 2;
     /** An interstitial may show at most once every N completed levels (natural breaks). */
     public static final int INTERSTITIAL_EVERY_N_LEVELS = 3;
     /** And never sooner than this after the previous full-screen ad, rewarded included. */
-    public static final long INTERSTITIAL_MIN_INTERVAL_MS = 90_000L;
+    public static final long INTERSTITIAL_MIN_INTERVAL_MS = 120_000L;
+    /**
+     * No interstitial until this many campaign levels are cleared: a new player's first minutes
+     * decide day-1 retention, which is worth far more than one early interstitial.
+     */
+    public static final int INTERSTITIAL_MIN_CLEARED = 5;
+    /** Shop "free coins" rewarded video: coins per confirmed view, and views per local day. */
+    public static final int AD_COINS_REWARD = 30;
+    public static final int AD_COINS_PER_DAY = 5;
+    /** Coins for the optional once-per-UTC-day rewarded bonus. */
+    public static final int DAILY_REWARDED_BONUS_COINS = 10;
+    /** Minimum time between confirmed rewarded extra-tube bonuses. */
+    public static final long REWARDED_TUBE_COOLDOWN_MS = 90_000L;
+    public static final int REWARDED_TUBE_BONUS = 1;
 
     // --------------------------------------------------------------------- hints
     /** Hints given without asking for anything, per level. */
@@ -78,6 +113,13 @@ public final class GameConfig {
     public static final int COINS_PER_WIN = 25;
     /** Extra coins when the level is finished in par moves or fewer. */
     public static final int COINS_PAR_BONUS = 15;
+    /** Coins for the first win of a UTC daily challenge. */
+    public static final int DAILY_CHALLENGE_COINS = 35;
+    /** Consecutive daily wins required to unlock the alternate ball palette. */
+    public static final int DAILY_PALETTE_STREAK = 3;
+    public static final int STAR_PALETTE_UNLOCK = 30;
+    public static final int WEEKLY_GOAL_REWARD = 30;
+    public static final int ACHIEVEMENT_STAR_PALETTE = 30;
     /** "Extra tube" boosters granted for free on every level. */
     public static final int FREE_BOOSTERS_PER_LEVEL = 3;
     /** Price of one permanent extra-tube booster. */

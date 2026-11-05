@@ -16,6 +16,9 @@ Requirements change: re-verify the linked pages at release time and note the dat
 - [ ] Play App Signing enrolled; upload key backed up outside the repo (password manager + offline copy)
 - [ ] R8 on; release build installed on a device and fully played (save/load after update install)
 - [ ] `validate-workspace.ps1` passes (no secrets, no debug ad IDs in release config)
+- [ ] No `android:screenOrientation` or `resizeableActivity=false` in the manifest (Play large-screen advisory); lock orientation at runtime only below sw600dp and check a landscape render at tablet size
+- [ ] Cutout mode `always` via `values-v30/styles.xml` and bars hidden with `WindowInsetsControllerCompat` (libGDX `renderUnderCutout=false`, `useImmersiveMode=false`: no `SHORT_EDGES`, no `setSystemUiVisibility`); UI padded by `Gdx.graphics.getSafeInset*`
+- [ ] Play Console SDK advisories cleared (e.g. `androidx.fragment` >= 1.2.1 declared explicitly over the 1.1.0 that `play-services-basement` pins)
 
 ## 3. Quality
 - [ ] `:core:test` green

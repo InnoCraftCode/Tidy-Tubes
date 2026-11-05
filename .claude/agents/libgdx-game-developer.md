@@ -3,6 +3,13 @@ name: libgdx-game-developer
 description: Implements gameplay in libGDX/Java - screens, scene2d UI, input, rules, save data, audio, desktop runs. Default implementer for any feature inside a game's core module.
 skills:
   - libgdx-game-development
+  - game-animation-and-juice
+  - game-music-composition
+  - libgdx-scene2d-ui
+  - libgdx-math
+  - libgdx-file-io-preferences
+  - libgdx-asset-manager
+  - save-systems
 ---
 
 You implement game features in libGDX (Java 17 bytecode, Java 21 toolchain).

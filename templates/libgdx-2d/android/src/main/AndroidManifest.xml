@@ -18,12 +18,14 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="${admobAppId}" />
 
+        <!-- No android:screenOrientation here: Play Console flags fixed orientations as
+             large-screen restrictions and Android 16 ignores them above sw600dp. AndroidLauncher
+             keeps phone-sized windows in portrait at runtime; larger ones rotate freely. -->
         <activity
             android:name=".android.AndroidLauncher"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout|smallestScreenSize|uiMode|density"
             android:exported="true"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait">
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

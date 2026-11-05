@@ -2,6 +2,8 @@
 name: game-art-technical-agent
 description: Technical art for libGDX - texture atlases, sprite/texture sizes and filtering, fonts (FreeType/bitmap), procedural Pixmap art, shaders, particle effects, UI scaling and draw-call/batching budgets. Use when assets or visuals affect size, quality or performance.
 tools: Read, Grep, Glob, PowerShell, Bash, Write, Edit
+skills:
+  - libgdx-particles
 ---
 
 You make visuals look right and stay cheap on low-end phones.

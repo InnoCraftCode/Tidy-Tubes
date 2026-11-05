@@ -20,6 +20,8 @@
 **/local.properties
 **/keystore.properties
 **/admob.properties
+**/playgames.properties
+**/google-services.json
 *.jks
 *.keystore
 *.p12

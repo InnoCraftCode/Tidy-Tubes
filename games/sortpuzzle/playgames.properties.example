@@ -1,0 +1,36 @@
+# Copier ce fichier en playgames.properties (git-ignoré) à la racine du projet (à côté de
+# settings.gradle.kts). Sans ce fichier, le jeu se construit et tourne avec Play Games
+# complètement désactivé (aucun appel SDK, aucun bouton dans l'interface).
+#
+# Play Console (interface en français) :
+#   Toutes les applications > Tidy Tubes > menu de gauche "Développer vos utilisateurs"
+#   > "Services de jeux Play" > "Configuration et gestion" > "Configuration"
+#
+# 1. "Créer une configuration" > "Oui, mon jeu utilise déjà les API Google" si tu as déjà un
+#    projet Google Cloud, sinon "Non, mon jeu n'utilise pas les API Google" (il en crée un).
+# 2. Dans "Identifiants" > "Ajouter des identifiants" > type "Android" : il crée le client OAuth.
+#    Ajouter l'empreinte SHA-1 de la clé d'UPLOAD (tidy-tubes-upload.jks) ET celle de la clé
+#    "Signature d'application Play" (Play Console > Configuration > Intégrité de l'application),
+#    sinon la connexion échoue en production.
+# 3. L'"ID du projet" (un long nombre affiché sous le nom du jeu, en haut de la page
+#    Configuration) va dans playgames.appId ci-dessous.
+# 4. "Classements" > "Créer un classement" (3 fois), puis copier chaque ID (commence par "Cgk") :
+#    - Niveau le plus élevé : format "Numérique", ordre "Le plus grand est le meilleur"
+#    - Total d'étoiles     : format "Numérique", ordre "Le plus grand est le meilleur"
+#    - Coups du jour       : format "Numérique", ordre "Le plus petit est le meilleur",
+#                            dans les options : réinitialisation "Quotidienne"
+#    Ne pas oublier "Enregistrer" puis "Publier les modifications" quand tout est prêt.
+# 5. "Testeurs" > "Ajouter des testeurs" : ajouter ton adresse Gmail tant que la configuration
+#    n'est pas publiée, sinon la connexion est refusée sur ton téléphone.
+#
+# Firebase (console.firebase.google.com, en français) :
+#   "Ajouter un projet" > nom libre > activer Google Analytics > "Créer le projet"
+#   > icône Android "Ajouter une application" > nom du package com.ben.laama.sortpuzzle
+#   > "Télécharger google-services.json" > déposer le fichier dans games\sortpuzzle\android\
+#   > menu "Exécution" > "Crashlytics" > "Activer Crashlytics".
+#   Le reste des étapes affichées par Firebase (Gradle) est déjà fait dans le projet.
+
+playgames.appId=000000000000
+playgames.leaderboard.highestLevel=CgkI...
+playgames.leaderboard.totalStars=CgkI...
+playgames.leaderboard.dailyMoves=CgkI...

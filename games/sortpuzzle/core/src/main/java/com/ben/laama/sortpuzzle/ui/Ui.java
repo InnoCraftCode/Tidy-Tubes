@@ -77,6 +77,23 @@ public final class Ui {
         return button;
     }
 
+    /**
+     * A pill button with a small glyph before its text: the home navigation row. The glyph
+     * takes the style's font colour so it reads as part of the label.
+     */
+    public static Button iconTextButton(Skin skin, String icon, String text, String style,
+                                        Runnable onClick) {
+        TextButton.TextButtonStyle textStyle = skin.get(style, TextButton.TextButtonStyle.class);
+        Button button = new Button(textStyle);
+        Image glyph = new Image(skin.newDrawable(icon, textStyle.fontColor));
+        Label label = new Label(text, new Label.LabelStyle(textStyle.font, textStyle.fontColor));
+        button.add(glyph).size(26f).padRight(8f);
+        button.add(label);
+        button.pad(12f, 20f, 12f, 22f);
+        click(button, onClick);
+        return button;
+    }
+
     /** A big call-to-action with a title line and a smaller caption line. */
     public static Button twoLineButton(Skin skin, String style, String title, String caption,
                                        Runnable onClick) {
@@ -165,6 +182,13 @@ public final class Ui {
             return on;
         }
 
+        /** Moves the switch without firing the change callback (e.g. a permission was refused). */
+        public void setOn(boolean value) {
+            if (on == value) return;
+            on = value;
+            apply(true);
+        }
+
         private void apply(boolean animate) {
             Color trackColor = on ? Palette.PRIMARY : Color.valueOf("FFFFFF2A");
             Color knobColor = on ? Palette.ON_PRIMARY : Palette.TEXT_DIM;
@@ -208,6 +232,38 @@ public final class Ui {
                 if (onResult != null) {
                     onResult.accept(choice);
                 }
+            }
+
+            /** Arrives with a small overshoot instead of scene2d's slow linear fade. */
+            private float fit = 1f;
+
+            @Override
+            public Dialog show(Stage stage) {
+                setTransform(true);
+                // A dialog designed for a 1280-unit portrait height must still fit a landscape
+                // screen (800 units): shrink it as a whole rather than clip its buttons.
+                pack();
+                fit = Math.min(1f, Math.min((stage.getHeight() - 24f) / getHeight(),
+                    (stage.getWidth() - 24f) / getWidth()));
+                setKeepWithinStage(fit >= 1f);
+                show(stage, Actions.sequence(
+                    Actions.alpha(0f),
+                    Actions.scaleTo(0.94f * fit, 0.94f * fit),
+                    Actions.parallel(
+                        Actions.fadeIn(0.18f, Interpolation.pow2Out),
+                        Actions.scaleTo(fit, fit, 0.26f, Interpolation.swingOut))));
+                setPosition(Math.round((stage.getWidth() - getWidth()) * 0.5f),
+                    Math.round((stage.getHeight() - getHeight()) * 0.5f));
+                setOrigin(Align.center);
+                return this;
+            }
+
+            /** Leaves faster than it arrived (exit = two thirds of the entrance). */
+            @Override
+            public void hide() {
+                hide(Actions.parallel(
+                    Actions.fadeOut(0.14f, Interpolation.pow2In),
+                    Actions.scaleTo(0.96f * fit, 0.96f * fit, 0.14f, Interpolation.pow2In)));
             }
         };
         dialog.setMovable(false);

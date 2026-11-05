@@ -20,7 +20,7 @@ OS: Windows 11, shell: Windows PowerShell 5.1 (no `&&`, no `?:`; use `;` and `if
 | `config/` | ADRs, coding standards, release checklists (canonical checklists live here) |
 | `shared/` | Reusable design, monetization, privacy, testing references |
 | `docs/` | Human guides. `reports/` audit + validation reports |
-| `.claude/` | Agents, skills, commands, settings |
+| `.claude/` | Agents, skills, commands, settings, path-scoped `rules/` (some adapted from Claude Code Game Studios, see `.claude/THIRD_PARTY.md`) |
 
 ## Commands (run from the workspace root)
 ```powershell
@@ -29,6 +29,7 @@ OS: Windows 11, shell: Windows PowerShell 5.1 (no `&&`, no `?:`; use `;` and `if
 .\tools\scripts\new-game.ps1 -Name my-game -PackageId com.ben.laama.mygame -DisplayName "My Game"
 .\tools\android-build\build-android.ps1 -Project <name> -Task Test     # Test|Desktop|Debug|Install|Release|Bundle
 .\tools\store\build-listing-doc.ps1 -Game <name>                       # Word listing from play-store\<name>\listing.json
+.\tools\store\export-listing-csv.ps1 -Game <name>                      # all locales as a review/copy-paste CSV (Play has no listing CSV import)
 .\tools\store\capture-desktop.ps1 -Game <name> [-Video]                 # store screenshots (+ promo videos) without a device
 .\tools\store\render-brand-assets.ps1 -Game <name>                      # icon 512, launcher icons, feature graphic (GDI+)
 .\tools\store\validate-store-assets.ps1 -Game <name>                    # Play specs check -> JSON report (exit 1 on FAIL)
@@ -61,8 +62,11 @@ Gradle from a project folder: `.\gradlew.bat :core:test`, `:lwjgl3:run`, `:andro
 |---|---|---|
 | New game, engine/architecture choice | game-architect | game-project-bootstrap |
 | Gameplay code, screens, input, save | libgdx-game-developer | libgdx-game-development |
+| Animation, transitions, juice, particles | libgdx-game-developer | game-animation-and-juice (+ game-feel, motion-design) |
+| Music, soundtrack, loops, adaptive/3D audio | libgdx-game-developer | game-music-composition |
 | Manifest, lifecycle, signing, Gradle/AGP, SDK levels | senior-android-developer | android-build-and-export |
-| Core loop, levels, difficulty, retention | game-design-agent | rewarded-ads-design |
+| Core loop, levels, difficulty | game-design-agent | rewarded-ads-design |
+| Retention, economy, shop/cosmetics, streaks, notifications, analytics | game-design-agent | mobile-game-specs (+ retention-loop-design, game-ui-ux) |
 | Textures, atlases, fonts, draw calls | game-art-technical-agent | mobile-game-performance |
 | AdMob, placements, consent wiring | ads-monetization-agent | admob-integration, privacy-and-consent |
 | Store listing, AAB, release readiness | google-play-release-agent | google-play-publishing |
@@ -70,7 +74,11 @@ Gradle from a project folder: `.\gradlew.bat :core:test`, `:lwjgl3:run`, `:andro
 | FPS, memory, battery, startup | performance-agent | mobile-game-performance |
 | Permissions, data safety, secrets | security-privacy-agent | privacy-and-consent |
 | Review a diff before merge/release | code-review-agent | game-architecture-review |
-| Visual redesign, design system, new screen, UX check | ui-ux-designer-agent | premium-ui-design |
+| Visual redesign, design system, new screen, UX check | ui-ux-designer-agent | premium-ui-design (+ responsive-ux-review) |
+| "Not responsive", tablet/foldable/landscape layout check | ui-ux-designer-agent | responsive-ux-review |
+| Accessibility audit (contrast, colour-blind, targets, motion) | accessibility-specialist | responsive-ux-review |
+| Bug intake, triage, playtest feedback | qa-testing-agent | bug-report, playtest-report |
+| Pre-tester go/no-go, production emergency fix | qa-testing-agent / senior-android-developer | smoke-check, hotfix |
 | Naming, store texts/ASO, icon/feature graphic/screenshots/video | brand-aso-agent | store-asset-production |
 | Independent Google Play policy audit (read-only) | play-compliance-auditor-agent | privacy-and-consent |
 

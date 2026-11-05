@@ -15,8 +15,14 @@ import com.badlogic.gdx.graphics.glutils.HdpiMode;
 
 import com.ben.laama.sortpuzzle.GameConfig;
 import com.ben.laama.sortpuzzle.Main;
+import com.ben.laama.sortpuzzle.logic.Cosmetic;
 import com.ben.laama.sortpuzzle.screens.GameScreen;
 import com.ben.laama.sortpuzzle.screens.HomeScreen;
+import com.ben.laama.sortpuzzle.screens.MusicSelectionScreen;
+import com.ben.laama.sortpuzzle.screens.ProgressScreen;
+import com.ben.laama.sortpuzzle.screens.ShopScreen;
+import com.ben.laama.sortpuzzle.ui.ShareCard;
+import com.ben.laama.sortpuzzle.ui.Responsive;
 import com.ben.laama.sortpuzzle.ui.SkinFactory;
 
 import java.io.File;
@@ -53,6 +59,8 @@ public final class StoreCapture extends ApplicationAdapter {
     private final int WIDTH;
     private final int HEIGHT;
     private final boolean video;
+    /** captureMode=review: the store shots plus every shop tab and Goals, for design checks. */
+    private static boolean review;
     private final File output;
     private final Deque<Step> timeline = new ArrayDeque<>();
 
@@ -78,6 +86,7 @@ public final class StoreCapture extends ApplicationAdapter {
      */
     public static void main(String[] args) {
         boolean video = args.length > 0 && args[0].equals("video");
+        review = args.length > 0 && args[0].equals("review");
         File output = new File(args.length > 1 ? args[1] : "capture");
         File prefs = new File(args.length > 2 ? args[2] : "capture-prefs");
         int width = DEFAULT_WIDTH;
@@ -129,6 +138,30 @@ public final class StoreCapture extends ApplicationAdapter {
         waitFor(() -> gameScreen().isWon(), 40f);
         wait(0.95f);
         shot("04-level-cleared");
+        // Not a store shot: exercises the share-card renderer on the desktop, where there is no
+        // share sheet. The PNG lands in the working directory's share/ folder for a look.
+        // Not a store shot either: the result card itself, once its buttons have faded in.
+        wait(1.6f);
+        shot("result-card-preview");
+        wait(0.4f);
+        run(() -> {
+            File shotFile = new File(output, "result-card-preview.png");
+            File preview = new File(output.getParentFile().getParentFile(), "result-card-preview.png");
+            if (shotFile.exists()) {
+                com.badlogic.gdx.Gdx.files.absolute(shotFile.getAbsolutePath())
+                    .moveTo(com.badlogic.gdx.Gdx.files.absolute(preview.getAbsolutePath()));
+                System.out.println("[capture] result card -> " + preview);
+            }
+        });
+        run(() -> {
+            com.badlogic.gdx.files.FileHandle png = ShareCard.render(game.skin(), game.tubes(),
+                game.batch(), null, new ShareCard.Result("Level 4  •  3 colours", 3, 2, 3, 9, 9, true));
+            // On the desktop "local" is the assets folder: move the preview out so it never ships.
+            File preview = new File(output.getParentFile().getParentFile(), "share-card-preview.png");
+            png.moveTo(com.badlogic.gdx.Gdx.files.absolute(preview.getAbsolutePath()));
+            png.parent().delete();
+            System.out.println("[capture] share card -> " + preview);
+        });
 
         run(() -> game.goLevelSelect());
         wait(1.2f);
@@ -143,34 +176,88 @@ public final class StoreCapture extends ApplicationAdapter {
         run(() -> game.goSettings());
         wait(1.2f);
         shot("07-settings");
+
+        // The shop, previewing a theme so the backdrop and the mini board show what coins buy.
+        run(() -> game.switchTo(new ShopScreen(game, Cosmetic.Category.THEME)));
+        waitFor(() -> game.getScreen() instanceof ShopScreen, 8f);
+        wait(1.4f);
+        shot("08-shop");
+
+        if (review) {
+            Cosmetic.Category[] tabs = {Cosmetic.Category.BALL_PALETTE, Cosmetic.Category.BALL_FINISH,
+                Cosmetic.Category.TUBE};
+            for (int i = 0; i < tabs.length; i++) {
+                final Cosmetic.Category tab = tabs[i];
+                final int number = 9 + i;
+                run(() -> game.switchTo(new ShopScreen(game, tab)));
+                wait(1.6f);
+                shot(String.format(java.util.Locale.ROOT, "%02d-shop-%s", number,
+                    tab.name().toLowerCase(java.util.Locale.ROOT)));
+                // Further down: the generated families, star-road and chapter cards.
+                run(() -> ((ShopScreen) game.getScreen()).scrollCatalogueTo(0.35f));
+                wait(0.8f);
+                shot(String.format(java.util.Locale.ROOT, "%02d-shop-%s-more", number,
+                    tab.name().toLowerCase(java.util.Locale.ROOT)));
+            }
+            run(() -> game.goProgress());
+            wait(1.4f);
+            shot("12-goals");
+        }
     }
 
-    /** About 30 seconds: home, a full solve with celebration, a hint, the 10-colour endgame. */
+    /** One-minute trailer: home, solves, hints, progression and increasingly complex boards. */
     private void videoScript() {
         run(() -> recording = true);
         waitFor(() -> game.getScreen() instanceof HomeScreen, 10f);
-        wait(1.6f);
+        wait(2.4f);
 
         level(6);
         wait(1.0f);
         run(() -> gameScreen().autoPlay(0.62f, 99));
         waitFor(() -> gameScreen().isWon(), 40f);
-        wait(2.4f);
+        wait(2.0f);
 
         level(28);
         wait(1.0f);
-        run(() -> gameScreen().autoPlay(0.6f, 3));
-        wait(2.0f);
+        run(() -> gameScreen().autoPlay(0.6f, 5));
+        wait(2.4f);
         run(() -> gameScreen().onHint());
-        wait(2.2f);
+        wait(2.6f);
+
+        level(55);
+        wait(1.0f);
+        run(() -> gameScreen().autoPlay(0.58f, 7));
+        wait(3.0f);
 
         level(104);
-        wait(1.2f);
-        run(() -> gameScreen().autoPlay(0.6f, 4));
+        wait(1.0f);
+        run(() -> gameScreen().autoPlay(0.58f, 9));
+        wait(3.0f);
+        run(() -> gameScreen().onHint());
         wait(2.8f);
 
+        run(() -> game.goProgress());
+        waitFor(() -> game.getScreen() instanceof ProgressScreen, 8f);
+        wait(3.0f);
         run(() -> game.goHome());
-        wait(1.6f);
+        wait(3.0f);
+        level(12);
+        wait(1.0f);
+        run(() -> gameScreen().autoPlay(0.58f, 8));
+        wait(4.0f);
+        run(() -> game.goHome());
+        wait(2.0f);
+        run(() -> game.goSettings());
+        wait(3.0f);
+        run(() -> game.goMusicSelection());
+        waitFor(() -> game.getScreen() instanceof MusicSelectionScreen, 8f);
+        wait(5.0f);
+        run(() -> game.finishMusicSelection(false));
+        wait(1.0f);
+        run(() -> game.goProgress());
+        waitFor(() -> game.getScreen() instanceof ProgressScreen, 8f);
+        wait(3.0f);
+        waitFor(() -> frameNumber >= 1800, 65f);
         run(() -> recording = false);
     }
 
@@ -179,11 +266,12 @@ public final class StoreCapture extends ApplicationAdapter {
     @Override
     public void create() {
         // Fonts must be rasterised for the frame buffer, not the half-size preview. The world
-        // scale is the smaller of the two ratios (ExtendViewport fits the 720x1280 minimum).
-        SkinFactory.setDensityOverride(Math.min(WIDTH / GameConfig.WORLD_WIDTH,
-            HEIGHT / GameConfig.WORLD_HEIGHT));
+        // scale is what the orientation-aware ExtendViewport uses for this frame-buffer size.
+        SkinFactory.setDensityOverride(Responsive.fontDensity(WIDTH, HEIGHT));
         game = new Main();
         game.create();
+        game.save().setMusicTrack(0);
+        game.goHome();
         // Look like a player some way in: the level grid shows progress, the HUD has coins,
         // and the first-launch tutorial card stays out of the pictures.
         for (int level = 1; level <= 36; level++) {

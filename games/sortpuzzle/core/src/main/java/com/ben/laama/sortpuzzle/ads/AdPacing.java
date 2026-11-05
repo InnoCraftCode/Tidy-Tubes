@@ -12,6 +12,7 @@ import java.util.function.LongSupplier;
  */
 public final class AdPacing {
 
+    private final int initialBreaksToSkip;
     private final int everyNBreaks;
     private final long minIntervalMs;
     private final LongSupplier clock;
@@ -19,10 +20,15 @@ public final class AdPacing {
     private int breaks;
     private long lastFullScreenAt = Long.MIN_VALUE;
 
-    public AdPacing(int everyNBreaks, long minIntervalMs, LongSupplier clock) {
+    public AdPacing(int initialBreaksToSkip, int everyNBreaks, long minIntervalMs,
+                    LongSupplier clock) {
+        if (initialBreaksToSkip < 0) {
+            throw new IllegalArgumentException("initialBreaksToSkip must be >= 0");
+        }
         if (everyNBreaks < 1) {
             throw new IllegalArgumentException("everyNBreaks must be >= 1");
         }
+        this.initialBreaksToSkip = initialBreaksToSkip;
         this.everyNBreaks = everyNBreaks;
         this.minIntervalMs = minIntervalMs;
         this.clock = clock;
@@ -31,7 +37,7 @@ public final class AdPacing {
     /** Call once per natural break. @return whether an interstitial may be shown now. */
     public boolean onBreak() {
         breaks++;
-        if (breaks < 2 || breaks % everyNBreaks != 0) {
+        if (breaks <= initialBreaksToSkip || breaks % everyNBreaks != 0) {
             return false;
         }
         return lastFullScreenAt == Long.MIN_VALUE || clock.getAsLong() - lastFullScreenAt >= minIntervalMs;

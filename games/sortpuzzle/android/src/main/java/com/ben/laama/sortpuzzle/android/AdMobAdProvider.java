@@ -70,8 +70,15 @@ public final class AdMobAdProvider implements AdProvider {
         }
     }
 
+    /** Told once per session what the consent flow concluded (UI thread). */
+    public interface ConsentListener {
+        void onConsentResolved(boolean canRequestAds);
+    }
+
     private final Activity activity;
     private final Config config;
+    private volatile ConsentListener consentListener;
+    private final AtomicBoolean consentReported = new AtomicBoolean();
     private final Handler main = new Handler(Looper.getMainLooper());
     private final AtomicBoolean sdkStarted = new AtomicBoolean();
     /** Written on the UI thread, read from the render thread (settings screen). */
@@ -112,13 +119,27 @@ public final class AdMobAdProvider implements AdProvider {
                         Log.w(TAG, "Consent form: " + formError.getMessage());
                     }
                     startSdkIfAllowed();
+                    reportConsent();
                 }),
                 requestError -> {
                     Log.w(TAG, "Consent info update failed: " + requestError.getMessage());
                     startSdkIfAllowed(); // falls back to the previous session's consent
+                    reportConsent();
                 });
         // Consent from a previous session may already allow requests; don't wait for the network.
         startSdkIfAllowed();
+    }
+
+    /** Other SDKs (analytics) follow the same decision; set before {@link #initialize()}. */
+    public void setConsentListener(ConsentListener listener) {
+        this.consentListener = listener;
+    }
+
+    private void reportConsent() {
+        ConsentListener listener = consentListener;
+        if (listener != null && consent != null && consentReported.compareAndSet(false, true)) {
+            listener.onConsentResolved(consent.canRequestAds());
+        }
     }
 
     private void startSdkIfAllowed() {

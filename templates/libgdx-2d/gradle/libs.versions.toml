@@ -7,6 +7,11 @@ agp = "8.11.1"
 gmaNextGen = "1.6.0"
 # User Messaging Platform (consent). https://developers.google.com/admob/android/privacy
 ump = "4.0.0"
+# play-services-basement (pulled in by the GMA SDK) pins androidx.fragment 1.1.0, which Play
+# Console reports as deprecated; this forces a current release (latest stable on 2026-10-28).
+androidxFragment = "1.9.1"
+# Used directly by AndroidLauncher (WindowInsetsControllerCompat); same version libGDX already pulls in.
+androidxCore = "1.13.1"
 
 [libraries]
 gdx = { module = "com.badlogicgames.gdx:gdx", version.ref = "gdx" }
@@ -16,6 +21,8 @@ gdx-platform = { module = "com.badlogicgames.gdx:gdx-platform", version.ref = "g
 
 gma-nextgen = { module = "com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk", version.ref = "gmaNextGen" }
 ump = { module = "com.google.android.ump:user-messaging-platform", version.ref = "ump" }
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "androidxFragment" }
+androidx-core = { module = "androidx.core:core", version.ref = "androidxCore" }
 
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
