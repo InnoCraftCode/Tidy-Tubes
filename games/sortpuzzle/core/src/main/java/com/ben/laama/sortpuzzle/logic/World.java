@@ -1,5 +1,7 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
+
 /**
  * The world map, as a sequence of biomes: every chapter of ten levels is a place with a name
  * and a look (one of the catalogue's themes), so progress is seen, not only counted. Biomes
@@ -30,8 +32,8 @@ public final class World {
     }
 
     private static final String[] NAMES = {
-        "Harbour", "Deep Sea", "Forest", "Lavender Fields", "Sakura Garden",
-        "Ember Caves", "Golden Hour", "Midnight", "Aurora"
+        T.k("Harbour"), T.k("Deep Sea"), T.k("Forest"), T.k("Lavender Fields"), T.k("Sakura Garden"),
+        T.k("Ember Caves"), T.k("Golden Hour"), T.k("Midnight"), T.k("Aurora")
     };
     private static final String[] THEMES = {
         "theme.nocturne", "theme.ocean", "theme.forest", "theme.lavender", "theme.sakura",

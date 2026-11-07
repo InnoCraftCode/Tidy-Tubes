@@ -1,5 +1,6 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.GameConfig;
 
 /**
@@ -122,12 +123,12 @@ public final class Difficulty {
     public static String bandName(int level) {
         requireValid(level);
         if (level <= GameConfig.EASY_LAST_LEVEL) {
-            return "WARM UP";
+            return T.k("WARM UP");
         }
         if (level <= GameConfig.MEDIUM_LAST_LEVEL) {
-            return "STEADY";
+            return T.k("STEADY");
         }
-        return "HARD";
+        return T.k("HARD");
     }
 
     private static void requireValid(int level) {

@@ -1,12 +1,14 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
+
 /** Offline achievement definitions, progress and one-time coin rewards. */
 public enum Achievement {
-    FIRST_CLEAR("First clear", "Complete a campaign level", 1, 20),
-    TEN_CLEARS("Getting tidy", "Complete 10 campaign levels", 10, 50),
-    PAR_SOLVER("Par solver", "Finish a campaign level at par", 1, 25),
-    STAR_COLLECTOR("Star collector", "Collect 30 campaign stars", 30, 75),
-    CHALLENGE_WINNER("Challenge accepted", "Win a custom challenge", 1, 35);
+    FIRST_CLEAR(T.k("First clear"), T.k("Complete a campaign level"), 1, 20),
+    TEN_CLEARS(T.k("Getting tidy"), T.k("Complete 10 campaign levels"), 10, 50),
+    PAR_SOLVER(T.k("Par solver"), T.k("Finish a campaign level at par"), 1, 25),
+    STAR_COLLECTOR(T.k("Star collector"), T.k("Collect 30 campaign stars"), 30, 75),
+    CHALLENGE_WINNER(T.k("Challenge accepted"), T.k("Win a custom challenge"), 1, 35);
 
     private final String title;
     private final String description;

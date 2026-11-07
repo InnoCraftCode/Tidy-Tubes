@@ -61,9 +61,72 @@ public final class Ui {
         return button;
     }
 
+    /**
+     * A text button whose caption shrinks (down to {@link #MIN_TEXT_SCALE}) when the cell gives
+     * it less width than the words need, instead of spilling out of the pill and pushing its
+     * card off screen. Translations vary a lot in length ("SHOP" / "BOUTIQUE" / "MAĞAZA").
+     */
+    public static final class FitTextButton extends TextButton {
+        public FitTextButton(String text, Skin skin, String style) {
+            super(text, skin, style);
+        }
+
+        /** May be squeezed: the caption scales down to fit (see {@link #layout()}). */
+        @Override
+        public float getMinWidth() {
+            float pads = getPadLeft() + getPadRight();
+            return pads + (super.getMinWidth() - pads) * MIN_TEXT_SCALE;
+        }
+
+        @Override
+        public void layout() {
+            Label label = getLabel();
+            float available = getWidth() - getPadLeft() - getPadRight();
+            float current = textScale(label);
+            float natural = label.getPrefWidth() / current;
+            float wanted = available <= 0f || natural <= available ? 1f
+                : Math.max(MIN_TEXT_SCALE, available / natural);
+            if (Math.abs(wanted - current) > 0.005f) {
+                setTextScale(label, wanted); // re-lays out once; stable on the next pass
+            }
+            super.layout();
+        }
+    }
+
+    // ------------------------------------------------------------------ text scale
+    //
+    // libGDX's Label.setFontScale is ABSOLUTE: while the label measures and draws, it replaces
+    // the font's own scale. Our fonts are rasterised at the screen density and carry a base
+    // scale of 1/density (0.67 on a 1.5x screen, ~0.36 on a 2.75x phone), so
+    // label.setFontScale(0.8f) made text 2.2x BIGGER on a phone instead of 20 % smaller. Always
+    // go through these two: they work relative to the font's base scale.
+
+    /** @return the label's text scale relative to its font's normal size (1 = unchanged) */
+    public static float textScale(Label label) {
+        float base = label.getStyle().font.getData().scaleX;
+        return label.getFontScaleX() == 1f || base == 0f ? 1f : label.getFontScaleX() / base;
+    }
+
+    /** Draws the label at {@code factor} times its font's normal size (1 = unchanged). */
+    public static void setTextScale(Label label, float factor) {
+        label.setFontScale(label.getStyle().font.getData().scaleX * factor);
+    }
+
+    /** The scale the label really measures and draws with (what Label applies to the font). */
+    public static float effectiveFontScaleX(Label label) {
+        return label.getFontScaleX() == 1f ? label.getStyle().font.getData().scaleX : label.getFontScaleX();
+    }
+
+    public static float effectiveFontScaleY(Label label) {
+        return label.getFontScaleY() == 1f ? label.getStyle().font.getData().scaleY : label.getFontScaleY();
+    }
+
+    /** Smallest caption scale a squeezed button or row may use. */
+    public static final float MIN_TEXT_SCALE = 0.6f;
+
     /** Text button in one of the registered styles, with the style's standard padding. */
     public static TextButton button(Skin skin, String text, String style, Runnable onClick) {
-        TextButton button = new TextButton(text, skin, style);
+        TextButton button = new FitTextButton(text, skin, style);
         switch (style) {
             case "primary":
             case "secondary":
@@ -108,6 +171,33 @@ public final class Ui {
         button.add(stack).pad(12f, 48f, 12f, 48f);
         click(button, onClick);
         return button;
+    }
+
+    /**
+     * Scales down every label under {@code row} (at most to 75 %) until the row's preferred
+     * width fits {@code maxWidth}. For rows of buttons whose words vary in length by language.
+     */
+    public static void shrinkTextToFit(Table row, float maxWidth) {
+        java.util.List<Label> labels = new java.util.ArrayList<>();
+        collectLabels(row, labels);
+        float scale = 1f;
+        for (int pass = 0; pass < 4 && row.getPrefWidth() > maxWidth && scale > 0.75f; pass++) {
+            scale = Math.max(0.75f, scale * maxWidth / row.getPrefWidth());
+            for (Label label : labels) {
+                setTextScale(label, scale);
+            }
+            row.invalidateHierarchy();
+        }
+    }
+
+    private static void collectLabels(Actor actor, java.util.List<Label> out) {
+        if (actor instanceof Label) {
+            out.add((Label) actor);
+        } else if (actor instanceof com.badlogic.gdx.scenes.scene2d.Group) {
+            for (Actor child : ((com.badlogic.gdx.scenes.scene2d.Group) actor).getChildren()) {
+                collectLabels(child, out);
+            }
+        }
     }
 
     public static void click(Actor actor, Runnable onClick) {
@@ -192,7 +282,7 @@ public final class Ui {
         private void apply(boolean animate) {
             Color trackColor = on ? Palette.PRIMARY : Color.valueOf("FFFFFF2A");
             Color knobColor = on ? Palette.ON_PRIMARY : Palette.TEXT_DIM;
-            float knobX = on ? WIDTH - knob.getWidth() - 5f : 5f;
+            float knobX = knobX();
             knob.clearActions();
             track.clearActions();
             if (animate) {
@@ -203,6 +293,22 @@ public final class Ui {
                 knob.setPosition(knobX, 5f);
                 knob.setColor(knobColor);
                 track.setColor(trackColor);
+            }
+        }
+
+        /** Knob at the "end" when on: the right, or the left in a right-to-left language. */
+        private float knobX() {
+            boolean atRight = on != com.ben.laama.sortpuzzle.i18n.T.rtl();
+            return atRight ? WIDTH - knob.getWidth() - 5f : 5f;
+        }
+
+        /** Re-asserts the resting geometry on every layout pass (rotation, RTL mirroring). */
+        @Override
+        public void layout() {
+            super.layout();
+            track.setBounds(0f, 0f, WIDTH, HEIGHT);
+            if (!knob.hasActions()) {
+                knob.setPosition(knobX(), 5f);
             }
         }
 

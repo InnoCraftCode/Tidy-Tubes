@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import com.ben.laama.sortpuzzle.GameConfig;
+import com.ben.laama.sortpuzzle.i18n.T;
 
 import java.nio.ByteBuffer;
 
@@ -125,9 +126,9 @@ public final class ShareCard {
         }
         root.add(stars).padTop(26f).row();
 
-        String detail = result.perfect ? "Perfect  •  " + result.moves + " moves"
-            : result.moves + " moves"
-                + (result.parMoves > 0 ? "  •  best possible " + result.parMoves : "");
+        String detail = result.perfect ? T.f("Perfect  •  {0} moves", result.moves)
+            : result.parMoves > 0 ? T.f("{0} moves  •  best possible {1}", result.moves, result.parMoves)
+            : T.f("{0} moves", result.moves);
         Label detailLabel = new Label(detail, skin, "heading");
         root.add(detailLabel).padTop(14f).row();
 
@@ -135,7 +136,7 @@ public final class ShareCard {
         Label invite = new Label("Can you beat it?", skin, "title");
         invite.setColor(Palette.PRIMARY);
         root.add(invite).row();
-        root.add(new Label("Tidy Tubes  •  free on Google Play", skin, "dim")).padTop(4f).row();
+        root.add(new Label(T.r("Tidy Tubes  •  free on Google Play"), skin, "dim")).padTop(4f).row();
     }
 
     /** The solved board: one full tube per colour, then the spare tubes, sized to fit. */

@@ -54,7 +54,7 @@ public final class BreatheOverlay extends Group {
         phase.setAlignment(Align.center);
         cycle = new Label("", skin, "dim");
         cycle.setAlignment(Align.center);
-        hint = new Label("Tap to skip", skin, "caption");
+        hint = new Label(com.ben.laama.sortpuzzle.i18n.T.r("Tap to skip"), skin, "caption");
         hint.setAlignment(Align.center);
         hint.getColor().a = 0.7f;
         addActor(phase);
@@ -92,7 +92,7 @@ public final class BreatheOverlay extends Group {
         }
         if (now != lastPhase) {
             lastPhase = now;
-            phase.setText(now.label());
+            phase.setText(com.ben.laama.sortpuzzle.i18n.T.r(now.label()));
             cycle.setText(Breathing.cycleAt(seconds) + " / " + Breathing.CYCLES);
             phase.clearActions();
             phase.getColor().a = 0.2f;

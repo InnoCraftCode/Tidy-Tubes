@@ -1,5 +1,7 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
+
 /**
  * A short guided breath - "Sort. Breathe. Repeat." made literal. Three cycles of
  * in (4 s), hold (2 s), out (6 s): the 4-2-6 pattern lengthens the exhale, which is what
@@ -8,7 +10,7 @@ package com.ben.laama.sortpuzzle.logic;
 public final class Breathing {
 
     public enum Phase {
-        IN("Breathe in"), HOLD("Hold"), OUT("Breathe out"), DONE("");
+        IN(T.k("Breathe in")), HOLD(T.k("Hold")), OUT(T.k("Breathe out")), DONE("");
 
         private final String label;
 

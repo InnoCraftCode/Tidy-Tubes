@@ -23,6 +23,10 @@ Adapted from Claude Code Game Studios (MIT, see `.claude/THIRD_PARTY.md`) for th
 - Fixed widths (500, 640, ...) are fine for a column, but a column must fit the smallest
   world in its orientation: 720 wide in portrait, 800 high in landscape. Anything taller
   scrolls (`ScrollPane`) or uses `Ui.dialog`, which scales itself to fit.
+- **Never call `Label.setFontScale` directly.** It is absolute in libGDX and replaces the
+  font's 1/density base scale, so "shrink to 0.8" draws text 2x bigger on a phone. Use
+  `Ui.setTextScale(label, factor)` / `Ui.textScale(label)` (relative). Long names in fixed-width
+  cells get `setEllipsis(true)` plus `minWidth(0)` on their cell, never an unbounded `expandX`.
 - Touch targets are at least 64 world units (about 48 dp). Text is never below the `small`
   style (17 units).
 - Never convey state by colour alone: pair it with an icon, a label or a shape

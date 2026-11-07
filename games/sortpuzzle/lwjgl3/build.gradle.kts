@@ -59,6 +59,7 @@ tasks.named<JavaExec>("run") {
  *   gradlew :lwjgl3:storeCapture -PcaptureDevice=tablet-7 -PcaptureSize=1200x1920   -> .../screenshots/tablet-7/
  *   gradlew :lwjgl3:storeCapture -PcaptureDevice=tablet-10 -PcaptureSize=1600x2560  -> .../screenshots/tablet-10/
  *   gradlew :lwjgl3:storeCapture -PcaptureMode=video               -> build/capture/frames/ (then make-promo-video.ps1)
+ *   gradlew :lwjgl3:storeCapture -PcaptureMode=trailer             -> build/capture/trailer/<scene>/ (then make-trailer.ps1)
  */
 tasks.register<JavaExec>("storeCapture") {
     group = "distribution"
@@ -75,10 +76,13 @@ tasks.register<JavaExec>("storeCapture") {
         file(customOut)
     } else if (mode == "video") {
         layout.buildDirectory.dir("capture/frames").get().asFile
+    } else if (mode == "trailer") {
+        layout.buildDirectory.dir("capture/trailer").get().asFile
     } else {
         rootProject.file("../../play-store/sortpuzzle/screenshots/$device")
     }
     args(mode, out.absolutePath, layout.buildDirectory.dir("capture/prefs").get().asFile.absolutePath, size)
+    systemProperty("capture.lang", providers.gradleProperty("captureLang").getOrElse("en"))
     if (System.getProperty("os.name").lowercase().contains("mac")) {
         jvmArgs("-XstartOnFirstThread")
     }

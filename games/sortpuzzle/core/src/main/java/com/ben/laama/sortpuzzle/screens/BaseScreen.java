@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.RtlMirror;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 
 import com.ben.laama.sortpuzzle.Main;
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.logic.Cosmetic;
 import com.ben.laama.sortpuzzle.ui.AnimatedBackground;
 import com.ben.laama.sortpuzzle.ui.Cosmetics;
@@ -97,6 +99,11 @@ public abstract class BaseScreen extends ScreenAdapter {
         });
     }
 
+    /** @return {@code true} when this screen was built with {@code current} (not a retired skin) */
+    public boolean usesSkin(Skin current) {
+        return skin == current;
+    }
+
     /** Called on ESC (desktop) or the hardware back button (Android). */
     protected void onBackPressed() {
         game.goHome();
@@ -158,6 +165,10 @@ public abstract class BaseScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         // Clamp so a stalled frame never teleports animations.
         stage.act(Math.min(delta, 1f / 30f));
+        if (T.rtl()) {
+            // Right-to-left language: mirror whatever was built or rebuilt since last frame.
+            RtlMirror.apply(stage.getRoot());
+        }
         stage.draw();
     }
 

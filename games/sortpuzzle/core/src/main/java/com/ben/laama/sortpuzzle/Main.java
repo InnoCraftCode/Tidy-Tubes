@@ -37,8 +37,13 @@ import com.ben.laama.sortpuzzle.ui.Cosmetics;
 import com.ben.laama.sortpuzzle.ui.SkinFactory;
 import com.ben.laama.sortpuzzle.ui.TubeTextures;
 
+import com.ben.laama.sortpuzzle.i18n.Language;
+import com.ben.laama.sortpuzzle.screens.LanguageScreen;
+import com.ben.laama.sortpuzzle.ui.Locales;
+
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Locale;
 
 /**
  * Application entry point and screen router.
@@ -109,9 +114,13 @@ public final class Main extends Game {
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_INFO);
         batch = new SpriteBatch();
+        save = SaveData.load();
+        // Before the skin: the fonts carry the glyphs of the language in use. Until the player
+        // picks one, the device's language (when the game has it) dresses the picker.
+        Language chosen = Language.fromCode(save.language);
+        Locales.install(chosen != null ? chosen : Language.forLocale(Locale.getDefault()));
         skin = SkinFactory.create();
         tubes = new TubeTextures();
-        save = SaveData.load();
         save.countSession();
         // The player is here: whatever was scheduled is now stale, and shown ones are noise.
         reminders.cancelAll();
@@ -125,9 +134,38 @@ public final class Main extends Game {
                 syncLeaderboards();
             }
         });
-        setScreen(save.musicTrack < 0
-            ? new MusicSelectionScreen(this, true)
-            : new SplashScreen(this));
+        setScreen(chosen == null ? new LanguageScreen(this, true) : firstLaunchNext());
+    }
+
+    /** After the language step: the music picker on a first launch, else the splash. */
+    private Screen firstLaunchNext() {
+        return save.musicTrack < 0 ? new MusicSelectionScreen(this, true) : new SplashScreen(this);
+    }
+
+    /** Skin replaced by a language change, disposed once the screen using it is gone. */
+    private Skin retiredSkin;
+
+    /**
+     * Switches the interface language: stores it, loads its texts, rebuilds the skin (fonts
+     * carry the script's glyphs; right-to-left flips the arrows) and reopens the screen it was
+     * picked from in the new language.
+     *
+     * @param firstLaunch {@code true} from the first-launch picker, which continues onboarding
+     */
+    public void changeLanguage(Language language, boolean firstLaunch) {
+        save.setLanguage(language);
+        Locales.install(language);
+        if (retiredSkin != null && retiredSkin != skin) {
+            retiredSkin.dispose(); // two changes within one transition
+        }
+        retiredSkin = skin;
+        skin = SkinFactory.create();
+        Cosmetics.apply(skin, tubes, save);
+        switchTo(firstLaunch ? firstLaunchNext() : new SettingsScreen(this));
+    }
+
+    public void goLanguage() {
+        switchTo(new LanguageScreen(this, false));
     }
 
     // ------------------------------------------------------------- services
@@ -340,6 +378,11 @@ public final class Main extends Game {
             if (previous != null) {
                 previous.dispose();
             }
+            if (retiredSkin != null && next instanceof BaseScreen
+                && ((BaseScreen) next).usesSkin(skin)) {
+                retiredSkin.dispose();
+                retiredSkin = null;
+            }
         });
     }
 
@@ -353,6 +396,7 @@ public final class Main extends Game {
         if (sound != null) sound.dispose();
         if (tubes != null) tubes.dispose();
         if (skin != null) skin.dispose();
+        if (retiredSkin != null) retiredSkin.dispose();
         if (batch != null) batch.dispose();
         ads.dispose();
         super.dispose();

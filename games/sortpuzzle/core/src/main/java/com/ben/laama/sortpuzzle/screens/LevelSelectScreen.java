@@ -18,6 +18,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 import com.ben.laama.sortpuzzle.Main;
+import com.ben.laama.sortpuzzle.i18n.Names;
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.audio.SoundManager;
 import com.ben.laama.sortpuzzle.logic.Cosmetic;
 import com.ben.laama.sortpuzzle.logic.Difficulty;
@@ -101,9 +103,9 @@ public final class LevelSelectScreen extends BaseScreen {
         header.pad(24f, 26f, 8f, 26f);
         header.add(Ui.iconButton(skin, "icon-back", game::goHome)).size(Ui.ICON_BUTTON).left();
         Table titles = new Table();
-        titles.add(new Label("World", skin, "title")).row();
+        titles.add(new Label(T.r("World"), skin, "title")).row();
         World.Biome here = World.biomeFor(save.currentLevel);
-        titles.add(new Label(here.name + "  •  " + save.completedCount() + " levels cleared",
+        titles.add(new Label(T.f("{0}  •  {1} levels cleared", Names.name(here.name), save.completedCount()),
             skin, "caption")).padTop(-2f);
         header.add(titles).expandX();
         header.add().size(Ui.ICON_BUTTON);
@@ -158,15 +160,15 @@ public final class LevelSelectScreen extends BaseScreen {
         Table titleRow = new Table();
         titleRow.pad(14f, 22f, 12f, 22f);
         Table names = new Table();
-        Label chapterLabel = new Label("CHAPTER " + biome.chapter + "  •  LEVELS "
-            + biome.firstLevel + "–" + biome.lastLevel, skin, "small");
+        Label chapterLabel = new Label(T.f("CHAPTER {0}  •  LEVELS {1}–{2}", biome.chapter,
+            biome.firstLevel, biome.lastLevel), skin, "small");
         chapterLabel.setColor(Palette.TEXT_DIM);
         names.add(chapterLabel).left().row();
-        Label name = new Label(biome.name, skin, "heading");
+        Label name = new Label(T.show(Names.name(biome.name)), skin, "heading");
         names.add(name).left().padTop(-2f);
         titleRow.add(names).left().expandX();
-        String state = done ? "COMPLETE" : reached ? Math.round(progress * CHAPTER) + " / " + CHAPTER
-            : "LOCKED";
+        String state = done ? T.r("COMPLETE") : reached ? Math.round(progress * CHAPTER) + " / " + CHAPTER
+            : T.r("LOCKED");
         Label stateLabel = new Label(state, skin, "small");
         stateLabel.setColor(done ? Palette.SUCCESS : reached ? Palette.PRIMARY : Palette.TEXT_DIM);
         if (!reached) {
@@ -191,8 +193,8 @@ public final class LevelSelectScreen extends BaseScreen {
         // Colours line: what this chapter asks for.
         int first = Difficulty.colorsFor(biome.firstLevel);
         int last = Difficulty.colorsFor(biome.lastLevel);
-        String colours = first == last ? first + " colours" : first + "–" + last + " colours";
-        card.add(new Label(colours + "  •  " + Difficulty.bandName(biome.firstLevel), skin, "caption"))
+        String colours = first == last ? T.rawf("{0} colours", first) : T.rawf("{0}–{1} colours", first, last);
+        card.add(new Label(T.f("{0}  •  {1}", colours, T.raw(Difficulty.bandName(biome.firstLevel))), skin, "caption"))
             .left().padLeft(22f).padTop(10f).row();
 
         // The tiles.
@@ -209,8 +211,8 @@ public final class LevelSelectScreen extends BaseScreen {
             Table line = new Table();
             line.add(new Image(skin.newDrawable(done ? "icon-check" : "icon-grid",
                 done ? Palette.SUCCESS : Palette.GOLD))).size(20f).padRight(8f);
-            Label text = new Label((done ? "Unlocked: " : "Clear to unlock: ") + reward.displayName()
-                + "  •  " + reward.category().title(), skin, "caption");
+            Label text = new Label(T.f(done ? T.k("Unlocked: {0}  •  {1}") : T.k("Clear to unlock: {0}  •  {1}"),
+                Names.name(reward.displayName()), T.raw(reward.category().title())), skin, "caption");
             text.setColor(done ? Palette.TEXT_DIM : Palette.GOLD);
             line.add(text);
             card.add(line).left().padLeft(22f).padTop(6f).row();
@@ -276,8 +278,8 @@ public final class LevelSelectScreen extends BaseScreen {
                 }
                 content.add(row).padTop(-2f);
             } else {
-                String caption = completed ? save.bestMovesFor(level) + " mv"
-                    : current ? "next" : Difficulty.colorsFor(level) + " col";
+                String caption = completed ? T.f("{0} mv", save.bestMovesFor(level))
+                    : current ? T.r("next") : T.f("{0} col", Difficulty.colorsFor(level));
                 Label sub = new Label(caption,
                     new Label.LabelStyle(skin.getFont("small"), textStyle.fontColor));
                 sub.getColor().a = 0.8f;

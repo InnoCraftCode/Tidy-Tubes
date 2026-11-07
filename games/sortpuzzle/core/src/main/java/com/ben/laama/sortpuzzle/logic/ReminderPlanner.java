@@ -1,5 +1,6 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.notify.Reminder;
 import com.ben.laama.sortpuzzle.notify.Reminders;
 
@@ -100,40 +101,41 @@ public final class ReminderPlanner {
      */
     static String[] text(int index, int level, boolean dailyOpen, boolean dailyStarted,
                          boolean streakAlive, int streak) {
+        // Notification text: logical order (Android shapes and lays out right-to-left itself).
         if (index == 0) {
             if (dailyStarted) {
-                return new String[] {"Almost there!",
-                    "You started today's puzzle. A few more moves and it's solved."};
+                return new String[] {T.raw("Almost there!"),
+                    T.raw("You started today's puzzle. A few more moves and it's solved.")};
             }
-            return new String[] {"Level " + level + " is waiting",
-                "Your tubes are right where you left them. One more?"};
+            return new String[] {T.rawf("Level {0} is waiting", level),
+                T.raw("Your tubes are right where you left them. One more?")};
         }
         if (streakAlive) {
-            return new String[] {"Keep your " + streak + "-day streak",
-                "Today's puzzle is ready. Solve it to make it " + (streak + 1) + " days in a row."};
+            return new String[] {T.rawf("Keep your {0}-day streak", streak),
+                T.rawf("Today's puzzle is ready. Solve it to make it {0} days in a row.", streak + 1)};
         }
         switch ((index - 1) % 5) {
             case 0:
                 return dailyOpen
-                    ? new String[] {"Today's puzzle is ready",
-                        "A fresh board, the same one for everyone today. Give it a minute."}
-                    : new String[] {"A calm minute?",
-                        "Sort a few tubes, breathe out. Level " + level + " is waiting."};
+                    ? new String[] {T.raw("Today's puzzle is ready"),
+                        T.raw("A fresh board, the same one for everyone today. Give it a minute.")}
+                    : new String[] {T.raw("A calm minute?"),
+                        T.rawf("Sort a few tubes, breathe out. Level {0} is waiting.", level)};
             case 1:
-                return new String[] {"Can you beat your best?",
-                    "Level " + level + " in fewer moves: the solver says it's possible."};
+                return new String[] {T.raw("Can you beat your best?"),
+                    T.rawf("Level {0} in fewer moves: the solver says it's possible.", level)};
             case 2:
-                return new String[] {"Your tubes miss you",
-                    "Coins are waiting to be earned, and new styles to unlock in the shop."};
+                return new String[] {T.raw("Your tubes miss you"),
+                    T.raw("Coins are waiting to be earned, and new styles to unlock in the shop.")};
             case 3:
                 return dailyOpen
-                    ? new String[] {"Still time for today's puzzle",
-                        "Win it before midnight (UTC) to keep your streak going."}
-                    : new String[] {"Three colours, then ten",
-                        "Level " + level + " is the next step. Short, calm, satisfying."};
+                    ? new String[] {T.raw("Still time for today's puzzle"),
+                        T.raw("Win it before midnight (UTC) to keep your streak going.")}
+                    : new String[] {T.raw("Three colours, then ten"),
+                        T.rawf("Level {0} is the next step. Short, calm, satisfying.", level)};
             default:
-                return new String[] {"One level before you go on",
-                    "Sort. Breathe. Repeat. Level " + level + " takes about a minute."};
+                return new String[] {T.raw("One level before you go on"),
+                    T.rawf("Sort. Breathe. Repeat. Level {0} takes about a minute.", level)};
         }
     }
 }

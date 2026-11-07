@@ -43,7 +43,7 @@ public final class SplashScreen extends BaseScreen {
             Actions.scaleTo(1f, 1f, 0.55f, Interpolation.swingOut)));
 
         Label title = new Label(GameConfig.APP_NAME, skin, "display");
-        Label tagline = new Label(GameConfig.TAGLINE, skin, "dim");
+        Label tagline = new Label(com.ben.laama.sortpuzzle.i18n.T.r(GameConfig.TAGLINE), skin, "dim");
         title.getColor().a = 0f;
         tagline.getColor().a = 0f;
         title.addAction(Actions.delay(0.35f, Actions.fadeIn(0.4f, Interpolation.fade)));

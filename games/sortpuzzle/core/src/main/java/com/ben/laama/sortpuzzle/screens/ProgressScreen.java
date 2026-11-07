@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import com.ben.laama.sortpuzzle.GameConfig;
 import com.ben.laama.sortpuzzle.Main;
+import com.ben.laama.sortpuzzle.i18n.Names;
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.audio.SoundManager;
 import com.ben.laama.sortpuzzle.logic.Achievement;
 import com.ben.laama.sortpuzzle.logic.ChallengeRules;
@@ -45,7 +47,7 @@ public final class ProgressScreen extends BaseScreen {
         Table header = new Table();
         header.pad(20f, 26f, 8f, 26f);
         header.add(Ui.iconButton(skin, "icon-back", game::goHome)).size(Ui.ICON_BUTTON).left();
-        header.add(new Label("Goals & challenges", skin, "title")).expandX();
+        header.add(new Label(T.r("Goals & challenges"), skin, "title")).expandX();
         header.add().size(Ui.ICON_BUTTON);
         root.add(header).growX().row();
 
@@ -60,16 +62,16 @@ public final class ProgressScreen extends BaseScreen {
         }
 
         Table challenge = Ui.card(skin);
-        challenge.add(new Label("BUILD YOUR CHALLENGE", skin, "heading")).left().row();
+        challenge.add(new Label(T.r("BUILD YOUR CHALLENGE"), skin, "heading")).left().row();
         challenge.add(Ui.paragraph(skin,
-            "Choose any combination. The challenge uses your current campaign level and never "
-                + "takes away campaign progress.", "caption", 520f))
+            T.r("Choose any combination. The challenge uses your current campaign level and never "
+                + "takes away campaign progress."), "caption", 520f))
             .width(520f).left().padTop(6f).row();
-        noUndo = challengeToggle(challenge, "No undo");
-        noHints = challengeToggle(challenge, "No hints");
-        noBoosters = challengeToggle(challenge, "No extra tubes");
-        parLimit = challengeToggle(challenge, "Par move limit");
-        startChallenge = Ui.button(skin, "CHOOSE A RULE TO START", "primary",
+        noUndo = challengeToggle(challenge, T.r("No undo"));
+        noHints = challengeToggle(challenge, T.r("No hints"));
+        noBoosters = challengeToggle(challenge, T.r("No extra tubes"));
+        parLimit = challengeToggle(challenge, T.r("Par move limit"));
+        startChallenge = Ui.button(skin, T.r("CHOOSE A RULE TO START"), "primary",
             this::startChallenge);
         startChallenge.setDisabled(true);
         challenge.add(startChallenge).growX().height(72f).padTop(10f).row();
@@ -88,7 +90,7 @@ public final class ProgressScreen extends BaseScreen {
     private Table leaderboardCard() {
         GameServices services = game.services();
         Table card = Ui.card(skin);
-        card.add(new Label("LEADERBOARDS", skin, "heading")).left().row();
+        card.add(new Label(T.r("LEADERBOARDS"), skin, "heading")).left().row();
         Label status = new Label("", skin, "caption");
         status.setWrap(true);
         card.add(status).width(520f).left().padTop(6f).row();
@@ -108,13 +110,13 @@ public final class ProgressScreen extends BaseScreen {
         GameServices services = game.services();
         if (services.isSignedIn()) {
             String name = services.playerName();
-            status.setText(name.isEmpty() ? "Signed in to Google Play Games."
-                : "Signed in as " + name + ".");
-            open.setText("VIEW LEADERBOARDS");
+            status.setText(name.isEmpty() ? T.r("Signed in to Google Play Games.")
+                : T.f("Signed in as {0}.", name));
+            open.setText(T.r("VIEW LEADERBOARDS"));
         } else {
-            status.setText("Compare your level, stars and daily moves with other players. "
-                + "Sign-in is optional and uses your Google Play Games profile.");
-            open.setText("SIGN IN WITH PLAY GAMES");
+            status.setText(T.r("Compare your level, stars and daily moves with other players. "
+                + "Sign-in is optional and uses your Google Play Games profile."));
+            open.setText(T.r("SIGN IN WITH PLAY GAMES"));
         }
     }
 
@@ -135,7 +137,7 @@ public final class ProgressScreen extends BaseScreen {
                 game.syncLeaderboards();
                 services.showLeaderboards();
             } else {
-                Ui.toast(stage, skin, "Couldn't sign in to Play Games. Try again later.",
+                Ui.toast(stage, skin, T.r("Couldn't sign in to Play Games. Try again later."),
                     Palette.TEXT_DIM);
             }
         });
@@ -143,17 +145,17 @@ public final class ProgressScreen extends BaseScreen {
 
     private Table weeklyCard() {
         Table card = Ui.card(skin);
-        card.add(new Label("THIS WEEK", skin, "heading")).left().row();
-        card.add(new Label("New goals every Monday (UTC)  •  "
-            + GameConfig.WEEKLY_GOAL_REWARD + " coins each", skin, "caption"))
+        card.add(new Label(T.r("THIS WEEK"), skin, "heading")).left().row();
+        card.add(new Label(T.f("New goals every Monday (UTC)  •  {0} coins each",
+            GameConfig.WEEKLY_GOAL_REWARD), skin, "caption"))
             .left().padTop(4f).row();
         for (int goal = 0; goal < WeeklyGoals.GOAL_COUNT; goal++) {
             Table row = new Table();
-            row.add(new Label(WeeklyGoals.title(goal), skin, "label")).left().expandX();
+            row.add(new Label(T.r(WeeklyGoals.title(goal)), skin, "label")).left().expandX();
             boolean done = (save.weeklyClaimedMask & (1 << goal)) != 0;
             String progress = Math.min(save.weeklyProgress(goal), WeeklyGoals.target(goal))
                 + " / " + WeeklyGoals.target(goal);
-            row.add(new Label(done ? "DONE" : progress, skin, done ? "gold" : "caption")).right();
+            row.add(new Label(done ? T.r("DONE") : progress, skin, done ? "gold" : "caption")).right();
             card.add(row).growX().padTop(14f).row();
         }
         return card;
@@ -161,20 +163,20 @@ public final class ProgressScreen extends BaseScreen {
 
     private Table achievementCard() {
         Table card = Ui.card(skin);
-        card.add(new Label("ACHIEVEMENTS", skin, "heading")).left().row();
-        card.add(new Label(save.unlockedAchievementCount() + " / "
-            + Achievement.values().length + " unlocked", skin, "caption"))
+        card.add(new Label(T.r("ACHIEVEMENTS"), skin, "heading")).left().row();
+        card.add(new Label(T.f("{0} / {1} unlocked", save.unlockedAchievementCount(),
+            Achievement.values().length), skin, "caption"))
             .left().padTop(4f).row();
         for (Achievement achievement : Achievement.values()) {
             boolean unlocked = save.isAchievementUnlocked(achievement);
             Table row = new Table();
-            row.add(new Label(achievement.title(), skin, "label")).left().expandX();
+            row.add(new Label(T.r(achievement.title()), skin, "label")).left().expandX();
             int current = Math.min(save.achievementProgress(achievement), achievement.target());
-            row.add(new Label(unlocked ? "UNLOCKED  •  +" + achievement.reward()
+            row.add(new Label(unlocked ? T.f("UNLOCKED  •  +{0}", achievement.reward())
                 : current + " / " + achievement.target(), skin,
                 unlocked ? "gold" : "caption")).right();
             card.add(row).growX().padTop(12f).row();
-            card.add(new Label(achievement.description(), skin, "caption")).left().row();
+            card.add(new Label(T.r(achievement.description()), skin, "caption")).left().row();
         }
         return card;
     }
@@ -187,12 +189,12 @@ public final class ProgressScreen extends BaseScreen {
         int stars = save.totalStars();
         Table card = Ui.card(skin);
         Table head = new Table();
-        head.add(new Label("STAR ROAD", skin, "heading")).left().expandX();
+        head.add(new Label(T.r("STAR ROAD"), skin, "heading")).left().expandX();
         Label total = new Label(String.valueOf(stars), skin, "gold");
         head.add(Ui.chip(skin, "icon-star", Palette.GOLD, total)).right();
         card.add(head).growX().row();
-        card.add(Ui.paragraph(skin, "Every star you earn (1 to 3 per level, best result kept) "
-            + "counts. Replay levels for 3 stars to unlock exclusive skins.", "caption", 520f))
+        card.add(Ui.paragraph(skin, T.r("Every star you earn (1 to 3 per level, best result kept) "
+            + "counts. Replay levels for 3 stars to unlock exclusive skins."), "caption", 520f))
             .width(520f).left().padTop(4f).row();
 
         StarRoad.Milestone next = StarRoad.next(stars);
@@ -205,17 +207,17 @@ public final class ProgressScreen extends BaseScreen {
             fill.setBackground(skin.newDrawable("white", Palette.GOLD));
             bar.add(fill).width(Math.max(4f, 520f * progress)).height(8f).left().expandX();
             card.add(bar).width(520f).height(8f).padTop(14f).row();
-            card.add(new Label((next.stars - stars) + " more to " + next.reward.displayName(),
+            card.add(new Label(T.f("{0} more to {1}", next.stars - stars, Names.name(next.reward.displayName())),
                 skin, "caption")).left().padTop(6f).row();
         } else {
-            card.add(new Label("Road complete: every star skin is yours", skin, "caption"))
+            card.add(new Label(T.r("Road complete: every star skin is yours"), skin, "caption"))
                 .left().padTop(10f).row();
         }
 
         // The road is long (a quarter of the 400 skins): show the last stop reached and the next
         // four, plus the count, rather than a hundred rows.
         int reachedCount = StarRoad.reachedCount(stars);
-        card.add(new Label(reachedCount + " / " + StarRoad.MILESTONES.size() + " star skins unlocked",
+        card.add(new Label(T.f("{0} / {1} star skins unlocked", reachedCount, StarRoad.MILESTONES.size()),
             skin, "label")).left().padTop(12f).row();
         int from = Math.max(0, reachedCount - 1);
         int to = Math.min(StarRoad.MILESTONES.size(), from + 5);
@@ -229,8 +231,8 @@ public final class ProgressScreen extends BaseScreen {
             count.setColor(reached ? Palette.GOLD : Palette.TEXT_DIM);
             need.add(count);
             row.add(need).width(90f).left();
-            Label name = new Label(milestone.reward.displayName() + "  •  "
-                + milestone.reward.category().title(), skin, "label");
+            Label name = new Label(T.f("{0}  •  {1}", Names.name(milestone.reward.displayName()),
+                T.raw(milestone.reward.category().title())), skin, "label");
             name.setColor(reached ? Palette.TEXT : Palette.TEXT_DIM);
             row.add(name).left().expandX();
             row.add(new Image(skin.newDrawable(reached ? "icon-check" : "icon-lock",
@@ -242,21 +244,21 @@ public final class ProgressScreen extends BaseScreen {
 
     private Table cosmeticCard() {
         Table card = Ui.card(skin);
-        card.add(new Label("STYLES", skin, "heading")).left().row();
-        card.add(Ui.paragraph(skin, "Ball colours, finishes, tubes and themes: earn some by "
-            + "playing, buy the rest with coins in the shop.", "caption", 520f))
+        card.add(new Label(T.r("STYLES"), skin, "heading")).left().row();
+        card.add(Ui.paragraph(skin, T.r("Ball colours, finishes, tubes and themes: earn some by "
+            + "playing, buy the rest with coins in the shop."), "caption", 520f))
             .width(520f).left().padTop(4f).row();
         Table owned = new Table();
-        owned.add(new Label(Shop.ownedCount(save) + " / " + Cosmetic.ALL.size() + " owned",
+        owned.add(new Label(T.f("{0} / {1} owned", Shop.ownedCount(save), Cosmetic.ALL.size()),
             skin, "label")).left().expandX();
-        owned.add(Ui.button(skin, "OPEN SHOP", "gold", () -> {
+        owned.add(Ui.button(skin, T.r("OPEN SHOP"), "gold", () -> {
             game.sound().play(SoundManager.Cue.BUTTON);
             game.goShop();
-        })).width(150f).right();
+        })).minWidth(150f).right();
         card.add(owned).growX().padTop(10f).row();
         card.add(Ui.divider(skin)).height(2f).growX().padTop(14f).padBottom(12f).row();
         Table labels = new Table();
-        labels.add(new Label("Number labels on balls", skin, "label")).left().expandX();
+        labels.add(new Label(T.r("Number labels on balls"), skin, "label")).left().expandX();
         labels.add(new Ui.Toggle(skin, save.colorLabels, save::setColorLabels)).right();
         card.add(labels).growX();
         return card;
@@ -274,7 +276,7 @@ public final class ProgressScreen extends BaseScreen {
     private void refreshChallengeButton() {
         boolean selected = noUndo.isOn() || noHints.isOn() || noBoosters.isOn() || parLimit.isOn();
         startChallenge.setDisabled(!selected);
-        startChallenge.setText(selected ? "START  •  " + game.save().currentLevel : "CHOOSE A RULE TO START");
+        startChallenge.setText(selected ? T.f("START  •  {0}", game.save().currentLevel) : T.r("CHOOSE A RULE TO START"));
     }
 
     private void startChallenge() {

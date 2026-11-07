@@ -1,5 +1,6 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,8 +36,8 @@ final class CatalogueGenerator {
     static final double MIN_BALL_ON_BACKDROP = 60.0;
 
     private static final String[] HUE_NAMES = {
-        "Ruby", "Amber", "Honey", "Lime", "Jade", "Mint",
-        "Teal", "Azure", "Indigo", "Violet", "Orchid", "Rose"};
+        T.k("Ruby"), T.k("Amber"), T.k("Honey"), T.k("Lime"), T.k("Jade"), T.k("Mint"),
+        T.k("Teal"), T.k("Azure"), T.k("Indigo"), T.k("Violet"), T.k("Orchid"), T.k("Rose")};
 
     private CatalogueGenerator() {
     }
@@ -137,12 +138,12 @@ final class CatalogueGenerator {
 
     // ------------------------------------------------------------------ palettes
     private static final float[] PALETTE_HUES = {0f, 28f, 52f, 120f, 172f, 205f, 262f, 315f};
-    private static final String[] PALETTE_FAMILIES = {"Vivid", "Soft", "Jewel", "Pastel", "Neon", "Sunny"};
+    private static final String[] PALETTE_FAMILIES = {T.k("Vivid"), T.k("Soft"), T.k("Jewel"), T.k("Pastel"), T.k("Neon"), T.k("Sunny")};
     private static final float[][] PALETTE_SV = {
         {0.85f, 1.00f}, {0.58f, 1.00f}, {0.80f, 0.86f}, {0.45f, 1.00f}, {1.00f, 1.00f}, {0.72f, 0.96f}};
     private static final String[] PALETTE_NOUNS = {
-        "Pop", "Bloom", "Splash", "Burst", "Drops", "Mix", "Glow", "Beads", "Gems", "Sweets",
-        "Fizz", "Petals", "Prism", "Confetti", "Marbles", "Lights"};
+        T.k("Pop"), T.k("Bloom"), T.k("Splash"), T.k("Burst"), T.k("Drops"), T.k("Mix"), T.k("Glow"), T.k("Beads"), T.k("Gems"), T.k("Sweets"),
+        T.k("Fizz"), T.k("Petals"), T.k("Prism"), T.k("Confetti"), T.k("Marbles"), T.k("Lights")};
 
     private static String paletteName(int j) {
         return PALETTE_FAMILIES[j % PALETTE_FAMILIES.length] + " "
@@ -151,12 +152,12 @@ final class CatalogueGenerator {
 
     private static String paletteDescription(int j) {
         switch (j % PALETTE_FAMILIES.length) {
-            case 0: return "Ten bold, saturated colours";
-            case 1: return "Ten gentle, airy colours";
-            case 2: return "Ten deep jewel tones";
-            case 3: return "Ten pale pastel colours";
-            case 4: return "Ten electric neon colours";
-            default: return "Ten warm, sunlit colours";
+            case 0: return T.k("Ten bold, saturated colours");
+            case 1: return T.k("Ten gentle, airy colours");
+            case 2: return T.k("Ten deep jewel tones");
+            case 3: return T.k("Ten pale pastel colours");
+            case 4: return T.k("Ten electric neon colours");
+            default: return T.k("Ten warm, sunlit colours");
         }
     }
 
@@ -197,13 +198,13 @@ final class CatalogueGenerator {
     // ------------------------------------------------------------------ finishes
     private static final String[] FINISH_BASES = {
         "finish.glossy", "finish.matte", "finish.glass", "finish.gem", "finish.jelly", "finish.chrome"};
-    private static final String[] FINISH_BASE_NAMES = {"Glossy", "Matte", "Glass", "Gem", "Jelly", "Chrome"};
+    private static final String[] FINISH_BASE_NAMES = {T.k("Glossy"), T.k("Matte"), T.k("Glass"), T.k("Gem"), T.k("Jelly"), T.k("Chrome")};
     private static final Cosmetic.Pattern[] PATTERNS = {
         Cosmetic.Pattern.BANDS, Cosmetic.Pattern.STRIPES, Cosmetic.Pattern.RING, Cosmetic.Pattern.DOTS,
         Cosmetic.Pattern.SWIRL, Cosmetic.Pattern.DUO, Cosmetic.Pattern.CHECKER, Cosmetic.Pattern.SPARKLE};
     private static final String[] PATTERN_PHRASES = {
-        "soft bands", "diagonal stripes", "a billiard ring", "polka dots", "a swirl",
-        "two tones", "a checker pattern", "sparkles"};
+        T.k("soft bands"), T.k("diagonal stripes"), T.k("a billiard ring"), T.k("polka dots"), T.k("a swirl"),
+        T.k("two tones"), T.k("a checker pattern"), T.k("sparkles")};
     private static final int[][] PATTERN_COUNTS ={{3, 5}, {4, 6}, {1, 2}, {3, 4}, {3, 5}, {1, 2}, {3, 4}, {10, 18}};
 
     private static Cosmetic finish(String id, int j, int price, Cosmetic.Unlock unlock, int need,
@@ -221,7 +222,7 @@ final class CatalogueGenerator {
     }
 
     // --------------------------------------------------------------------- tubes
-    private static final String[] TUBE_FAMILIES = {"Tint", "Neon", "Smoke", "Frost", "Halo"};
+    private static final String[] TUBE_FAMILIES = {T.k("Tint"), T.k("Neon"), T.k("Smoke"), T.k("Frost"), T.k("Halo")};
 
     private static Cosmetic tube(String id, int j, int price, Cosmetic.Unlock unlock, int need,
                                  Set<String> names) {
@@ -234,23 +235,23 @@ final class CatalogueGenerator {
         switch (family) {
             case 0:
                 body = hsv(hue, 0.5f, 1f) + "20"; rim = hsv(hue, 0.6f, 1f) + "E6"; thickness = 3f;
-                description = "Tinted glass, matching rim";
+                description = T.k("Tinted glass, matching rim");
                 break;
             case 1:
                 body = "FFFFFF12"; rim = hsv(hue, 0.85f, 1f) + "F2"; thickness = 4.2f;
-                description = "Clear glass, glowing rim";
+                description = T.k("Clear glass, glowing rim");
                 break;
             case 2:
                 body = "00000040"; rim = hsv(hue, 0.35f, 1f) + "D0"; thickness = 3f;
-                description = "Smoked glass, coloured edge";
+                description = T.k("Smoked glass, coloured edge");
                 break;
             case 3:
                 body = hsv(hue, 0.2f, 1f) + "30"; rim = hsv(hue, 0.25f, 1f) + "70"; thickness = 2.4f;
-                description = "Frosted glass, soft edge";
+                description = T.k("Frosted glass, soft edge");
                 break;
             default:
                 body = hsv(hue, 0.6f, 1f) + "16"; rim = hsv(hue, 0.5f, 1f) + "F0"; thickness = 5f;
-                description = "Bold halo rim";
+                description = T.k("Bold halo rim");
                 break;
         }
         String name = hueName(hue) + " " + TUBE_FAMILIES[family];
@@ -259,13 +260,13 @@ final class CatalogueGenerator {
     }
 
     // -------------------------------------------------------------------- themes
-    private static final String[] THEME_FAMILIES = {"Dusk", "Deep", "Mist", "Ink"};
+    private static final String[] THEME_FAMILIES = {T.k("Dusk"), T.k("Deep"), T.k("Mist"), T.k("Ink")};
     private static final float[][] THEME_SV = {
         {0.55f, 0.32f, 0.10f}, {0.75f, 0.26f, 0.07f}, {0.32f, 0.30f, 0.10f}, {0.45f, 0.18f, 0.05f}};
     private static final String[] PLACES = {
-        "Harbor", "Canyon", "Lagoon", "Tundra", "Meadow", "Glacier", "Orchard", "Dune",
-        "Reef", "Grove", "Summit", "Valley", "Delta", "Fjord", "Prairie", "Atoll",
-        "Bayou", "Mesa", "Steppe", "Marsh", "Cove", "Ridge", "Isle", "Haven"};
+        T.k("Harbor"), T.k("Canyon"), T.k("Lagoon"), T.k("Tundra"), T.k("Meadow"), T.k("Glacier"), T.k("Orchard"), T.k("Dune"),
+        T.k("Reef"), T.k("Grove"), T.k("Summit"), T.k("Valley"), T.k("Delta"), T.k("Fjord"), T.k("Prairie"), T.k("Atoll"),
+        T.k("Bayou"), T.k("Mesa"), T.k("Steppe"), T.k("Marsh"), T.k("Cove"), T.k("Ridge"), T.k("Isle"), T.k("Haven")};
 
     private static Cosmetic theme(String id, int j, int price, Cosmetic.Unlock unlock, int need,
                                   Set<String> names, List<String[]> palettes) {

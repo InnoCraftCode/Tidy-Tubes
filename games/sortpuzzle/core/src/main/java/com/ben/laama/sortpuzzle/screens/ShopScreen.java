@@ -24,6 +24,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ObjectMap;
 
 import com.ben.laama.sortpuzzle.Main;
+import com.ben.laama.sortpuzzle.i18n.Names;
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.audio.SoundManager;
 import com.ben.laama.sortpuzzle.logic.Cosmetic;
 import com.ben.laama.sortpuzzle.logic.Shop;
@@ -103,8 +105,8 @@ public final class ShopScreen extends BaseScreen {
         Table header = new Table();
         header.add(Ui.iconButton(skin, "icon-back", this::goBack)).size(Ui.ICON_BUTTON).left();
         Table titles = new Table();
-        titles.add(new Label("Shop", skin, "title")).row();
-        titles.add(new Label("Styles are looks only  •  Tubes+ help you play", skin, "caption"))
+        titles.add(new Label(T.r("Shop"), skin, "title")).row();
+        titles.add(new Label(T.r("Styles are looks only  •  Tubes+ help you play"), skin, "caption"))
             .padTop(-2f);
         header.add(titles).expandX();
         coinsLabel = new Label(String.valueOf(save.coins), skin, "gold");
@@ -139,7 +141,13 @@ public final class ShopScreen extends BaseScreen {
             final Cosmetic.Category category = boosters ? null : categories[i];
             Table segment = new Table();
             segment.setTouchable(Touchable.enabled);
-            Label label = new Label(boosters ? "TUBES+" : category.title().toUpperCase(), skin, "label");
+            Label label = new Label(boosters ? T.r("TUBES+") : T.show(T.raw(category.title()).toUpperCase(new java.util.Locale(T.language().code))), skin, "label");
+            // Five equal segments: a long word ("OBERFLÄCHE") shrinks to fit its pill.
+            float segmentWidth = (CONTENT_WIDTH - 10f) / (BOOSTERS_TAB + 1);
+            float room = segmentWidth - 16f;
+            if (label.getPrefWidth() > room) {
+                Ui.setTextScale(label, Math.max(0.7f, room / label.getPrefWidth()));
+            }
             segment.add(label);
             segment.addListener(new ClickListener() {
                 @Override
@@ -175,7 +183,7 @@ public final class ShopScreen extends BaseScreen {
             Table chip = new Table();
             chip.setTouchable(Touchable.enabled);
             chip.pad(0f, 14f, 0f, 14f);
-            Label label = new Label(value.label(), skin, "small");
+            Label label = new Label(T.r(value.label()), skin, "small");
             chip.add(label);
             chip.addListener(new ClickListener() {
                 @Override
@@ -240,8 +248,8 @@ public final class ShopScreen extends BaseScreen {
             if (Shop.isOwned(save, item)) owned++;
         }
         List<Cosmetic> items = Shop.filter(save, all, filter);
-        sectionTitle.setText(sectionName(tab));
-        sectionCount.setText(owned + " / " + all.size() + " owned");
+        sectionTitle.setText(T.r(sectionName(tab)));
+        sectionCount.setText(T.f("{0} / {1} owned", owned, all.size()));
 
         grid.clearChildren();
         for (int i = 0; i < items.size(); i++) {
@@ -257,9 +265,9 @@ public final class ShopScreen extends BaseScreen {
             if (i % 2 == 1) grid.row();
         }
         if (items.isEmpty()) {
-            String empty = filter == Shop.Filter.OWNED ? "Nothing owned here yet: buy or earn one."
-                : filter == Shop.Filter.COINS ? "You own every item coins can buy here."
-                : "Every reward of this tab is already yours.";
+            String empty = filter == Shop.Filter.OWNED ? T.r("Nothing owned here yet: buy or earn one.")
+                : filter == Shop.Filter.COINS ? T.r("You own every item coins can buy here.")
+                : T.r("Every reward of this tab is already yours.");
             grid.add(new Label(empty, skin, "caption")).colspan(2).width(CONTENT_WIDTH).padTop(30f);
         }
         rebuildPreview();
@@ -268,13 +276,13 @@ public final class ShopScreen extends BaseScreen {
     private static String sectionName(Cosmetic.Category category) {
         switch (category) {
             case BALL_PALETTE:
-                return "Ball colours";
+                return T.k("Ball colours");
             case BALL_FINISH:
-                return "Ball finishes";
+                return T.k("Ball finishes");
             case TUBE:
-                return "Tube styles";
+                return T.k("Tube styles");
             default:
-                return "Themes";
+                return T.k("Themes");
         }
     }
 
@@ -307,28 +315,30 @@ public final class ShopScreen extends BaseScreen {
         card.add(visual(item)).height(92f).growX().row();
 
         // name + state badge
+        // The name gives way to the badge: a long name (or translation) ends in "..." instead of
+        // widening the card past its grid column, which pushed badges onto the next card.
         Table title = new Table();
-        title.add(new Label(item.displayName(), skin, "label")).left().expandX();
+        addCardName(title, T.show(Names.name(item.displayName())));
         if (equipped) {
-            title.add(badge("EQUIPPED", Palette.PRIMARY, Palette.ON_PRIMARY)).right();
+            title.add(badge(T.r("EQUIPPED"), Palette.PRIMARY, Palette.ON_PRIMARY)).right();
         } else if (owned) {
-            title.add(badge("OWNED", Palette.SURFACE_STRONG, Palette.TEXT)).right();
+            title.add(badge(T.r("OWNED"), Palette.SURFACE_STRONG, Palette.TEXT)).right();
         } else if (item.unlock() == Cosmetic.Unlock.STARS) {
             // Star-road reward: the badge says the price in stars, not in coins.
             title.add(starBadge(StarRoad.starsRequired(item))).right();
         } else if (item.unlock() == Cosmetic.Unlock.CHAPTER) {
             // World reward: which chapter of the map gives it.
-            title.add(badge("CH " + item.requirement(), Palette.PRIMARY, Palette.ON_PRIMARY)).right();
+            title.add(badge(T.f("CH {0}", item.requirement()), Palette.PRIMARY, Palette.ON_PRIMARY)).right();
         } else if (!item.isForSale()) {
             Image lock = new Image(skin.newDrawable("icon-lock", Palette.TEXT_DIM));
             title.add(lock).size(22f).right();
         } else if (item.price() >= 1500) {
-            title.add(badge("PRESTIGE", Palette.GOLD, Palette.ON_GOLD)).right();
+            title.add(badge(T.r("PRESTIGE"), Palette.GOLD, Palette.ON_GOLD)).right();
         }
-        card.add(title).growX().padTop(10f).row();
+        card.add(title).width(CARD_WIDTH - 36f).padTop(10f).row();
 
-        Label description = new Label(owned || item.isForSale() ? item.description()
-            : Shop.unlockHint(item), skin, "caption");
+        Label description = new Label(T.show(owned || item.isForSale() ? Names.description(item.description())
+            : Shop.unlockHint(item)), skin, "caption");
         description.setWrap(true);
         card.add(description).width(CARD_WIDTH - 36f).padTop(4f).row();
 
@@ -340,14 +350,14 @@ public final class ShopScreen extends BaseScreen {
             inUse.setBackground(skin.newDrawable("pill", Palette.SURFACE_STRONG));
             Image check = new Image(skin.newDrawable("icon-check", Palette.PRIMARY));
             inUse.add(check).size(22f).padRight(8f);
-            Label inUseLabel = new Label("IN USE", skin, "label");
+            Label inUseLabel = new Label(T.r("IN USE"), skin, "label");
             inUseLabel.setColor(Palette.PRIMARY);
             inUse.add(inUseLabel);
             action = inUse;
         } else if (owned) {
-            action = Ui.button(skin, "EQUIP", "ghost", () -> equip(item));
+            action = Ui.button(skin, T.r("EQUIP"), "ghost", () -> equip(item));
         } else if (item.isForSale()) {
-            Button buy = Ui.iconTextButton(skin, "icon-coin", "BUY  " + item.price(), "gold",
+            Button buy = Ui.iconTextButton(skin, "icon-coin", T.f("BUY  {0}", item.price()), "gold",
                 () -> confirmPurchase(item));
             buy.getColor().a = Shop.canBuy(save, item) ? 1f : 0.55f;
             action = buy;
@@ -357,7 +367,7 @@ public final class ShopScreen extends BaseScreen {
             Table road = new Table();
             road.setBackground(skin.newDrawable("pill", Palette.SURFACE_STRONG));
             road.add(new Image(skin.newDrawable("icon-star", Palette.GOLD))).size(22f).padRight(8f);
-            Label count = new Label(Shop.starProgress(save, item).replace(" stars", ""), skin, "label");
+            Label count = new Label(Shop.starCount(save, item), skin, "label");
             count.setColor(Palette.GOLD);
             road.add(count);
             action = road;
@@ -366,12 +376,12 @@ public final class ShopScreen extends BaseScreen {
             Table world = new Table();
             world.setBackground(skin.newDrawable("pill", Palette.SURFACE_STRONG));
             world.add(new Image(skin.newDrawable("icon-grid", Palette.PRIMARY))).size(22f).padRight(8f);
-            Label chapterLabel = new Label("Chapter " + item.requirement(), skin, "label");
+            Label chapterLabel = new Label(T.f("Chapter {0}", item.requirement()), skin, "label");
             chapterLabel.setColor(Palette.PRIMARY);
             world.add(chapterLabel);
             action = world;
         } else {
-            TextButton locked = Ui.button(skin, "LOCKED", "secondary", () -> { });
+            TextButton locked = Ui.button(skin, T.r("LOCKED"), "secondary", () -> { });
             locked.setDisabled(true);
             action = locked;
         }
@@ -391,6 +401,17 @@ public final class ShopScreen extends BaseScreen {
         });
 
         return card;
+    }
+
+    /**
+     * A card's name, left of its badge. It gives way to the badge: a long name or translation
+     * ends in "..." instead of widening the card past its grid column (badges and buttons then
+     * spilled onto the neighbouring card).
+     */
+    private void addCardName(Table titleRow, String text) {
+        Label name = new Label(text, skin, "label");
+        name.setEllipsis(true);
+        titleRow.add(name).left().expandX().fillX().minWidth(0f).padRight(8f);
     }
 
     private Table badge(String text, Color background, Color textColor) {
@@ -447,10 +468,10 @@ public final class ShopScreen extends BaseScreen {
                 Table legend = new Table();
                 legend.add(new Image(skin.newDrawable("circle", Color.valueOf(item.hex(1)))))
                     .size(22f).padRight(8f);
-                legend.add(new Label("rim", skin, "caption")).row();
+                legend.add(new Label(T.r("rim"), skin, "caption")).row();
                 Image body = new Image(skin.newDrawable("circle", Color.valueOf(item.hex(0))));
                 legend.add(body).size(22f).padRight(8f).padTop(6f);
-                legend.add(new Label("glass", skin, "caption")).padTop(6f);
+                legend.add(new Label(T.r("glass"), skin, "caption")).padTop(6f);
                 zone.add(legend).left();
                 break;
             }
@@ -552,14 +573,14 @@ public final class ShopScreen extends BaseScreen {
         preview.addAction(Actions.scaleTo(1f, 1f, 0.22f, Interpolation.swingOut));
 
         if (previewed != null) {
-            previewCaption.setText("Previewing  " + previewed.displayName());
+            previewCaption.setText(T.f("Previewing  {0}", Names.name(previewed.displayName())));
             previewCaption.setColor(Palette.PRIMARY);
         } else {
-            previewCaption.setText("Wearing  "
-                + Shop.equipped(save, Cosmetic.Category.BALL_PALETTE).displayName() + "  •  "
-                + Shop.equipped(save, Cosmetic.Category.BALL_FINISH).displayName() + "  •  "
-                + Shop.equipped(save, Cosmetic.Category.TUBE).displayName() + "  •  "
-                + Shop.equipped(save, Cosmetic.Category.THEME).displayName());
+            previewCaption.setText(T.f("Wearing  {0}  •  {1}  •  {2}  •  {3}",
+                Names.name(Shop.equipped(save, Cosmetic.Category.BALL_PALETTE).displayName()),
+                Names.name(Shop.equipped(save, Cosmetic.Category.BALL_FINISH).displayName()),
+                Names.name(Shop.equipped(save, Cosmetic.Category.TUBE).displayName()),
+                Names.name(Shop.equipped(save, Cosmetic.Category.THEME).displayName())));
             previewCaption.setColor(Palette.TEXT_DIM);
         }
     }
@@ -567,9 +588,9 @@ public final class ShopScreen extends BaseScreen {
     // ----------------------------------------------------------------- boosters
     /** Extra tubes: one, a pack of five, a pack of twelve, and the daily video. */
     private void refreshBoosters() {
-        sectionTitle.setText("Extra tubes");
-        sectionCount.setText(save.boosters + " in stock  •  "
-            + com.ben.laama.sortpuzzle.GameConfig.FREE_BOOSTERS_PER_LEVEL + " free per level");
+        sectionTitle.setText(T.r("Extra tubes"));
+        sectionCount.setText(T.f("{0} in stock  •  {1} free per level", save.boosters,
+            com.ben.laama.sortpuzzle.GameConfig.FREE_BOOSTERS_PER_LEVEL));
         grid.clearChildren();
         java.util.List<Actor> cards = new java.util.ArrayList<>();
         cards.add(freeCoinsCard()); // first: the free way to fill the purse
@@ -599,21 +620,22 @@ public final class ShopScreen extends BaseScreen {
         }
         card.add(glyphs).height(92f).growX().row();
         Table title = new Table();
-        title.add(new Label(assist.packLabel().substring(0, 1).toUpperCase()
-            + assist.packLabel().substring(1), skin, "label")).left().expandX();
-        title.add(badge("×" + save.stockOf(assist) + " in stock", Palette.SURFACE_STRONG, Palette.TEXT)).right();
-        card.add(title).growX().padTop(10f).row();
-        Label description = new Label(assist.freePerLevel() + " free every level. "
-            + (assist == com.ben.laama.sortpuzzle.logic.Assists.UNDO
-                ? "Extra ones for when a long move needs rethinking."
-                : "Extra ones for a fresh start without the wait."), skin, "caption");
+        String packLabel = assist.packLabel();
+        addCardName(title, T.show(packLabel.substring(0, 1).toUpperCase(new java.util.Locale(T.language().code))
+            + packLabel.substring(1)));
+        title.add(badge(T.f("×{0} in stock", save.stockOf(assist)), Palette.SURFACE_STRONG, Palette.TEXT)).right();
+        card.add(title).width(CARD_WIDTH - 36f).padTop(10f).row();
+        Label description = new Label(assist == com.ben.laama.sortpuzzle.logic.Assists.UNDO
+                ? T.f("{0} free every level. Extra ones for when a long move needs rethinking.", assist.freePerLevel())
+                : T.f("{0} free every level. Extra ones for a fresh start without the wait.", assist.freePerLevel()),
+            skin, "caption");
         description.setWrap(true);
         card.add(description).width(CARD_WIDTH - 36f).padTop(4f).row();
-        Button buy = Ui.iconTextButton(skin, "icon-coin", "BUY  " + assist.packPrice(), "gold", () -> {
+        Button buy = Ui.iconTextButton(skin, "icon-coin", T.f("BUY  {0}", assist.packPrice()), "gold", () -> {
             if (save.coins < assist.packPrice()) {
                 game.sound().play(SoundManager.Cue.INVALID);
-                Ui.toast(stage, skin, (assist.packPrice() - save.coins)
-                    + " more coins needed  •  clear levels to earn them", Palette.TEXT_DIM);
+                Ui.toast(stage, skin, T.f("{0} more coins needed  •  clear levels to earn them",
+                    assist.packPrice() - save.coins), Palette.TEXT_DIM);
                 return;
             }
             if (save.buyAssistPack(assist)) {
@@ -622,13 +644,13 @@ public final class ShopScreen extends BaseScreen {
                     "assist." + assist.id(), AnalyticsEvents.P_PRICE, assist.packPrice(),
                     AnalyticsEvents.P_COINS, save.coins);
                 refresh();
-                Ui.toast(stage, skin, "+" + assist.packLabel() + " in stock", Palette.SUCCESS);
+                Ui.toast(stage, skin, T.f("+{0} in stock", assist.packLabel()), Palette.SUCCESS);
             }
         });
         buy.getColor().a = save.coins >= assist.packPrice() ? 1f : 0.55f;
         card.add(buy).growX().height(54f).padTop(12f).row();
         // The free way, same as for tubes: a short video adds a few.
-        Button watch = Ui.iconTextButton(skin, "icon-play", "WATCH  •  +" + assist.videoReward(),
+        Button watch = Ui.iconTextButton(skin, "icon-play", T.f("WATCH  •  +{0}", assist.videoReward()),
             "ghost", () -> watchForAssist(assist));
         card.add(watch).growX().height(50f).padTop(8f).row();
         return card;
@@ -640,7 +662,7 @@ public final class ShopScreen extends BaseScreen {
     private void watchForAssist(final com.ben.laama.sortpuzzle.logic.Assists assist) {
         if (assistAdInFlight) return;
         if (!game.ads().isRewardedReady()) {
-            Ui.toast(stage, skin, "Reward video isn't ready yet. Try again later.", Palette.GOLD);
+            Ui.toast(stage, skin, T.r("Reward video isn't ready yet. Try again later."), Palette.GOLD);
             return;
         }
         assistAdInFlight = true;
@@ -654,7 +676,7 @@ public final class ShopScreen extends BaseScreen {
                 if (game.getScreen() == ShopScreen.this) {
                     game.sound().play(SoundManager.Cue.TUBE);
                     refresh();
-                    Ui.toast(stage, skin, "+" + assist.videoLabel() + " in stock", Palette.SUCCESS);
+                    Ui.toast(stage, skin, T.f("+{0} in stock", assist.videoLabel()), Palette.SUCCESS);
                 }
             }
 
@@ -662,7 +684,7 @@ public final class ShopScreen extends BaseScreen {
             public void onFailed() {
                 assistAdInFlight = false;
                 if (game.getScreen() == ShopScreen.this) {
-                    Ui.toast(stage, skin, "No reward this time. Try again later.", Palette.GOLD);
+                    Ui.toast(stage, skin, T.r("No reward this time. Try again later."), Palette.GOLD);
                 }
             }
         });
@@ -700,23 +722,23 @@ public final class ShopScreen extends BaseScreen {
         card.add(glyphs).height(92f).growX().row();
 
         Table title = new Table();
-        title.add(new Label(pack.title(), skin, "label")).left().expandX();
+        addCardName(title, T.r(pack.title()));
         if (pack.savingsPercent() > 0) {
             title.add(badge("-" + pack.savingsPercent() + "%", Palette.SUCCESS, Palette.ON_PRIMARY)).right();
         }
-        card.add(title).growX().padTop(10f).row();
+        card.add(title).width(CARD_WIDTH - 36f).padTop(10f).row();
         Label description = new Label(pack.count() == 1
-            ? "One extra tube to use whenever a level gets tight."
-            : pack.count() + " extra tubes, " + (pack.price() / pack.count()) + " coins each.",
+            ? T.r("One extra tube to use whenever a level gets tight.")
+            : T.f("{0} extra tubes, {1} coins each.", pack.count(), pack.price() / pack.count()),
             skin, "caption");
         description.setWrap(true);
         card.add(description).width(CARD_WIDTH - 36f).padTop(4f).row();
 
-        Button buy = Ui.iconTextButton(skin, "icon-coin", "BUY  " + pack.price(), "gold", () -> {
+        Button buy = Ui.iconTextButton(skin, "icon-coin", T.f("BUY  {0}", pack.price()), "gold", () -> {
             if (!pack.canBuy(save)) {
                 game.sound().play(SoundManager.Cue.INVALID);
-                Ui.toast(stage, skin, (pack.price() - save.coins)
-                    + " more coins needed  •  clear levels to earn them", Palette.TEXT_DIM);
+                Ui.toast(stage, skin, T.f("{0} more coins needed  •  clear levels to earn them",
+                    pack.price() - save.coins), Palette.TEXT_DIM);
                 return;
             }
             if (pack.buy(save)) {
@@ -725,8 +747,8 @@ public final class ShopScreen extends BaseScreen {
                     "booster." + pack.count(), AnalyticsEvents.P_PRICE, pack.price(),
                     AnalyticsEvents.P_COINS, save.coins);
                 refresh();
-                Ui.toast(stage, skin, "+" + pack.count() + " extra tube" + (pack.count() > 1 ? "s" : "")
-                    + " in stock", Palette.SUCCESS);
+                Ui.toast(stage, skin, T.f("+{0} in stock",
+                    com.ben.laama.sortpuzzle.logic.Assists.TUBE.countLabel(pack.count())), Palette.SUCCESS);
             }
         });
         buy.getColor().a = pack.canBuy(save) ? 1f : 0.55f;
@@ -753,19 +775,18 @@ public final class ShopScreen extends BaseScreen {
         glyphs.add(new Image(skin.newDrawable("icon-coin", Palette.GOLD))).size(40f);
         card.add(glyphs).height(92f).growX().row();
         Table title = new Table();
-        title.add(new Label("Free coins", skin, "label")).left().expandX();
+        addCardName(title, T.r("Free coins"));
         int left = save.adCoinsLeft(todayKey());
-        title.add(badge(left + " / " + com.ben.laama.sortpuzzle.GameConfig.AD_COINS_PER_DAY + " today",
+        title.add(badge(T.f("{0} / {1} today", left, com.ben.laama.sortpuzzle.GameConfig.AD_COINS_PER_DAY),
             Palette.SURFACE_STRONG, Palette.TEXT)).right();
-        card.add(title).growX().padTop(10f).row();
-        Label description = new Label("Watch a short video, get "
-            + com.ben.laama.sortpuzzle.GameConfig.AD_COINS_REWARD + " coins. Always optional.",
-            skin, "caption");
+        card.add(title).width(CARD_WIDTH - 36f).padTop(10f).row();
+        Label description = new Label(T.f("Watch a short video, get {0} coins. Always optional.",
+            com.ben.laama.sortpuzzle.GameConfig.AD_COINS_REWARD), skin, "caption");
         description.setWrap(true);
         card.add(description).width(CARD_WIDTH - 36f).padTop(4f).row();
         final TextButton watch = Ui.button(skin, left > 0
-            ? "WATCH  •  +" + com.ben.laama.sortpuzzle.GameConfig.AD_COINS_REWARD + " COINS"
-            : "BACK TOMORROW", left > 0 ? "gold" : "secondary", () -> { });
+            ? T.f("WATCH  •  +{0} COINS", com.ben.laama.sortpuzzle.GameConfig.AD_COINS_REWARD)
+            : T.r("BACK TOMORROW"), left > 0 ? "gold" : "secondary", () -> { });
         watch.setDisabled(left <= 0);
         Ui.click(watch, () -> watchForCoins(watch));
         card.add(watch).growX().height(54f).padTop(12f).row();
@@ -777,11 +798,11 @@ public final class ShopScreen extends BaseScreen {
             return;
         }
         if (!game.ads().isRewardedReady()) {
-            Ui.toast(stage, skin, "Reward video isn't ready yet. Try again later.", Palette.GOLD);
+            Ui.toast(stage, skin, T.r("Reward video isn't ready yet. Try again later."), Palette.GOLD);
             return;
         }
         watch.setDisabled(true);
-        watch.setText("VIDEO IN PROGRESS...");
+        watch.setText(T.r("VIDEO IN PROGRESS..."));
         game.sound().play(SoundManager.Cue.BUTTON);
         game.pacing().onFullScreenAdShown();
         game.ads().showRewarded(new com.ben.laama.sortpuzzle.ads.AdProvider.RewardListener() {
@@ -797,8 +818,8 @@ public final class ShopScreen extends BaseScreen {
                 if (game.getScreen() == ShopScreen.this) {
                     if (granted) {
                         game.sound().play(SoundManager.Cue.COIN);
-                        Ui.toast(stage, skin, "+" + com.ben.laama.sortpuzzle.GameConfig.AD_COINS_REWARD
-                            + " coins added", Palette.SUCCESS);
+                        Ui.toast(stage, skin, T.f("+{0} coins added",
+                            com.ben.laama.sortpuzzle.GameConfig.AD_COINS_REWARD), Palette.SUCCESS);
                     }
                     refresh();
                 }
@@ -808,7 +829,7 @@ public final class ShopScreen extends BaseScreen {
             public void onFailed() {
                 if (game.getScreen() == ShopScreen.this) {
                     refresh();
-                    Ui.toast(stage, skin, "No reward this time. Try again later.", Palette.GOLD);
+                    Ui.toast(stage, skin, T.r("No reward this time. Try again later."), Palette.GOLD);
                 }
             }
         });
@@ -824,8 +845,8 @@ public final class ShopScreen extends BaseScreen {
         glyphs.add(new Image(skin.newDrawable("icon-play", Palette.GOLD))).size(40f).padRight(8f);
         glyphs.add(new Image(skin.newDrawable("icon-tube", Palette.PRIMARY))).size(40f);
         card.add(glyphs).height(92f).growX().row();
-        card.add(new Label("Free tube", skin, "label")).padTop(10f).row();
-        Label description = new Label("Watch a short video, get one extra tube. Always optional.",
+        card.add(new Label(T.r("Free tube"), skin, "label")).padTop(10f).row();
+        Label description = new Label(T.r("Watch a short video, get one extra tube. Always optional."),
             skin, "caption");
         description.setWrap(true);
         card.add(description).width(CARD_WIDTH - 36f).padTop(4f).row();
@@ -842,7 +863,7 @@ public final class ShopScreen extends BaseScreen {
             return;
         }
         if (!game.ads().isRewardedReady()) {
-            Ui.toast(stage, skin, "Reward video isn't ready yet. Try again later.", Palette.GOLD);
+            Ui.toast(stage, skin, T.r("Reward video isn't ready yet. Try again later."), Palette.GOLD);
             return;
         }
         rewardedTubeAdInFlight = true;
@@ -857,7 +878,7 @@ public final class ShopScreen extends BaseScreen {
                 if (game.getScreen() == ShopScreen.this) {
                     if (granted) {
                         game.sound().play(SoundManager.Cue.TUBE);
-                        Ui.toast(stage, skin, "One extra tube added to your stock", Palette.SUCCESS);
+                        Ui.toast(stage, skin, T.r("One extra tube added to your stock"), Palette.SUCCESS);
                     }
                     refresh();
                 }
@@ -868,7 +889,7 @@ public final class ShopScreen extends BaseScreen {
                 rewardedTubeAdInFlight = false;
                 if (game.getScreen() == ShopScreen.this) {
                     refreshRewardedTubeButton();
-                    Ui.toast(stage, skin, "No reward this time. Try again later.", Palette.GOLD);
+                    Ui.toast(stage, skin, T.r("No reward this time. Try again later."), Palette.GOLD);
                 }
             }
         });
@@ -877,16 +898,16 @@ public final class ShopScreen extends BaseScreen {
     private void refreshRewardedTubeButton() {
         if (rewardedTubeButton == null) return;
         if (rewardedTubeAdInFlight) {
-            rewardedTubeButton.setText("VIDEO IN PROGRESS...");
+            rewardedTubeButton.setText(T.r("VIDEO IN PROGRESS..."));
             rewardedTubeButton.setDisabled(true);
             return;
         }
         long remaining = save.rewardedTubeCooldownRemaining(System.currentTimeMillis());
         if (remaining > 0L) {
-            rewardedTubeButton.setText("NEXT FREE TUBE IN " + ((remaining + 999L) / 1000L) + " s");
+            rewardedTubeButton.setText(T.f("NEXT FREE TUBE IN {0} s", (remaining + 999L) / 1000L));
             rewardedTubeButton.setDisabled(true);
         } else {
-            rewardedTubeButton.setText("WATCH VIDEO  •  +1 TUBE");
+            rewardedTubeButton.setText(T.r("WATCH VIDEO  •  +1 TUBE"));
             rewardedTubeButton.setDisabled(false);
         }
     }
@@ -910,7 +931,7 @@ public final class ShopScreen extends BaseScreen {
             game.analytics().event(AnalyticsEvents.SHOP_EQUIP, AnalyticsEvents.P_ITEM, item.id());
             previewed = null;
             refresh();
-            Ui.toast(stage, skin, item.displayName() + " is now in use", Palette.SUCCESS);
+            Ui.toast(stage, skin, T.f("{0} is now in use", Names.name(item.displayName())), Palette.SUCCESS);
         }
     }
 
@@ -918,22 +939,22 @@ public final class ShopScreen extends BaseScreen {
         if (!Shop.canBuy(save, item)) {
             game.sound().play(SoundManager.Cue.INVALID);
             int missing = item.price() - save.coins;
-            Ui.toast(stage, skin, missing + " more coins needed  •  clear levels to earn them",
+            Ui.toast(stage, skin, T.f("{0} more coins needed  •  clear levels to earn them", missing),
                 Palette.TEXT_DIM);
             return;
         }
         previewed = item;
         refresh();
-        Dialog dialog = Ui.dialog(skin, "Buy " + item.displayName() + "?", choice -> {
+        Dialog dialog = Ui.dialog(skin, T.f("Buy {0}?", Names.name(item.displayName())), choice -> {
             if ("buy".equals(choice)) {
                 buy(item);
             }
         });
         dialog.getContentTable().add(Ui.paragraph(skin,
-            item.price() + " coins.  You have " + save.coins + ", leaving "
-                + (save.coins - item.price()) + ".", "dim", 400f)).width(400f).padTop(6f).row();
-        dialog.button(Ui.button(skin, "NOT NOW", "ghost", () -> { }), "no");
-        dialog.button(Ui.button(skin, "BUY  " + item.price(), "gold", () -> { }), "buy");
+            T.f("{0} coins.  You have {1}, leaving {2}.", item.price(), save.coins,
+                save.coins - item.price()), "dim", 400f)).width(400f).padTop(6f).row();
+        dialog.button(Ui.button(skin, T.r("NOT NOW"), "ghost", () -> { }), "no");
+        dialog.button(Ui.button(skin, T.f("BUY  {0}", item.price()), "gold", () -> { }), "buy");
         dialog.show(stage);
     }
 
@@ -949,7 +970,7 @@ public final class ShopScreen extends BaseScreen {
             AnalyticsEvents.P_PRICE, item.price(), AnalyticsEvents.P_COINS, save.coins);
         previewed = null;
         refresh();
-        Ui.toast(stage, skin, item.displayName() + " is yours and in use", Palette.SUCCESS);
+        Ui.toast(stage, skin, T.f("{0} is yours and in use", Names.name(item.displayName())), Palette.SUCCESS);
     }
 
     private void goBack() {

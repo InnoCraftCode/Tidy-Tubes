@@ -1,8 +1,8 @@
 {
   "appName": "Tidy Tubes",
   "packageId": "com.ben.laama.sortpuzzle",
-  "versionName": "1.1.2",
-  "versionCode": 12,
+  "versionName": "1.2.1",
+  "versionCode": 15,
   "category": "Jeux > Réflexion (Puzzle)",
   "tags": ["Réflexion", "Casse-tête", "Tri de couleurs", "Hors ligne", "Relaxant"],
   "contactEmail": "benlamschille@gmail.com",
@@ -59,7 +59,7 @@
         "",
         "Free to play. Contains ads: rewarded videos (extra hints, moves, tubes, undos or resets) are always optional, and beyond the free ones you can also pay with in-game coins earned by clearing levels. No purchases."
       ],
-      "releaseNotes": "Version 1.1.2\n• 400 looks: 100 ball colours, 100 finishes, 100 tubes, 100 themes.\n• Star road: every star you earn unlocks exclusive looks. Clearing a chapter gives one too.\n• Shop filters: all, owned, for coins, to earn. Free coins for a short video, 5 a day.\n• Double your coins after a level with an optional video.\n• Made for tablets and foldables: two-column layouts in landscape.\n• Fixes: black background between levels, settings layout.",
+      "releaseNotes": "Version 1.2.1\n• Play in your language: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Pick it at first launch or in Settings.\n• Arabic with a full right-to-left layout.\n• 400 looks and the star road: every star unlocks exclusive styles.\n• Shop filters, free coins for a short video, double your coins after a level.\n• Tablets and foldables: two-column layouts.\n• Fixes: shop cards and text size on high-density phones, top bar on notch phones.",
       "captions": ["Home screen", "A level in progress", "Hints from a real solver", "Level cleared", "Levels in chapters of ten", "Up to ten colours", "Settings and about", "Shop: styles for your coins"]
     },
     {
@@ -88,7 +88,7 @@
         "",
         "Gratuit. Contient des publicités : les vidéos récompensées (indices, coups, tubes, annulations ou recommencements supplémentaires) sont toujours facultatives, et au-delà des gratuits vous pouvez aussi payer avec les pièces gagnées en réussissant des niveaux. Aucun achat."
       ],
-      "releaseNotes": "Version 1.1.2\n• 400 styles : 100 couleurs de boules, 100 finitions, 100 tubes, 100 thèmes.\n• Route des étoiles : chaque étoile gagnée débloque des styles exclusifs. Un chapitre fini en offre un aussi.\n• Filtres de la boutique : tout, possédés, en pièces, à gagner. Pièces gratuites contre une courte vidéo, 5 par jour.\n• Doublez vos pièces après un niveau avec une vidéo facultative.\n• Tablettes et pliables : deux colonnes en paysage.\n• Corrections : fond noir entre les niveaux, réglages.",
+      "releaseNotes": "Version 1.2.1\n• Joue dans ta langue : English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Choix au premier lancement ou dans les Réglages.\n• Arabe avec interface de droite à gauche.\n• 400 styles et route des étoiles : chaque étoile débloque des styles.\n• Filtres boutique, pièces gratuites contre une vidéo, pièces doublées après un niveau.\n• Tablettes et pliables : deux colonnes.\n• Corrections : boutique, taille des textes, barre du haut (écrans à encoche).",
       "captions": ["Écran d'accueil", "Un niveau en cours", "Indices d'un vrai solveur", "Niveau réussi", "Niveaux par chapitres de dix", "Jusqu'à dix couleurs", "Réglages et à propos", "Boutique : des styles pour vos pièces"]
     },
     {
@@ -117,7 +117,7 @@
         "",
         "مجانية. تحتوي على إعلانات: مقاطع الفيديو المكافِئة (تلميحات أو حركات أو أنابيب أو تراجعات أو إعادات إضافية) اختيارية دائمًا، وبعد المجانية منها يمكنك أيضًا الدفع بالعملات التي تكسبها داخل اللعبة بإنهاء المستويات. لا توجد مشتريات."
       ],
-      "releaseNotes": "الإصدار 1.1.2\n• 400 مظهر: 100 لون للكرات، 100 لمسة نهائية، 100 أنبوب، 100 سمة.\n• طريق النجوم: كل نجمة تكسبها تفتح مظاهر حصرية، وإنهاء فصل يمنحك واحدًا أيضًا.\n• فلاتر المتجر: الكل، المملوكة، بالعملات، للكسب. عملات مجانية مقابل فيديو قصير، 5 مرات يوميًا.\n• ضاعف عملاتك بعد كل مستوى بفيديو اختياري.\n• مصممة للأجهزة اللوحية والقابلة للطي: عمودان في الوضع الأفقي.\n• إصلاحات: الخلفية السوداء بين المستويات، وتخطيط الإعدادات.",
+      "releaseNotes": "الإصدار 1.2.1\n• العب بلغتك: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. اخترها عند أول تشغيل أو من الإعدادات.\n• العربية بواجهة كاملة من اليمين إلى اليسار.\n• 400 مظهر وطريق النجوم: كل نجمة تفتح أنماطًا حصرية.\n• فلاتر المتجر، عملات مجانية مقابل فيديو قصير، ضاعف عملاتك بعد كل مستوى.\n• الأجهزة اللوحية والقابلة للطي: عمودان.\n• إصلاحات: بطاقات المتجر، حجم النصوص، الشريط العلوي (الهواتف ذات النتوء).",
       "captions": ["الشاشة الرئيسية", "مستوى قيد اللعب", "تلميحات من حلّال حقيقي", "تم إنهاء المستوى", "مستويات في فصول من عشرة", "حتى عشرة ألوان", "الإعدادات وحول اللعبة", "المتجر: أنماط مقابل عملاتك"]
     },
     {
@@ -146,7 +146,7 @@
         "",
         "Gratis. Contiene anuncios: los vídeos con recompensa (pistas, movimientos, tubos, deshacer o reinicios extra) son siempre opcionales y, más allá de los gratuitos, también puedes pagarlos con las monedas que ganas al superar niveles. Sin compras."
       ],
-      "releaseNotes": "Versión 1.1.2\n• 400 estilos: 100 colores de bolas, 100 acabados, 100 tubos, 100 temas.\n• Camino de estrellas: cada estrella que ganas desbloquea estilos exclusivos. Completar un capítulo también da uno.\n• Filtros en la tienda: todo, tuyos, por monedas, por ganar. Monedas gratis por un vídeo corto, 5 al día.\n• Duplica tus monedas tras un nivel con un vídeo opcional.\n• Pensado para tablets y plegables: dos columnas en horizontal.\n• Correcciones: fondo negro entre niveles, ajustes.",
+      "releaseNotes": "Versión 1.2.1\n• Juega en tu idioma: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Elígelo al abrir o en Ajustes.\n• Árabe con interfaz de derecha a izquierda.\n• 400 estilos y camino de estrellas: cada estrella desbloquea estilos.\n• Filtros en la tienda, monedas gratis por un vídeo, duplica tus monedas tras un nivel.\n• Tablets y plegables: dos columnas.\n• Correcciones: tienda, tamaño del texto, barra superior (móviles con muesca).",
       "captions": ["Pantalla de inicio", "Un nivel en curso", "Pistas de un solucionador real", "Nivel superado", "Niveles en capítulos de diez", "Hasta diez colores", "Ajustes y acerca de", "Tienda: estilos por tus monedas"]
     },
     {
@@ -175,7 +175,7 @@
         "",
         "Grátis. Contém anúncios: os vídeos com recompensa (dicas, movimentos, tubos, desfazer ou reinícios extras) são sempre opcionais e, além dos gratuitos, você também pode pagar com as moedas ganhas ao concluir níveis. Sem compras."
       ],
-      "releaseNotes": "Versão 1.1.2\n• 400 visuais: 100 cores de bolas, 100 acabamentos, 100 tubos, 100 temas.\n• Caminho das estrelas: cada estrela conquistada desbloqueia visuais exclusivos. Concluir um capítulo também dá um.\n• Filtros na loja: todos, seus, por moedas, a conquistar. Moedas grátis por um vídeo curto, 5 por dia.\n• Dobre suas moedas após um nível com um vídeo opcional.\n• Feito para tablets e dobráveis: duas colunas na horizontal.\n• Correções: fundo preto entre níveis, configurações.",
+      "releaseNotes": "Versão 1.2.1\n• Jogue no seu idioma: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Escolha ao abrir ou nas Configurações.\n• Árabe com interface da direita para a esquerda.\n• 400 visuais e caminho das estrelas: cada estrela desbloqueia estilos.\n• Filtros na loja, moedas grátis por um vídeo, dobre suas moedas após um nível.\n• Tablets e dobráveis: duas colunas.\n• Correções: loja, tamanho do texto, barra superior (celulares com entalhe).",
       "captions": ["Tela inicial", "Um nível em andamento", "Dicas de um solucionador de verdade", "Nível concluído", "Níveis em capítulos de dez", "Até dez cores", "Configurações e sobre", "Loja: estilos pelas suas moedas"]
     },
     {
@@ -204,7 +204,7 @@
         "",
         "Kostenlos. Enthält Werbung: Videos mit Belohnung (zusätzliche Tipps, Züge, Röhren, Rückgängig oder Neustarts) sind immer freiwillig, und über die kostenlosen hinaus kannst du auch mit Münzen bezahlen, die du durch geschaffte Level verdienst. Keine Käufe."
       ],
-      "releaseNotes": "Version 1.1.2\n• 400 Looks: 100 Kugelfarben, 100 Oberflächen, 100 Röhren, 100 Themes.\n• Sternenweg: Jeder verdiente Stern schaltet exklusive Looks frei. Ein abgeschlossenes Kapitel auch.\n• Shop-Filter: alle, eigene, für Münzen, zu verdienen. Gratis-Münzen für ein kurzes Video, 5 pro Tag.\n• Verdopple deine Münzen nach einem Level mit einem optionalen Video.\n• Für Tablets und Foldables: zwei Spalten im Querformat.\n• Behoben: schwarzer Hintergrund zwischen Leveln, Einstellungen.",
+      "releaseNotes": "Version 1.2.1\n• Spiele in deiner Sprache: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Wähle sie beim Start oder in den Einstellungen.\n• Arabisch mit Layout von rechts nach links.\n• 400 Looks und Sternenweg: Jeder Stern schaltet Styles frei.\n• Shop-Filter, Gratis-Münzen per Video, Münzen nach dem Level verdoppeln.\n• Tablets und Foldables: zwei Spalten.\n• Behoben: Shop-Karten, Textgröße, obere Leiste (Notch-Handys).",
       "captions": ["Startbildschirm", "Ein laufendes Level", "Tipps von einem echten Löser", "Level geschafft", "Level in Kapiteln zu zehn", "Bis zu zehn Farben", "Einstellungen und Info", "Shop: Styles für deine Münzen"]
     },
     {
@@ -233,7 +233,7 @@
         "",
         "Gratis. Mengandung iklan: video berhadiah (petunjuk, langkah, tabung, undo, atau reset tambahan) selalu opsional, dan selain yang gratis kamu juga bisa membayar dengan koin yang didapat dari menyelesaikan level. Tanpa pembelian."
       ],
-      "releaseNotes": "Versi 1.1.2\n• 400 gaya: 100 warna bola, 100 hasil akhir, 100 tabung, 100 tema.\n• Jalur bintang: setiap bintang yang kamu dapat membuka gaya eksklusif. Menyelesaikan bab juga memberi satu.\n• Filter toko: semua, dimiliki, dengan koin, untuk diraih. Koin gratis dengan video singkat, 5 per hari.\n• Gandakan koinmu setelah level dengan video opsional.\n• Untuk tablet dan ponsel lipat: dua kolom saat lanskap.\n• Perbaikan: latar hitam antar level, tata letak pengaturan.",
+      "releaseNotes": "Versi 1.2.1\n• Main dalam bahasamu: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Pilih saat pertama dibuka atau di Pengaturan.\n• Bahasa Arab dengan tata letak kanan ke kiri.\n• 400 gaya dan jalur bintang: setiap bintang membuka gaya eksklusif.\n• Filter toko, koin gratis lewat video, gandakan koin setelah level.\n• Tablet dan ponsel lipat: dua kolom.\n• Perbaikan: kartu toko, ukuran teks, bilah atas (ponsel berponi).",
       "captions": ["Layar utama", "Level yang sedang dimainkan", "Petunjuk dari pemecah sungguhan", "Level selesai", "Level dalam bab berisi sepuluh", "Hingga sepuluh warna", "Pengaturan dan tentang", "Toko: gaya untuk koinmu"]
     },
     {
@@ -262,7 +262,7 @@
         "",
         "Ücretsiz. Reklam içerir: ödüllü videolar (ek ipucu, hamle, tüp, geri alma veya sıfırlama) her zaman isteğe bağlıdır; ücretsiz olanların ötesinde, seviyeleri bitirerek kazandığın oyun içi paralarla da ödeyebilirsin. Satın alma yok."
       ],
-      "releaseNotes": "Sürüm 1.1.2\n• 400 görünüm: 100 top rengi, 100 yüzey, 100 tüp, 100 tema.\n• Yıldız yolu: kazandığın her yıldız özel görünümlerin kilidini açar. Bir bölümü bitirmek de bir tane verir.\n• Mağaza filtreleri: tümü, sahip olunan, parayla, kazanılacak. Kısa bir video için bedava para, günde 5.\n• Seviye sonrası paranı isteğe bağlı bir videoyla ikiye katla.\n• Tablet ve katlanabilirler için: yatayda iki sütun.\n• Düzeltmeler: seviyeler arası siyah arka plan, ayarlar.",
+      "releaseNotes": "Sürüm 1.2.1\n• Kendi dilinde oyna: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. İlk açılışta ya da Ayarlar'dan seç.\n• Arapça için sağdan sola arayüz.\n• 400 görünüm ve yıldız yolu: her yıldız özel stiller açar.\n• Mağaza filtreleri, videoyla ücretsiz jeton, seviye sonrası jetonu ikiye katla.\n• Tablet ve katlanabilirler: iki sütun.\n• Düzeltmeler: mağaza kartları, yazı boyutu, üst çubuk (çentikli telefonlar).",
       "captions": ["Ana ekran", "Devam eden bir seviye", "Gerçek bir çözücüden ipuçları", "Seviye tamamlandı", "Onar seviyelik bölümler", "On renge kadar", "Ayarlar ve hakkında", "Mağaza: paralarına karşılık stiller"]
     },
     {
@@ -291,7 +291,7 @@
         "",
         "मुफ़्त। विज्ञापन शामिल हैं: इनाम वाले वीडियो (अतिरिक्त संकेत, चालें, ट्यूब, अनडू या रीसेट) हमेशा वैकल्पिक हैं, और मुफ़्त वालों के बाद आप लेवल पूरे करके कमाए गए सिक्कों से भी भुगतान कर सकते हैं। कोई खरीदारी नहीं।"
       ],
-      "releaseNotes": "संस्करण 1.1.2\n• 400 लुक: 100 गेंद रंग, 100 फ़िनिश, 100 ट्यूब, 100 थीम।\n• सितारों की राह: कमाया हर सितारा खास लुक खोलता है। अध्याय पूरा करने पर भी एक मिलता है।\n• दुकान फ़िल्टर: सभी, आपके, सिक्कों से, कमाने को। छोटे वीडियो पर मुफ़्त सिक्के, दिन में 5 बार।\n• लेवल के बाद वैकल्पिक वीडियो से सिक्के दोगुने करें।\n• टैबलेट और फ़ोल्डेबल के लिए: लैंडस्केप में दो कॉलम।\n• सुधार: लेवल के बीच काली पृष्ठभूमि, सेटिंग्स लेआउट।",
+      "releaseNotes": "संस्करण 1.2.1\n• अपनी भाषा में खेलें: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe (हिंदी जल्द)। पहली बार खोलने पर या सेटिंग्स में चुनें।\n• अरबी में पूरा दाएँ-से-बाएँ लेआउट।\n• 400 लुक और सितारों की राह: हर सितारा खास स्टाइल खोलता है।\n• दुकान फ़िल्टर, वीडियो पर मुफ़्त सिक्के, लेवल के बाद सिक्के दोगुने।\n• टैबलेट और फ़ोल्डेबल: दो कॉलम।\n• सुधार: दुकान कार्ड, टेक्स्ट का आकार, ऊपरी पट्टी (नॉच वाले फ़ोन)।",
       "captions": ["होम स्क्रीन", "चल रहा एक लेवल", "असली सॉल्वर से संकेत", "लेवल पूरा", "दस-दस लेवल के अध्याय", "दस रंगों तक", "सेटिंग्स और जानकारी", "दुकान: आपके सिक्कों के बदले स्टाइल"]
     }
   ]

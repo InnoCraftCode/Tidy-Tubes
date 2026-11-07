@@ -1,5 +1,7 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
+
 /** Optional, combinable rules selected by the player before a challenge run. */
 public final class ChallengeRules {
 
@@ -40,13 +42,13 @@ public final class ChallengeRules {
 
     public String summary() {
         if (isClassic()) {
-            return "Classic";
+            return T.raw("Classic");
         }
         StringBuilder summary = new StringBuilder();
-        append(summary, noUndo, "No undo");
-        append(summary, noHints, "No hints");
-        append(summary, noBoosters, "No boosters");
-        append(summary, parMoveLimit, "Par limit");
+        append(summary, noUndo, T.raw("No undo"));
+        append(summary, noHints, T.raw("No hints"));
+        append(summary, noBoosters, T.raw("No boosters"));
+        append(summary, parMoveLimit, T.raw("Par limit"));
         return summary.toString();
     }
 

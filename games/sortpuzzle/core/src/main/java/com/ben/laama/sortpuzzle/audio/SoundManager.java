@@ -56,6 +56,12 @@ public final class SoundManager implements Disposable {
     /** Master gain for one-shot effects; the files themselves already peak at -8 dBFS. */
     private static final float EFFECTS_GAIN = 0.7f;
 
+    /**
+     * Desktop store capture only (null in the game): sees every cue raised, so a trailer can
+     * lay the real sound effects on the frames where they happened.
+     */
+    public static java.util.function.BiConsumer<Cue, Float> observer;
+
     private final SaveData save;
     private final ObjectMap<Cue, Sound> sounds = new ObjectMap<>();
     private Music music;
@@ -94,6 +100,7 @@ public final class SoundManager implements Disposable {
      *              higher than the last) instead of identical
      */
     public void play(Cue cue, float pitch) {
+        if (observer != null) observer.accept(cue, pitch);
         if (save.effectsOff) return;
         Sound sound = sounds.get(cue);
         if (sound != null) {

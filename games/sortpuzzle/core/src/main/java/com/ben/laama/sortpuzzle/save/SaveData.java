@@ -60,6 +60,8 @@ public class SaveData {
     public boolean musicOff = false;
     /** Selected original ambient loop; -1 means the first-launch choice is still pending. */
     public int musicTrack = -1;
+    /** Interface language code ({@code i18n.Language}); "" until the first-launch picker. */
+    public String language = "";
     public boolean vibrate = true;
     /** The "how to play" card was shown once. */
     public boolean tutorialSeen = false;
@@ -216,6 +218,9 @@ public class SaveData {
             musicTrack = -1;
         }
         migrateAudioFlags();
+        if (language == null || com.ben.laama.sortpuzzle.i18n.Language.fromCode(language) == null) {
+            language = "";
+        }
         if (lastDailyWinDate == null) lastDailyWinDate = "";
         if (lastDailyStartDate == null) lastDailyStartDate = "";
         reminderAsks = Math.max(0, reminderAsks);
@@ -811,6 +816,15 @@ public class SaveData {
             throw new IllegalArgumentException("unknown music track: " + track);
         }
         musicTrack = track;
+        flush();
+    }
+
+    /** Stores the interface language picked by the player. */
+    public void setLanguage(com.ben.laama.sortpuzzle.i18n.Language chosen) {
+        if (chosen == null) {
+            throw new IllegalArgumentException("language must not be null");
+        }
+        language = chosen.code;
         flush();
     }
 

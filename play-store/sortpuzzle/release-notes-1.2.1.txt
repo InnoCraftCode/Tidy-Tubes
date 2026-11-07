@@ -1,0 +1,81 @@
+<en-US>
+Version 1.2.1
+• Play in your language: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Pick it at first launch or in Settings.
+• Arabic with a full right-to-left layout.
+• 400 looks and the star road: every star unlocks exclusive styles.
+• Shop filters, free coins for a short video, double your coins after a level.
+• Tablets and foldables: two-column layouts.
+• Fixes: shop cards and text size on high-density phones, top bar on notch phones.
+</en-US>
+<fr-FR>
+Version 1.2.1
+• Joue dans ta langue : English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Choix au premier lancement ou dans les Réglages.
+• Arabe avec interface de droite à gauche.
+• 400 styles et route des étoiles : chaque étoile débloque des styles.
+• Filtres boutique, pièces gratuites contre une vidéo, pièces doublées après un niveau.
+• Tablettes et pliables : deux colonnes.
+• Corrections : boutique, taille des textes, barre du haut (écrans à encoche).
+</fr-FR>
+<ar>
+الإصدار 1.2.1
+• العب بلغتك: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. اخترها عند أول تشغيل أو من الإعدادات.
+• العربية بواجهة كاملة من اليمين إلى اليسار.
+• 400 مظهر وطريق النجوم: كل نجمة تفتح أنماطًا حصرية.
+• فلاتر المتجر، عملات مجانية مقابل فيديو قصير، ضاعف عملاتك بعد كل مستوى.
+• الأجهزة اللوحية والقابلة للطي: عمودان.
+• إصلاحات: بطاقات المتجر، حجم النصوص، الشريط العلوي (الهواتف ذات النتوء).
+</ar>
+<es-ES>
+Versión 1.2.1
+• Juega en tu idioma: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Elígelo al abrir o en Ajustes.
+• Árabe con interfaz de derecha a izquierda.
+• 400 estilos y camino de estrellas: cada estrella desbloquea estilos.
+• Filtros en la tienda, monedas gratis por un vídeo, duplica tus monedas tras un nivel.
+• Tablets y plegables: dos columnas.
+• Correcciones: tienda, tamaño del texto, barra superior (móviles con muesca).
+</es-ES>
+<pt-BR>
+Versão 1.2.1
+• Jogue no seu idioma: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Escolha ao abrir ou nas Configurações.
+• Árabe com interface da direita para a esquerda.
+• 400 visuais e caminho das estrelas: cada estrela desbloqueia estilos.
+• Filtros na loja, moedas grátis por um vídeo, dobre suas moedas após um nível.
+• Tablets e dobráveis: duas colunas.
+• Correções: loja, tamanho do texto, barra superior (celulares com entalhe).
+</pt-BR>
+<de-DE>
+Version 1.2.1
+• Spiele in deiner Sprache: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Wähle sie beim Start oder in den Einstellungen.
+• Arabisch mit Layout von rechts nach links.
+• 400 Looks und Sternenweg: Jeder Stern schaltet Styles frei.
+• Shop-Filter, Gratis-Münzen per Video, Münzen nach dem Level verdoppeln.
+• Tablets und Foldables: zwei Spalten.
+• Behoben: Shop-Karten, Textgröße, obere Leiste (Notch-Handys).
+</de-DE>
+<id>
+Versi 1.2.1
+• Main dalam bahasamu: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. Pilih saat pertama dibuka atau di Pengaturan.
+• Bahasa Arab dengan tata letak kanan ke kiri.
+• 400 gaya dan jalur bintang: setiap bintang membuka gaya eksklusif.
+• Filter toko, koin gratis lewat video, gandakan koin setelah level.
+• Tablet dan ponsel lipat: dua kolom.
+• Perbaikan: kartu toko, ukuran teks, bilah atas (ponsel berponi).
+</id>
+<tr-TR>
+Sürüm 1.2.1
+• Kendi dilinde oyna: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe. İlk açılışta ya da Ayarlar'dan seç.
+• Arapça için sağdan sola arayüz.
+• 400 görünüm ve yıldız yolu: her yıldız özel stiller açar.
+• Mağaza filtreleri, videoyla ücretsiz jeton, seviye sonrası jetonu ikiye katla.
+• Tablet ve katlanabilirler: iki sütun.
+• Düzeltmeler: mağaza kartları, yazı boyutu, üst çubuk (çentikli telefonlar).
+</tr-TR>
+<hi-IN>
+संस्करण 1.2.1
+• अपनी भाषा में खेलें: English, Français, العربية, Español, Português, Deutsch, Bahasa Indonesia, Türkçe (हिंदी जल्द)। पहली बार खोलने पर या सेटिंग्स में चुनें।
+• अरबी में पूरा दाएँ-से-बाएँ लेआउट।
+• 400 लुक और सितारों की राह: हर सितारा खास स्टाइल खोलता है।
+• दुकान फ़िल्टर, वीडियो पर मुफ़्त सिक्के, लेवल के बाद सिक्के दोगुने।
+• टैबलेट और फ़ोल्डेबल: दो कॉलम।
+• सुधार: दुकान कार्ड, टेक्स्ट का आकार, ऊपरी पट्टी (नॉच वाले फ़ोन)।
+</hi-IN>

@@ -25,6 +25,8 @@ import com.badlogic.gdx.utils.Array;
 
 import com.ben.laama.sortpuzzle.GameConfig;
 import com.ben.laama.sortpuzzle.Main;
+import com.ben.laama.sortpuzzle.i18n.Names;
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.ads.AdProvider;
 import com.ben.laama.sortpuzzle.audio.SoundManager;
 import com.ben.laama.sortpuzzle.logic.Difficulty;
@@ -91,6 +93,8 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     }
 
     private static final float BOARD_MARGIN_X = 36f;
+    /** Clear space between the HUD chrome and the board (room for the status pill's pop). */
+    private static final float HUD_BOARD_GAP = 16f;
     private static final float TUBE_GAP = 16f;
     private static final float ROW_GAP = 70f;
     private static final float MAX_TUBE_WIDTH = 108f;
@@ -181,11 +185,11 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         safeArea.toFront(); // the HUD (inside the safe area) draws above the board
 
         hud = new HudTable(skin, this);
-        String title = dailyChallenge ? "DAILY CHALLENGE"
-            : this.challengeRun ? "CUSTOM CHALLENGE" : "Level " + levelIndex;
-        String subtitle = this.challengeRun ? this.challengeRules.summary() + "  •  "
-            + Difficulty.colorsFor(levelIndex) + " colours"
-            : Difficulty.bandName(levelIndex) + "  •  " + Difficulty.colorsFor(levelIndex) + " colours";
+        String title = dailyChallenge ? T.r("DAILY CHALLENGE")
+            : this.challengeRun ? T.r("CUSTOM CHALLENGE") : T.f("Level {0}", levelIndex);
+        String subtitle = this.challengeRun
+            ? T.f("{0}  •  {1} colours", this.challengeRules.summary(), Difficulty.colorsFor(levelIndex))
+            : T.f("{0}  •  {1} colours", T.raw(Difficulty.bandName(levelIndex)), Difficulty.colorsFor(levelIndex));
         hud.setLevel(title, subtitle);
         hud.setMoves(0, 0);
         hud.showPar(Level.PAR_UNKNOWN);
@@ -229,7 +233,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                 Actions.delay(0.4f - i * 0.15f))));
         }
         holder.add(balls).row();
-        holder.add(new Label("Shuffling the tubes…", skin, "dim")).padTop(16f);
+        holder.add(new Label(T.r("Shuffling the tubes…"), skin, "dim")).padTop(16f);
         return holder;
     }
 
@@ -418,18 +422,20 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         float areaLeft;
         float areaRight;
         float areaBottom;
-        float areaTop = worldHeight - hudTopReserve();
+        // The fixed reserves are a floor; the measured HUD edges win when the chrome is taller
+        // (display cutout pushing the safe area down, longer status text, larger font).
+        float areaTop = Math.min(worldHeight - hudTopReserve(), hud.chromeTopEdge() - HUD_BOARD_GAP);
         int maxPerRow;
         if (isLandscape()) {
             areaLeft = HudTable.LANDSCAPE_SIDE;
             areaRight = worldWidth - HudTable.LANDSCAPE_SIDE;
-            areaBottom = 40f;
+            areaBottom = Math.max(40f, hud.chromeBottomEdge() + 20f);
             maxPerRow = 12;
         } else {
             float available = Math.min(worldWidth, GameConfig.WORLD_WIDTH + 120f) - 2f * BOARD_MARGIN_X;
             areaLeft = (worldWidth - available) * 0.5f;
             areaRight = areaLeft + available;
-            areaBottom = HudTable.PORTRAIT_BOTTOM;
+            areaBottom = Math.max(HudTable.PORTRAIT_BOTTOM, hud.chromeBottomEdge() + HUD_BOARD_GAP);
             maxPerRow = MAX_TUBES_PER_ROW;
         }
         BoardLayout fit = BoardLayout.fit(count, areaRight - areaLeft, areaTop - areaBottom,
@@ -795,7 +801,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     }
 
     // ------------------------------------------------------------------ juice
-    private static final String[] PRAISE = {"Nice!", "Great!", "Awesome!", "Amazing!"};
+    private static final String[] PRAISE = {T.k("Nice!"), T.k("Great!"), T.k("Awesome!"), T.k("Amazing!")};
     private static final SoundManager.Cue[] PRAISE_VOICE = {
         SoundManager.Cue.VOICE_NICE, SoundManager.Cue.VOICE_GREAT,
         SoundManager.Cue.VOICE_AWESOME, SoundManager.Cue.VOICE_PERFECT};
@@ -827,7 +833,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
 
         int step = Math.min(tubesCompleted, PRAISE.length - 1);
         tubesCompleted++;
-        popWord(PRAISE[step], tube.getX() + tube.getWidth() * 0.5f);
+        popWord(T.r(PRAISE[step]), tube.getX() + tube.getWidth() * 0.5f);
         game.sound().play(PRAISE_VOICE[step]);
     }
 
@@ -958,7 +964,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             return;
         }
         if (state.tubeCount() >= MAX_TUBES) {
-            toast("No room for another tube", Palette.DANGER);
+            toast(T.r("No room for another tube"), Palette.DANGER);
             game.sound().play(SoundManager.Cue.INVALID);
             return;
         }
@@ -1033,30 +1039,32 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             && (assist != Assists.TUBE || save.rewardedTubeCooldownRemaining(System.currentTimeMillis()) == 0L);
         boolean canBuy = save.coins >= assist.packPrice();
         game.sound().play(SoundManager.Cue.INVALID);
-        Dialog dialog = Ui.dialog(skin, "Out of " + assist.plural(2), choice -> {
+        Dialog dialog = Ui.dialog(skin, assist == com.ben.laama.sortpuzzle.logic.Assists.TUBE ? T.r("Out of extra tubes")
+            : assist == com.ben.laama.sortpuzzle.logic.Assists.UNDO ? T.r("Out of undos") : T.r("Out of resets"), choice -> {
             if ("video".equals(choice)) {
                 watchForAssist(assist);
             } else if ("buy".equals(choice) && !disposed && save.buyAssistPack(assist)) {
                 hud.setCoins(save.coins);
                 game.sound().play(SoundManager.Cue.COIN);
                 refreshStock();
-                toast("+" + assist.packLabel() + " in stock", Palette.SUCCESS);
+                toast(T.f("+{0} in stock", assist.packLabel()), Palette.SUCCESS);
             }
         });
         Table content = dialog.getContentTable();
-        String ways = videoReady && canBuy ? "Watch a short video for " + assist.videoLabel()
-            + ", or pay " + assist.packPrice() + " coins for " + assist.packLabel() + "."
-            : videoReady ? "Watch a short video for " + assist.videoLabel() + "."
-            : canBuy ? assist.packLabel() + " for " + assist.packPrice() + " coins."
-            : assist.packLabel() + " cost " + assist.packPrice() + " coins. Clear levels to earn "
-                + "more, or come back when a video is ready.";
+        String ways = videoReady && canBuy
+            ? T.f("Watch a short video for {0}, or pay {1} coins for {2}.", assist.videoLabel(),
+                assist.packPrice(), assist.packLabel())
+            : videoReady ? T.f("Watch a short video for {0}.", assist.videoLabel())
+            : canBuy ? T.f("{0} for {1} coins.", assist.packLabel(), assist.packPrice())
+            : T.f("{0} cost {1} coins. Clear levels to earn more, or come back when a video is ready.",
+                assist.packLabel(), assist.packPrice());
         content.add(Ui.paragraph(skin, ways, "dim", 420f)).width(420f).padTop(6f).row();
-        dialog.button(Ui.button(skin, "NOT NOW", "ghost", () -> { }), "no");
+        dialog.button(Ui.button(skin, T.r("NOT NOW"), "ghost", () -> { }), "no");
         if (videoReady) {
-            dialog.button(Ui.iconTextButton(skin, "icon-play", "WATCH", "primary", () -> { }), "video");
+            dialog.button(Ui.iconTextButton(skin, "icon-play", T.r("WATCH"), "primary", () -> { }), "video");
         }
         if (canBuy) {
-            dialog.button(Ui.iconTextButton(skin, "icon-coin", "BUY  " + assist.packPrice(), "gold",
+            dialog.button(Ui.iconTextButton(skin, "icon-coin", T.f("BUY  {0}", assist.packPrice()), "gold",
                 () -> { }), "buy");
         }
         dialog.show(stage);
@@ -1079,13 +1087,13 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                     "assist." + assist.id());
                 refreshStock();
                 game.sound().play(SoundManager.Cue.TUBE);
-                toast("+" + assist.videoLabel() + " in stock", Palette.SUCCESS);
+                toast(T.f("+{0} in stock", assist.videoLabel()), Palette.SUCCESS);
             }
 
             @Override
             public void onFailed() {
                 if (!disposed) {
-                    toast("Video closed early — nothing added this time", Palette.TEXT_DIM);
+                    toast(T.r("Video closed early — nothing added this time"), Palette.TEXT_DIM);
                 }
             }
         });
@@ -1128,7 +1136,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                     public void onFailed() {
                         if (!disposed) {
                             hud.setHintEnabled(!challengeRules.noHints());
-                            toast("Video closed early — no hint this time", Palette.TEXT_DIM);
+                            toast(T.r("Video closed early — no hint this time"), Palette.TEXT_DIM);
                         }
                     }
                 });
@@ -1139,14 +1147,14 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             case NONE:
             default:
                 game.sound().play(SoundManager.Cue.INVALID);
-                toast("Hints cost " + offer.price() + " coins — clear a level to earn more",
+                toast(T.f("Hints cost {0} coins — clear a level to earn more", offer.price()),
                     Palette.TEXT_DIM);
                 break;
         }
     }
 
     private void confirmHintUnlock(int price) {
-        Dialog dialog = Ui.dialog(skin, "Unlock hints?", choice -> {
+        Dialog dialog = Ui.dialog(skin, T.r("Unlock hints?"), choice -> {
             if (Boolean.TRUE.equals(choice) && !disposed && game.save().spendCoins(price)) {
                 hud.setCoins(game.save().coins);
                 game.sound().play(SoundManager.Cue.COIN);
@@ -1154,10 +1162,10 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             }
         });
         Table content = dialog.getContentTable();
-        content.add(Ui.paragraph(skin, "Hints for the rest of this level, "
-            + "for " + price + " coins.", "dim", 400f)).width(400f).padTop(6f).row();
-        dialog.button(Ui.button(skin, "NOT NOW", "ghost", () -> { }), Boolean.FALSE);
-        dialog.button(Ui.button(skin, "UNLOCK  •  " + price, "gold", () -> { }), Boolean.TRUE);
+        content.add(Ui.paragraph(skin, T.f("Hints for the rest of this level, for {0} coins.", price),
+            "dim", 400f)).width(400f).padTop(6f).row();
+        dialog.button(Ui.button(skin, T.r("NOT NOW"), "ghost", () -> { }), Boolean.FALSE);
+        dialog.button(Ui.button(skin, T.f("UNLOCK  •  {0}", price), "gold", () -> { }), Boolean.TRUE);
         dialog.show(stage);
     }
 
@@ -1212,13 +1220,13 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                 }
                 break;
             case UNDO:
-                hud.showStatus("No way to win from here — undo", Palette.DANGER);
+                hud.showStatus(T.r("No way to win from here — undo"), Palette.DANGER);
                 if (animate) {
                     game.sound().play(SoundManager.Cue.INVALID);
                 }
                 break;
             case UNKNOWN:
-                hud.showStatus("Too tangled to read from here", Palette.TEXT_DIM);
+                hud.showStatus(T.r("Too tangled to read from here"), Palette.TEXT_DIM);
                 break;
             case ALREADY_WON:
             default:
@@ -1293,15 +1301,15 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
 
     private String hintCaption() {
         if (challengeRules.noHints()) {
-            return "Hint off";
+            return T.r("Hint off");
         }
         if (hintsUnlocked) {
-            return "Hint ∞";
+            return T.r("Hint ∞");
         }
         if (freeHints > 0) {
-            return "Hint ×" + freeHints;
+            return T.f("Hint ×{0}", freeHints);
         }
-        return game.ads().isRewardedReady() ? "Hint ▶" : "Hint • " + GameConfig.HINT_UNLOCK_PRICE;
+        return game.ads().isRewardedReady() ? T.r("Hint ▶") : T.f("Hint • {0}", GameConfig.HINT_UNLOCK_PRICE);
     }
 
     // -------------------------------------------------------------- out of moves
@@ -1327,24 +1335,24 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
 
     private void showOutOfMovesDialog() {
         if (challengeRun) {
-            Dialog ended = Ui.dialog(skin, "Challenge ended", choice -> {
+            Dialog ended = Ui.dialog(skin, T.r("Challenge ended"), choice -> {
                 if ("retry".equals(choice)) {
                     onRestart();
                 } else {
                     game.goHome();
                 }
             });
-            ended.getContentTable().add(new Label("This ruleset gives you no extra moves.",
+            ended.getContentTable().add(new Label(T.r("This ruleset gives you no extra moves."),
                 skin, "dim")).padTop(8f).row();
-            ended.button(Ui.button(skin, "HOME", "ghost", () -> { }), "home");
-            ended.button(Ui.button(skin, "RETRY", "primary", () -> { }), "retry");
+            ended.button(Ui.button(skin, T.r("HOME"), "ghost", () -> { }), "home");
+            ended.button(Ui.button(skin, T.r("RETRY"), "primary", () -> { }), "retry");
             ended.show(stage);
             return;
         }
         RewardOffer offer = RewardOffer.decide(game.ads().isRewardedReady(),
             game.save().coins, GameConfig.EXTRA_MOVES_PRICE);
 
-        Dialog dialog = Ui.dialog(skin, "Out of moves", choice -> {
+        Dialog dialog = Ui.dialog(skin, T.r("Out of moves"), choice -> {
             if ("video".equals(choice)) {
                 watchAdForMoves();
             } else if ("coins".equals(choice)) {
@@ -1361,15 +1369,15 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             }
         });
         Table content = dialog.getContentTable();
-        content.add(new Label("You used all " + moveLimit + " of them.", skin, "dim")).padTop(4f).row();
+        content.add(new Label(T.f("You used all {0} of them.", moveLimit), skin, "dim")).padTop(4f).row();
         if (!offer.isAvailable()) {
-            content.add(Ui.paragraph(skin, "+" + GameConfig.EXTRA_MOVES_PER_AD + " moves cost "
-                + offer.price() + " coins. Clear a level to earn more.", "caption", 400f))
+            content.add(Ui.paragraph(skin, T.f("+{0} moves cost {1} coins. Clear a level to earn more.",
+                GameConfig.EXTRA_MOVES_PER_AD, offer.price()), "caption", 400f))
                 .width(400f).padTop(10f).row();
         }
 
-        dialog.button(Ui.button(skin, "HOME", "ghost", () -> { }), "home");
-        dialog.button(Ui.button(skin, "RETRY", "secondary", () -> { }), "restart");
+        dialog.button(Ui.button(skin, T.r("HOME"), "ghost", () -> { }), "home");
+        dialog.button(Ui.button(skin, T.r("RETRY"), "secondary", () -> { }), "restart");
         if (offer.kind() == RewardOffer.Kind.VIDEO) {
             dialog.button(Ui.button(skin, "+" + GameConfig.EXTRA_MOVES_PER_AD + "  ▶", "gold",
                 () -> { }), "video");
@@ -1393,7 +1401,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             @Override
             public void onFailed() {
                 if (!disposed) {
-                    toast("Video closed early — no extra moves", Palette.TEXT_DIM);
+                    toast(T.r("Video closed early — no extra moves"), Palette.TEXT_DIM);
                     showOutOfMovesDialog();
                 }
             }
@@ -1407,7 +1415,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         phase = Phase.PLAYING;
         hud.setMoves(moves, moveLimit);
         hud.setHintEnabled(!challengeRules.noHints());
-        toast("+" + GameConfig.EXTRA_MOVES_PER_AD + " moves", Palette.SUCCESS);
+        toast(T.f("+{0} moves", GameConfig.EXTRA_MOVES_PER_AD), Palette.SUCCESS);
         game.sound().play(SoundManager.Cue.COIN);
     }
 
@@ -1446,7 +1454,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             }
         }
         boolean perfect = parMoves != Level.PAR_UNKNOWN && moves <= parMoves;
-        popWord(perfect ? "Perfect!" : "Complete!", stage.getWidth() * 0.5f);
+        popWord(perfect ? T.r("Perfect!") : T.r("Complete!"), stage.getWidth() * 0.5f);
         SoundManager.Cue voice = perfect ? SoundManager.Cue.VOICE_PERFECT
             : SoundManager.Cue.VOICE_LEVEL_COMPLETE;
         game.sound().play(voice);
@@ -1501,17 +1509,17 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
      */
     private void shareResult(WinSummary summary) {
         if (!game.share().isAvailable()) {
-            Ui.toast(stage, skin, "Sharing works in the phone version", Palette.TEXT_DIM);
+            Ui.toast(stage, skin, T.r("Sharing works in the phone version"), Palette.TEXT_DIM);
             return;
         }
         String heading;
         if (dailyChallenge) {
-            heading = "Daily puzzle  •  " + LocalDate.parse(dailyDate).format(
-                java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.ENGLISH));
+            heading = T.f("Daily puzzle  •  {0}", LocalDate.parse(dailyDate).format(
+                java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy", new java.util.Locale(T.language().code))));
         } else if (challengeRun) {
-            heading = "Challenge  •  level " + levelIndex;
+            heading = T.f("Challenge  •  level {0}", levelIndex);
         } else {
-            heading = "Level " + levelIndex + "  •  " + level.colors() + " colours";
+            heading = T.f("Level {0}  •  {1} colours", levelIndex, level.colors());
         }
         int par = parMoves == Level.PAR_UNKNOWN ? 0 : parMoves;
         ShareCard.Result result = new ShareCard.Result(heading, level.colors(), level.emptyTubes(),
@@ -1521,17 +1529,19 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             png = ShareCard.render(skin, game.tubes(), game.batch(), stage.getViewport(), result);
         } catch (RuntimeException failed) {
             com.badlogic.gdx.Gdx.app.error("Share", "Result card failed: " + failed.getMessage());
-            Ui.toast(stage, skin, "Couldn't build the picture. Try again.", Palette.TEXT_DIM);
+            Ui.toast(stage, skin, T.r("Couldn't build the picture. Try again."), Palette.TEXT_DIM);
             return;
         }
-        String what = dailyChallenge ? "today's Tidy Tubes puzzle"
-            : "level " + levelIndex + " of Tidy Tubes";
-        String text = "I solved " + what + " in " + moves + " move" + (moves == 1 ? "" : "s")
-            + (par > 0 ? " (best possible " + par + ")" : "") + ". Can you beat it? "
+        // Platform text: logical order, the share sheet lays it out itself.
+        String what = dailyChallenge ? T.raw("today's Tidy Tubes puzzle")
+            : T.rawf("level {0} of Tidy Tubes", levelIndex);
+        String text = (moves == 1 ? T.rawf("I solved {0} in 1 move", what)
+            : T.rawf("I solved {0} in {1} moves", what, moves))
+            + (par > 0 ? T.rawf(" (best possible {0})", par) : "") + T.raw(". Can you beat it? ")
             + GameConfig.STORE_URL;
         game.analytics().event(AnalyticsEvents.SHARE_RESULT, AnalyticsEvents.P_LEVEL, levelIndex,
             AnalyticsEvents.P_MODE, analyticsMode());
-        game.share().shareImage(png, text, "Share your result");
+        game.share().shareImage(png, text, T.raw("Share your result"));
     }
 
     /**
@@ -1554,7 +1564,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     /** "1 more daily win" / "2 more daily wins", towards the streak palette. */
     private String remainingDailyWins() {
         int left = Math.max(1, GameConfig.DAILY_PALETTE_STREAK - game.save().dailyWinStreak);
-        return left + " more daily win" + (left == 1 ? "" : "s");
+        return left == 1 ? T.raw("1 more daily win") : T.rawf("{0} more daily wins", left);
     }
 
     private static final float STAR_SIZE = 68f;
@@ -1599,11 +1609,11 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         content.pad(26f, 30f, 22f, 30f);
 
         // --- header: what was played, then the big word, which pops in like the praise did
-        String context = dailyChallenge ? "DAILY CHALLENGE"
-            : challengeRun ? "CHALLENGE" : "LEVEL " + levelIndex;
+        String context = dailyChallenge ? T.r("DAILY CHALLENGE")
+            : challengeRun ? T.r("CHALLENGE") : T.f("LEVEL {0}", levelIndex);
         Label contextLabel = new Label(context, skin, "accent");
         content.add(contextLabel).row();
-        Label word = new Label(perfect ? "Perfect!" : dailyChallenge ? "Done!" : "Cleared!",
+        Label word = new Label(perfect ? T.r("Perfect!") : dailyChallenge ? T.r("Done!") : T.r("Cleared!"),
             skin, "display");
         if (perfect) word.setColor(Palette.GOLD);
         Container<Label> wordBox = new Container<>(word);
@@ -1651,16 +1661,17 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         starStack.add(starsRow);
         content.add(starStack).size(340f, 150f).padTop(4f).row();
 
-        String detail = moves == 1 ? "1 move" : moves + " moves";
+        String detail = moves == 1 ? T.raw("1 move") : T.rawf("{0} moves", moves);
         if (parMoves != Level.PAR_UNKNOWN) {
-            detail += perfect ? "  •  can't be beaten" : "  •  best possible " + parMoves;
+            detail = perfect ? T.rawf("{0}  •  can't be beaten", detail)
+                : T.rawf("{0}  •  best possible {1}", detail, parMoves);
         }
-        content.add(new Label(detail, skin, "dim")).padTop(10f).row();
+        content.add(new Label(T.show(detail), skin, "dim")).padTop(10f).row();
 
         // --- record line (campaign only): a badge that pops once the stars have landed
         if (!dailyChallenge && !challengeRun) {
             if (summary.newRecord) {
-                Label record = new Label("NEW RECORD!  was " + summary.previousBest, skin, "gold");
+                Label record = new Label(T.f("NEW RECORD!  was {0}", summary.previousBest), skin, "gold");
                 Container<Label> badge = new Container<>(record);
                 badge.setTransform(true);
                 badge.pack();
@@ -1673,7 +1684,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                     Actions.scaleTo(1f, 1f, 0.16f, Interpolation.swingOut)));
                 content.add(badge).padTop(8f).row();
             } else if (!summary.firstClear) {
-                content.add(new Label("Your best: " + summary.bestAfter + " moves", skin, "caption"))
+                content.add(new Label(T.f("Your best: {0} moves", summary.bestAfter), skin, "caption"))
                     .padTop(8f).row();
             }
         }
@@ -1681,10 +1692,10 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         // --- coins: the chip shows the award; the sprites fly from it to the purse
         Table rewardChip = null;
         if (dailyChallenge && coinsEarned == 0) {
-            content.add(new Label("Daily reward already claimed", skin, "caption"))
+            content.add(new Label(T.r("Daily reward already claimed"), skin, "caption"))
                 .padTop(12f).row();
         } else if (challengeRun && coinsEarned == 0) {
-            content.add(new Label("Challenge completed  •  no new achievement reward",
+            content.add(new Label(T.r("Challenge completed  •  no new achievement reward"),
                 skin, "caption")).padTop(12f).row();
         } else {
             Label reward = new Label("+" + coinsEarned, skin, "gold");
@@ -1697,13 +1708,13 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             }
         }
         if (challengeRun && coinsEarned > 0) {
-            content.add(new Label("Achievement reward", skin, "caption")).padTop(8f).row();
+            content.add(new Label(T.r("Achievement reward"), skin, "caption")).padTop(8f).row();
         }
         if (dailyChallenge && coinsEarned > 0) {
             String streakMessage = paletteUnlockedNow
-                ? "3-day streak! New ball colours unlocked."
-                : game.save().dailyPaletteUnlocked ? "Daily colour style unlocked."
-                : remainingDailyWins() + " to unlock colours.";
+                ? T.r("3-day streak! New ball colours unlocked.")
+                : game.save().dailyPaletteUnlocked ? T.r("Daily colour style unlocked.")
+                : T.f("{0} to unlock colours.", remainingDailyWins());
             content.add(new Label(streakMessage, skin, "caption")).padTop(8f).row();
         }
 
@@ -1717,8 +1728,8 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                     boolean chapterReward = item.unlock() == Cosmetic.Unlock.CHAPTER;
                     unlocked.add(new Image(skin.newDrawable(chapterReward ? "icon-grid" : "icon-star",
                         Palette.ON_GOLD))).size(22f).padRight(8f);
-                    Label text = new Label("New skin unlocked: " + item.displayName() + "  •  "
-                        + item.category().title(), skin, "label");
+                    Label text = new Label(T.f("New skin unlocked: {0}  •  {1}", Names.name(item.displayName()),
+                        T.raw(item.category().title())), skin, "label");
                     text.setColor(Palette.ON_GOLD);
                     unlocked.add(text);
                     content.add(unlocked).padTop(10f).row();
@@ -1728,9 +1739,9 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                 StarRoad.Milestone next = StarRoad.next(game.save().totalStars());
                 if (next != null) {
                     int missing = next.stars - game.save().totalStars();
-                    Label road = new Label(missing + (missing == 1 ? " star" : " stars")
-                        + " to unlock " + next.reward.displayName() + " ("
-                        + next.reward.category().title().toLowerCase(java.util.Locale.ROOT) + ")",
+                    Label road = new Label(T.f(missing == 1 ? T.k("{0} star to unlock {1} ({2})")
+                            : T.k("{0} stars to unlock {1} ({2})"), missing, Names.name(next.reward.displayName()),
+                        T.raw(next.reward.category().title()).toLowerCase(new java.util.Locale(T.language().code))),
                         skin, "caption");
                     road.setColor(Palette.GOLD);
                     content.add(road).padTop(8f).row();
@@ -1744,8 +1755,8 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             if (!fresh.isEmpty()) {
                 Cosmetic item = fresh.get(0);
                 game.save().markShopNotified(item.id());
-                Label nudge = new Label("New in the shop: " + item.displayName() + "  •  "
-                    + item.price() + " coins", skin, "caption");
+                Label nudge = new Label(T.f("New in the shop: {0}  •  {1} coins", Names.name(item.displayName()),
+                    item.price()), skin, "caption");
                 nudge.setColor(Palette.GOLD);
                 content.add(nudge).padTop(10f).row();
             }
@@ -1755,9 +1766,9 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         if (!dailyChallenge && !challengeRun && summary.firstClear
             && Breathing.offersBreathAfter(levelIndex, GameConfig.BREATHE_EVERY_N_LEVELS)) {
             Table breath = new Table();
-            breath.add(new Label(levelIndex + " levels in. Take a breath?", skin, "caption"))
+            breath.add(new Label(T.f("{0} levels in. Take a breath?", levelIndex), skin, "caption"))
                 .padRight(12f);
-            breath.add(Ui.button(skin, "BREATHE  •  " + (int) Breathing.TOTAL_SECONDS + " s",
+            breath.add(Ui.button(skin, T.f("BREATHE  •  {0} s", (int) Breathing.TOTAL_SECONDS),
                 "ghost", () -> {
                     resultDialog[0].hide();
                     startBreath();
@@ -1771,20 +1782,20 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         content.add(Ui.divider(skin)).height(2f).width(actionsWidth).padTop(18f).row();
         // Daily: back to the campaign where the player left it; the level number is the home
         // screen's business, here it only reads like a jump to a random level.
-        String primary = dailyChallenge ? "CONTINUE" : challengeRun ? "CHALLENGES" : "NEXT LEVEL";
+        String primary = dailyChallenge ? T.r("CONTINUE") : challengeRun ? T.r("CHALLENGES") : T.r("NEXT LEVEL");
         com.badlogic.gdx.scenes.scene2d.ui.Button next = Ui.iconTextButton(skin, "icon-play",
             primary, "primary", goNext);
         content.add(next).width(actionsWidth).height(74f).padTop(18f).row();
 
         Table secondary = new Table();
-        secondary.add(Ui.iconTextButton(skin, "icon-replay", "REPLAY", "ghost", goReplay))
+        secondary.add(Ui.iconTextButton(skin, "icon-replay", T.r("REPLAY"), "ghost", goReplay))
             .width((actionsWidth - 12f) * 0.5f).height(60f).padRight(12f);
-        secondary.add(Ui.iconTextButton(skin, "icon-share", "SHARE", "ghost",
+        secondary.add(Ui.iconTextButton(skin, "icon-share", T.r("SHARE"), "ghost",
             () -> shareResult(summary))) // the card stays; the share sheet opens over it
             .width((actionsWidth - 12f) * 0.5f).height(60f);
         content.add(secondary).padTop(12f).row();
 
-        TextButton home = Ui.button(skin, "HOME", "ghost", game::goHome);
+        TextButton home = Ui.button(skin, T.r("HOME"), "ghost", game::goHome);
         home.getLabel().setColor(Palette.TEXT_DIM);
         content.add(home).width(actionsWidth * 0.5f).height(52f).padTop(10f).row();
 
@@ -1821,7 +1832,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     private Actor doubleCoinsButton(Label rewardLabel, int coinsEarned) {
         final boolean[] doubled = {false};
         final Button[] holder = new Button[1];
-        holder[0] = Ui.iconTextButton(skin, "icon-play", "WATCH  •  ×2  COINS", "gold", () -> {
+        holder[0] = Ui.iconTextButton(skin, "icon-play", T.r("WATCH  •  ×2  COINS"), "gold", () -> {
             if (doubled[0] || holder[0].isDisabled()) {
                 return;
             }
@@ -1848,7 +1859,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
                 public void onFailed() {
                     if (!disposed && !doubled[0]) {
                         holder[0].setDisabled(false);
-                        Ui.toast(stage, skin, "No video right now. Try again in a moment.", Palette.GOLD);
+                        Ui.toast(stage, skin, T.r("No video right now. Try again in a moment."), Palette.GOLD);
                     }
                 }
             });
@@ -1930,17 +1941,17 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
      * @param onClose invoked when the card is dismissed; may be {@code null}
      */
     public static void showHowToPlay(Stage stage, Skin skin, Runnable onClose) {
-        Dialog dialog = Ui.dialog(skin, "How to play", value -> {
+        Dialog dialog = Ui.dialog(skin, T.r("How to play"), value -> {
             if (onClose != null) {
                 onClose.run();
             }
         });
         Table content = dialog.getContentTable();
         String[] steps = {
-            "Tap a tube, or drag its top balls, to pick them up.",
-            "Tap another tube or drag-and-drop onto it. It must be empty, or show the same colour.",
-            "Fill every tube with a single colour to win. Undo is free, always.",
-            "You get one free hint per level. Watch the move limit; a rewarded continue is optional."
+            T.r("Tap a tube, or drag its top balls, to pick them up."),
+            T.r("Tap another tube or drag-and-drop onto it. It must be empty, or show the same colour."),
+            T.r("Fill every tube with a single colour to win. Undo is free, always."),
+            T.r("You get one free hint per level. Watch the move limit; a rewarded continue is optional.")
         };
         for (int i = 0; i < steps.length; i++) {
             Table row = new Table();
@@ -1950,7 +1961,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             row.add(Ui.paragraph(skin, steps[i], "default", 380f)).width(380f).left();
             content.add(row).padTop(i == 0 ? 10f : 14f).left().row();
         }
-        dialog.button(Ui.button(skin, "GOT IT", "primary", () -> { }), Boolean.TRUE);
+        dialog.button(Ui.button(skin, T.r("GOT IT"), "primary", () -> { }), Boolean.TRUE);
         dialog.show(stage);
     }
 

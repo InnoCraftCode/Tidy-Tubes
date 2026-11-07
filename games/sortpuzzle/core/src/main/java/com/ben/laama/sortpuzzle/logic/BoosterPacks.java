@@ -1,5 +1,6 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.GameConfig;
 import com.ben.laama.sortpuzzle.save.SaveData;
 
@@ -9,9 +10,9 @@ import com.ben.laama.sortpuzzle.save.SaveData;
  */
 public enum BoosterPacks {
 
-    SINGLE(1, GameConfig.BOOSTER_PRICE, "One extra tube"),
-    FIVE(5, 500, "Pack of five"),
-    TWELVE(12, 1000, "Pack of twelve");
+    SINGLE(1, GameConfig.BOOSTER_PRICE, T.k("One extra tube")),
+    FIVE(5, 500, T.k("Pack of five")),
+    TWELVE(12, 1000, T.k("Pack of twelve"));
 
     private final int count;
     private final int price;

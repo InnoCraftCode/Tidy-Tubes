@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.logic.Level;
 
 /**
@@ -59,6 +60,9 @@ public final class HudTable extends Table {
     private final Table topBar;
     private final Table stock;
     private final Table[] verbs;
+    /** Portrait only: the four verbs in a row under the board. */
+    private final Table bottomBar = new Table();
+    private final Vector2 probe = new Vector2();
     private Boolean landscape;
 
     private final Label levelLabel;
@@ -183,8 +187,8 @@ public final class HudTable extends Table {
             Ui.ICON_BUTTON, listener::onBooster);
         hintButton = Ui.iconButton(skin, "icon-hint", Palette.PRIMARY, Palette.ON_PRIMARY,
             Ui.ICON_BUTTON, listener::onHint);
-        undoCaption = new Label("Undo", skin, "caption");
-        resetCaption = new Label("Reset", skin, "caption");
+        undoCaption = new Label(T.r("Undo"), skin, "caption");
+        resetCaption = new Label(T.r("Reset"), skin, "caption");
         boosterCaption = new Label("", skin, "caption");
         hintCaption = new Label("", skin, "caption");
 
@@ -213,13 +217,13 @@ public final class HudTable extends Table {
         if (!wide) {
             add(statusPill).padTop(4f).row();
             add(stock).padTop(8f).row();
-            Table bottom = new Table();
-            bottom.pad(10f, 16f, 0f, 16f).defaults().pad(0f, 14f, 0f, 14f).uniformX();
+            bottomBar.clearChildren();
+            bottomBar.pad(10f, 16f, 0f, 16f).defaults().pad(0f, 14f, 0f, 14f).uniformX();
             for (Table verb : verbs) {
-                bottom.add(verb);
+                bottomBar.add(verb);
             }
             add().expandY().row();
-            add(bottom).padBottom(26f).row();
+            add(bottomBar).padBottom(26f).row();
             return;
         }
         Table left = new Table();
@@ -236,6 +240,28 @@ public final class HudTable extends Table {
         middle.add().expand();
         middle.add(pad).width(LANDSCAPE_SIDE).expandY().center();
         add(middle).grow().padBottom(20f).row();
+    }
+
+    /**
+     * Stage-space y of the lowest edge of the chrome above the board (the stock strip in
+     * portrait, the top bar in landscape). Measured from the real layout, so it already includes
+     * the display-cutout inset and any text that grew wider or taller than planned. The fixed
+     * {@link #PORTRAIT_TOP} reserve missed both on punch-hole phones and the status pill sat on
+     * the top row of tubes.
+     */
+    public float chromeTopEdge() {
+        validate();
+        Actor lowest = Boolean.TRUE.equals(landscape) ? topBar : stock;
+        return lowest.localToStageCoordinates(probe.set(0f, 0f)).y;
+    }
+
+    /** Stage-space y of the top edge of the verb row in portrait; the HUD's own bottom in landscape. */
+    public float chromeBottomEdge() {
+        validate();
+        if (Boolean.TRUE.equals(landscape)) {
+            return localToStageCoordinates(probe.set(0f, 0f)).y;
+        }
+        return bottomBar.localToStageCoordinates(probe.set(0f, bottomBar.getHeight())).y;
     }
 
     private static Table verb(Skin skin, ImageButton button, Label caption) {
@@ -268,9 +294,9 @@ public final class HudTable extends Table {
         shownTubes = tubes;
         shownUndos = undos;
         shownResets = resets;
-        boosterCaption.setText(tubes > 0 ? "Tube ×" + tubes : "Tube");
-        undoCaption.setText(undos > 0 ? "Undo ×" + undos : "Undo");
-        resetCaption.setText(resets > 0 ? "Reset ×" + resets : "Reset");
+        boosterCaption.setText(tubes > 0 ? T.f("Tube ×{0}", tubes) : T.r("Tube"));
+        undoCaption.setText(undos > 0 ? T.f("Undo ×{0}", undos) : T.r("Undo"));
+        resetCaption.setText(resets > 0 ? T.f("Reset ×{0}", resets) : T.r("Reset"));
     }
 
     private static void stockChip(Table chip, Label label, int count, int shown) {
@@ -284,7 +310,7 @@ public final class HudTable extends Table {
 
     // --------------------------------------------------------------------- header
     public void setLevel(int level, String band) {
-        setLevel("Level " + level, band);
+        setLevel(T.f("Level {0}", level), band);
     }
 
     public void setLevel(String title, String band) {
@@ -301,14 +327,14 @@ public final class HudTable extends Table {
         boolean played = shownMoves >= 0 && used > shownMoves;
         shownMoves = used;
         if (limit <= 0) {
-            movesLabel.setText(used == 1 ? "1 move" : used + " moves");
+            movesLabel.setText(used == 1 ? T.r("1 move") : T.f("{0} moves", used));
             movesLabel.setColor(Palette.TEXT_DIM);
             if (played) {
                 pop(movesBox, 1.12f);
             }
             return;
         }
-        movesLabel.setText(used + " / " + limit + " moves");
+        movesLabel.setText(T.f("{0} / {1} moves", used, limit));
         int left = limit - used;
         // Go amber with a few moves to spare, red on the last one — the player should see the
         // wall coming rather than hit it.
@@ -349,11 +375,11 @@ public final class HudTable extends Table {
     /** @param par {@link Level#PAR_UNKNOWN} while the solver is still thinking */
     public void showPar(int par) {
         if (par == Level.PAR_UNKNOWN) {
-            setStatus("icon-star", Palette.TEXT_DIM, "Best possible", "solving…");
+            setStatus("icon-star", Palette.TEXT_DIM, T.r("Best possible"), T.r("solving…"));
             parShown = false;
             return;
         }
-        setStatus("icon-star", Palette.GOLD, "Best possible", par == 1 ? "1 move" : par + " moves");
+        setStatus("icon-star", Palette.GOLD, T.r("Best possible"), par == 1 ? T.r("1 move") : T.f("{0} moves", par));
         if (!parShown) {
             parShown = true;
             // The text just changed width; size the pill now so the pop scales from its centre.
@@ -384,8 +410,8 @@ public final class HudTable extends Table {
      *                  one, in which case the number is an upper bound and says so
      */
     public void showRemaining(int remaining, boolean exact) {
-        String moves = remaining == 1 ? "1 move" : remaining + " moves";
-        setStatus("icon-hint", Palette.PRIMARY, exact ? "To finish" : "To finish, at most", moves);
+        String moves = remaining == 1 ? T.r("1 move") : T.f("{0} moves", remaining);
+        setStatus("icon-hint", Palette.PRIMARY, exact ? T.r("To finish") : T.r("To finish, at most"), moves);
     }
 
     public void showStatus(String message, Color color) {
@@ -401,7 +427,7 @@ public final class HudTable extends Table {
 
     /** @param available how many extra-tube boosters the player can still spend here */
     public void setBoosters(int available) {
-        boosterCaption.setText("Tube ×" + available);
+        boosterCaption.setText(T.f("Tube ×{0}", available));
         boosterButton.setDisabled(available <= 0);
         boosterButton.getColor().a = available > 0 ? 1f : 0.45f;
     }

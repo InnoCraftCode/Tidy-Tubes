@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Align;
 
 import com.ben.laama.sortpuzzle.GameConfig;
 import com.ben.laama.sortpuzzle.Main;
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.ads.AdProvider;
 import com.ben.laama.sortpuzzle.audio.SoundManager;
 import com.ben.laama.sortpuzzle.logic.DailyChallenge;
@@ -48,6 +49,8 @@ public final class HomeScreen extends BaseScreen {
     private final Button play;
     private final Table dailyCard;
     private final Table navigation;
+    /** Widest the WORLD / GOALS / SHOP row may get: the screen minus margins (720 - 2 x 40). */
+    private static final float NAVIGATION_MAX_WIDTH = 640f;
     private final Table chips;
     private final Table rewardCard;
     private Boolean arrangedLandscape;
@@ -81,42 +84,45 @@ public final class HomeScreen extends BaseScreen {
         brand.add(mark).size(mark.getWidth() * 0.78f, mark.getHeight() * 0.78f)
             .padTop(8f).row();
         brand.add(new Label(GameConfig.APP_NAME, skin, "display")).padTop(2f).row();
-        brand.add(new Label(GameConfig.TAGLINE, skin, "dim")).padTop(0f).row();
+        brand.add(new Label(T.r(GameConfig.TAGLINE), skin, "dim")).padTop(0f).row();
 
         // ---- primary action: where the player is on the map ---------------------
         int level = save.currentLevel;
         World.Biome biome = World.biomeFor(level);
-        String caption = biome.name + "  •  " + Difficulty.colorsFor(level) + " colours";
-        play = Ui.twoLineButton(skin, "primary", "CONTINUE  •  LEVEL " + level, caption, () -> {
+        String caption = T.f("{0}  •  {1} colours", T.raw(biome.name), Difficulty.colorsFor(level));
+        play = Ui.twoLineButton(skin, "primary", T.f("CONTINUE  •  LEVEL {0}", level), caption, () -> {
             game.sound().play(SoundManager.Cue.BUTTON);
             game.goToLevel(game.save().currentLevel);
         });
-        Button levels = Ui.iconTextButton(skin, "icon-grid", "WORLD", "ghost", () -> {
+        Button levels = Ui.iconTextButton(skin, "icon-grid", T.r("WORLD"), "ghost", () -> {
             game.sound().play(SoundManager.Cue.BUTTON);
             game.goLevelSelect();
         });
-        Button progress = Ui.iconTextButton(skin, "icon-goal", "GOALS", "ghost", () -> {
+        Button progress = Ui.iconTextButton(skin, "icon-goal", T.r("GOALS"), "ghost", () -> {
             game.sound().play(SoundManager.Cue.BUTTON);
             game.goProgress();
         });
         // The shop button turns gold when a new item has come within reach of the purse.
         boolean shopNews = !Shop.newlyAffordable(save).isEmpty();
-        Button shopButton = Ui.iconTextButton(skin, "icon-shop", shopNews ? "SHOP • NEW" : "SHOP",
+        Button shopButton = Ui.iconTextButton(skin, "icon-shop", shopNews ? T.r("SHOP • NEW") : T.r("SHOP"),
             shopNews ? "gold" : "ghost", () -> {
                 game.sound().play(SoundManager.Cue.BUTTON);
                 game.goShop();
             });
         dailyCard = dailyChallengeCard(save);
         navigation = new Table();
-        navigation.add(levels).width(150f).height(64f).padRight(10f);
-        navigation.add(progress).width(150f).height(64f).padRight(10f);
-        navigation.add(shopButton).width(180f).height(64f);
+        // Widths follow the words (WORLD / MONDE / OBJETIVOS...); a row longer than the cards
+        // above it shrinks its text instead of running off the screen.
+        navigation.add(levels).minWidth(130f).height(64f).padRight(10f);
+        navigation.add(progress).minWidth(130f).height(64f).padRight(10f);
+        navigation.add(shopButton).minWidth(160f).height(64f);
+        Ui.shrinkTextToFit(navigation, NAVIGATION_MAX_WIDTH);
 
         // ---- purse chips ---------------------------------------------------------
         coinsLabel = new Label(String.valueOf(save.coins), skin, "gold");
-        boostersLabel = new Label(save.boosters + " tubes", skin, "label");
-        Label cleared = new Label(save.completedCount() + " cleared  •  "
-            + save.totalStars() + " stars", skin, "label");
+        boostersLabel = new Label(T.f("{0} tubes", save.boosters), skin, "label");
+        Label cleared = new Label(T.f("{0} cleared  •  {1} stars", save.completedCount(),
+            save.totalStars()), skin, "label");
         chips = new Table();
         chips.add(Ui.chip(skin, "icon-coin", Palette.GOLD, coinsLabel)).padRight(10f);
         chips.add(Ui.chip(skin, "icon-tube", Palette.PRIMARY, boostersLabel)).padRight(10f);
@@ -143,7 +149,7 @@ public final class HomeScreen extends BaseScreen {
 
     /** The soft-ask card: why, what, how often - then the system prompt only after "Yes". */
     private void showReminderAsk() {
-        com.badlogic.gdx.scenes.scene2d.ui.Dialog dialog = Ui.dialog(skin, "Daily puzzle reminder",
+        com.badlogic.gdx.scenes.scene2d.ui.Dialog dialog = Ui.dialog(skin, T.r("Daily puzzle reminder"),
             choice -> {
                 if ("yes".equals(choice)) {
                     game.enableReminders(on -> { });
@@ -153,12 +159,12 @@ public final class HomeScreen extends BaseScreen {
                 }
             });
         dialog.getContentTable().add(Ui.paragraph(skin,
-            "Want a nudge when you leave a level or today's puzzle unfinished, and a few gentle "
-                + "reminders during the day? Never at night, and you can switch it off any time.",
+            T.r("Want a nudge when you leave a level or today's puzzle unfinished, and a few gentle "
+                + "reminders during the day? Never at night, and you can switch it off any time."),
             "dim", 420f))
             .width(420f).padTop(6f).row();
-        dialog.button(Ui.button(skin, "NOT NOW", "ghost", () -> { }), "no");
-        dialog.button(Ui.button(skin, "YES, REMIND ME", "primary", () -> { }), "yes");
+        dialog.button(Ui.button(skin, T.r("NOT NOW"), "ghost", () -> { }), "no");
+        dialog.button(Ui.button(skin, T.r("YES, REMIND ME"), "primary", () -> { }), "yes");
         dialog.show(stage);
     }
 
@@ -218,11 +224,11 @@ public final class HomeScreen extends BaseScreen {
         Table card = Ui.card(skin);
         Table heading = new Table();
         Table copy = new Table();
-        copy.add(new Label("TODAY'S PUZZLE", skin, "label")).left().row();
-        copy.add(new Label("Same daily puzzle for everyone", skin, "caption"))
+        copy.add(new Label(T.r("TODAY'S PUZZLE"), skin, "label")).left().row();
+        copy.add(new Label(T.r("Same daily puzzle for everyone"), skin, "caption"))
             .left().padTop(1f);
         heading.add(copy).left().expandX();
-        Label date = new Label(today.format(DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH)),
+        Label date = new Label(T.show(today.format(DateTimeFormatter.ofPattern("d MMM", new Locale(T.language().code)))),
             skin, "caption");
         date.setColor(Palette.GOLD);
         heading.add(date).right();
@@ -235,22 +241,23 @@ public final class HomeScreen extends BaseScreen {
             streakRow.add(dot).size(12f).padRight(5f);
         }
         String streakText = save.dailyPaletteUnlocked
-            ? "ALT COLOURS UNLOCKED"
-            : streak + " / " + GameConfig.DAILY_PALETTE_STREAK + " DAYS TO NEW COLOURS";
+            ? T.r("ALT COLOURS UNLOCKED")
+            : T.f("{0} / {1} DAYS TO NEW COLOURS", streak, GameConfig.DAILY_PALETTE_STREAK);
         streakRow.add(new Label(streakText, skin, "caption")).left().padLeft(4f).expandX();
-        streakRow.add(new Label(completedToday ? "CLAIMED" : "+" + GameConfig.DAILY_CHALLENGE_COINS,
+        streakRow.add(new Label(completedToday ? T.r("CLAIMED") : "+" + GameConfig.DAILY_CHALLENGE_COINS,
             skin, "gold")).right();
+        Ui.shrinkTextToFit(streakRow, 440f); // card is 500 wide, 26 padding each side
         card.add(streakRow).growX().padTop(14f).row();
 
         TextButton playDaily = Ui.button(skin,
-            completedToday ? "REPLAY PUZZLE" : "PLAY DAILY",
+            completedToday ? T.r("REPLAY PUZZLE") : T.r("PLAY DAILY"),
             "gold", () -> {
                 game.sound().play(SoundManager.Cue.BUTTON);
                 game.goToDailyChallenge();
             });
         dailyBonusButton = Ui.button(skin,
             save.hasClaimedDailyRewardedBonus(dateKey)
-                ? "BONUS CLAIMED" : "WATCH  •  +" + GameConfig.DAILY_REWARDED_BONUS_COINS,
+                ? T.r("BONUS CLAIMED") : T.f("WATCH  •  +{0}", GameConfig.DAILY_REWARDED_BONUS_COINS),
             "ghost", this::claimDailyBonus);
         dailyBonusButton.setDisabled(save.hasClaimedDailyRewardedBonus(dateKey));
         Table actions = new Table();
@@ -274,7 +281,7 @@ public final class HomeScreen extends BaseScreen {
             return;
         }
         if (!game.ads().isRewardedReady()) {
-            Ui.toast(stage, skin, "Reward video isn't ready yet. Try again later.", Palette.GOLD);
+            Ui.toast(stage, skin, T.r("Reward video isn't ready yet. Try again later."), Palette.GOLD);
             return;
         }
 
@@ -291,7 +298,7 @@ public final class HomeScreen extends BaseScreen {
                         refreshDailyBonusButton();
                         game.sound().play(SoundManager.Cue.COIN);
                         Ui.toast(stage, skin,
-                            "+" + GameConfig.DAILY_REWARDED_BONUS_COINS + " coins added",
+                            T.f("+{0} coins added", GameConfig.DAILY_REWARDED_BONUS_COINS),
                             Palette.SUCCESS);
                     }
                 } else if (game.getScreen() == HomeScreen.this) {
@@ -304,7 +311,7 @@ public final class HomeScreen extends BaseScreen {
                 if (game.getScreen() == HomeScreen.this) {
                     dailyBonusButton.setDisabled(false);
                     Ui.toast(stage, skin,
-                        "No reward this time. You can try again later.", Palette.GOLD);
+                        T.r("No reward this time. You can try again later."), Palette.GOLD);
                 }
             }
         });
@@ -314,7 +321,7 @@ public final class HomeScreen extends BaseScreen {
         String today = DailyChallenge.dateKey(DailyChallenge.todayUtc());
         boolean claimed = game.save().hasClaimedDailyRewardedBonus(today);
         dailyBonusButton.setText(claimed
-            ? "BONUS CLAIMED" : "WATCH  •  +" + GameConfig.DAILY_REWARDED_BONUS_COINS);
+            ? T.r("BONUS CLAIMED") : T.f("WATCH  •  +{0}", GameConfig.DAILY_REWARDED_BONUS_COINS));
         dailyBonusButton.setDisabled(claimed);
     }
 
@@ -335,8 +342,10 @@ public final class HomeScreen extends BaseScreen {
         Table card = Ui.card(skin);
         card.pad(18f, 24f, 18f, 24f);
         Table heading = new Table();
-        heading.add(new Label("DAILY REWARD", skin, "label")).left().expandX();
-        heading.add(new Label("Come back every day, it grows", skin, "caption")).right();
+        // Title over caption: side by side they overflowed the card in longer languages.
+        heading.defaults().left();
+        heading.add(new Label(T.r("DAILY REWARD"), skin, "label")).expandX().row();
+        heading.add(new Label(T.r("Come back every day, it grows"), skin, "caption")).padTop(2f);
         card.add(heading).growX().row();
         calendar = new Table();
         card.add(calendar).growX().padTop(12f).row();
@@ -359,7 +368,7 @@ public final class HomeScreen extends BaseScreen {
             Color dotColor = past ? Palette.GOLD : isToday ? Palette.PRIMARY : Palette.SURFACE_STRONG;
             Image dot = new Image(skin.newDrawable(past ? "icon-check" : "circle", dotColor));
             cell.add(dot).size(past ? 18f : 16f).row();
-            Label label = new Label(DailyRewards.boostersFor(day) > 0 ? "tube" : "+" + DailyRewards.coinsFor(day),
+            Label label = new Label(DailyRewards.boostersFor(day) > 0 ? T.r("tube") : "+" + DailyRewards.coinsFor(day),
                 skin, "small");
             label.setColor(isToday ? Palette.TEXT : Palette.TEXT_DIM);
             cell.add(label).padTop(4f);
@@ -372,11 +381,11 @@ public final class HomeScreen extends BaseScreen {
             calendar.add(cell).expandX();
         }
         if (claimable > 0) {
-            claimButton.setText("CLAIM DAY " + claimable + "  •  " + DailyRewards.label(claimable));
+            claimButton.setText(T.f("CLAIM DAY {0}  •  {1}", claimable, DailyRewards.label(claimable)));
             claimButton.setDisabled(false);
             claimButton.getColor().a = 1f;
         } else {
-            claimButton.setText("DAY " + shown + " CLAIMED  •  BACK TOMORROW");
+            claimButton.setText(T.f("DAY {0} CLAIMED  •  BACK TOMORROW", shown));
             claimButton.setDisabled(true);
             claimButton.getColor().a = 0.6f;
         }
@@ -392,14 +401,14 @@ public final class HomeScreen extends BaseScreen {
         game.sound().play(SoundManager.Cue.COIN);
         refreshPurse();
         refreshCalendar();
-        Ui.toast(stage, skin, "Day " + day + ": " + DailyRewards.label(day) + "  •  see you tomorrow",
+        Ui.toast(stage, skin, T.f("Day {0}: {1}  •  see you tomorrow", day, DailyRewards.label(day)),
             Palette.SUCCESS);
     }
 
     private void refreshPurse() {
         SaveData save = game.save();
         coinsLabel.setText(String.valueOf(save.coins));
-        boostersLabel.setText(save.boosters + " tubes");
+        boostersLabel.setText(T.f("{0} tubes", save.boosters));
     }
 
     private String soundIcon() {

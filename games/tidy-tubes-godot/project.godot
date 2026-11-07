@@ -1,0 +1,24 @@
+; Engine configuration file.
+; Godot 4.7.2 - Tidy Tubes (port of games/sortpuzzle, see config/architecture/ADR-003).
+
+config_version=5
+
+[application]
+
+config/name="Tidy Tubes"
+config/description="Calm colour sort puzzle."
+config/version="2.0.0"
+config/features=PackedStringArray("4.7", "Mobile")
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=6
+
+[rendering]
+
+renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true

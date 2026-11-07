@@ -1,5 +1,6 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -14,9 +15,9 @@ public final class WeeklyGoals {
 
     private static final int[] TARGETS = {3, 1, 20};
     private static final String[] TITLES = {
-        "Clear 3 campaign levels",
-        "Finish a level at par",
-        "Make 20 campaign moves"
+        T.k("Clear 3 campaign levels"),
+        T.k("Finish a level at par"),
+        T.k("Make 20 campaign moves")
     };
 
     private WeeklyGoals() {

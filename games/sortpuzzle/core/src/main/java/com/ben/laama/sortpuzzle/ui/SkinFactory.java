@@ -18,6 +18,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import com.ben.laama.sortpuzzle.i18n.ArabicText;
+import com.ben.laama.sortpuzzle.i18n.Language;
+import com.ben.laama.sortpuzzle.i18n.T;
+
 
 /**
  * Builds the entire {@link Skin} in code: the "Nocturne" design system from
@@ -97,21 +101,96 @@ public final class SkinFactory {
     // ------------------------------------------------------------------ fonts
     private static void registerFonts(Skin skin, float density) {
         FreeTypeFontGenerator.setMaxTextureSize(2048);
-        skin.add("display", font("Poppins-ExtraBold.ttf", 58, density));
-        skin.add("title", font("Poppins-ExtraBold.ttf", 40, density));
-        skin.add("heading", font("Poppins-Bold.ttf", 30, density));
-        skin.add("body", font("Poppins-SemiBold.ttf", 24, density));
-        skin.add("label", font("Poppins-SemiBold.ttf", 20, density));
-        skin.add("small", font("Poppins-Medium.ttf", 17, density));
+        String arabic = arabicCharacters();
+        skin.add("display", font("Poppins-ExtraBold.ttf", "NotoSansArabic-ExtraBold.ttf", 58, density, arabic));
+        skin.add("title", font("Poppins-ExtraBold.ttf", "NotoSansArabic-ExtraBold.ttf", 40, density, arabic));
+        skin.add("heading", font("Poppins-Bold.ttf", "NotoSansArabic-Bold.ttf", 30, density, arabic));
+        skin.add("body", font("Poppins-SemiBold.ttf", "NotoSansArabic-SemiBold.ttf", 24, density, arabic));
+        skin.add("label", font("Poppins-SemiBold.ttf", "NotoSansArabic-SemiBold.ttf", 20, density, arabic));
+        skin.add("small", font("Poppins-Medium.ttf", "NotoSansArabic-Medium.ttf", 17, density, arabic));
     }
 
-    private static BitmapFont font(String file, int worldSize, float density) {
+    /**
+     * Accented letters of the Latin-script languages (French, Spanish, Portuguese, German,
+     * Indonesian, Turkish) and their quotation marks. Poppins covers Latin Extended-A.
+     */
+    private static final String LATIN_EXTRA =
+        "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝŸŒßàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿœ"
+            + "ĞğİıŞşĆćŁłŃńŚśŹźŻżĄąĘęČčŠšŽž¡¿«»‘’‚“”„‹›·°ºª€";
+
+    /**
+     * Arabic glyphs to merge into each font: every presentation form when the game is in a
+     * right-to-left language, otherwise only what the language picker needs to write
+     * "العربية". Generated per skin, so a language change rebuilds the skin.
+     */
+    private static String arabicCharacters() {
+        StringBuilder chars = new StringBuilder(".01"); // baseline references, see merge()
+        if (T.rtl()) {
+            for (char c = 'ﹰ'; c <= 'ﻼ'; c++) chars.append(c);
+            chars.append("،؛؟٪٫٬");
+        } else {
+            String shaped = ArabicText.shape(Language.AR.nativeName);
+            for (int i = 0; i < shaped.length(); i++) {
+                if (chars.indexOf(String.valueOf(shaped.charAt(i))) < 0) chars.append(shaped.charAt(i));
+            }
+        }
+        return chars.toString();
+    }
+
+    private static BitmapFont font(String file, String arabicFile, int worldSize, float density,
+                                   String arabicChars) {
+        BitmapFont latin = generate(file, worldSize, density,
+            FreeTypeFontGenerator.DEFAULT_CHARS + EXTRA_CHARS + LATIN_EXTRA);
+        if (!arabicChars.isEmpty()) {
+            merge(latin, generate(arabicFile, worldSize, density, arabicChars));
+        }
+        latin.getData().setScale(1f / density);
+        latin.getData().markupEnabled = true;
+        latin.setUseIntegerPositions(false);
+        return latin;
+    }
+
+    /**
+     * Moves every glyph of {@code extra} into {@code into}: a BitmapFont has no fallback font, so
+     * Arabic letters must live in the same font as the Latin ones. The glyph pages come along
+     * (and are disposed with {@code into}); each glyph is shifted so both scripts share one
+     * baseline: libGDX places glyphs from the cap-height line, which differs between the fonts.
+     */
+    private static void merge(BitmapFont into, BitmapFont extra) {
+        BitmapFont.BitmapFontData target = into.getData();
+        BitmapFont.BitmapFontData source = extra.getData();
+        int pageOffset = into.getRegions().size;
+        into.getRegions().addAll(extra.getRegions());
+        // Align baselines on a glyph both fonts draw sitting on the baseline (a glyph's yoffset
+        // is its bottom edge). Noto Sans Arabic has no Latin capitals, so the cap-height metrics
+        // cannot be compared; the period and the digits can.
+        float shift = source.capHeight - target.capHeight;
+        for (char reference : new char[] {'.', '0', '1'}) {
+            BitmapFont.Glyph mine = target.getGlyph(reference);
+            BitmapFont.Glyph theirs = source.getGlyph(reference);
+            if (mine != null && theirs != null) {
+                shift = mine.yoffset - theirs.yoffset;
+                break;
+            }
+        }
+        for (BitmapFont.Glyph[] page : source.glyphs) {
+            if (page == null) continue;
+            for (BitmapFont.Glyph glyph : page) {
+                if (glyph == null || glyph.id == ' ' || target.hasGlyph((char) glyph.id)) continue;
+                glyph.page += pageOffset;
+                glyph.yoffset += Math.round(shift);
+                target.setGlyph(glyph.id, glyph);
+            }
+        }
+    }
+
+    private static BitmapFont generate(String file, int worldSize, float density, String characters) {
         FreeTypeFontGenerator generator =
             new FreeTypeFontGenerator(Gdx.files.internal(FONT_DIR + file));
         try {
             FreeTypeFontParameter parameter = new FreeTypeFontParameter();
             parameter.size = Math.round(worldSize * density);
-            parameter.characters = FreeTypeFontGenerator.DEFAULT_CHARS + EXTRA_CHARS;
+            parameter.characters = characters;
             parameter.hinting = Hinting.AutoMedium;
             parameter.kerning = true;
             parameter.genMipMaps = true;
@@ -121,11 +200,7 @@ public final class SkinFactory {
             parameter.padBottom = 2;
             parameter.padLeft = 2;
             parameter.padRight = 2;
-            BitmapFont font = generator.generateFont(parameter);
-            font.getData().setScale(1f / density);
-            font.getData().markupEnabled = true;
-            font.setUseIntegerPositions(false);
-            return font;
+            return generator.generateFont(parameter); // scaled by font() after any merge
         } finally {
             generator.dispose();
         }
@@ -215,7 +290,17 @@ public final class SkinFactory {
         for (String name : Icons.NAMES) {
             Texture icon = Icons.render(name);
             skin.add("tex-" + name, icon);
-            skin.add(name, new TextureRegionDrawable(new TextureRegion(icon)), Drawable.class);
+            TextureRegion region = new TextureRegion(icon);
+            if (T.rtl() && ("icon-back".equals(name) || "icon-next".equals(name))) {
+                region.flip(true, false); // "back" points right in a right-to-left layout
+            }
+            skin.add(name, new TextureRegionDrawable(region), Drawable.class);
+        }
+
+        for (String code : Flags.CODES) {
+            Texture flag = Flags.render(code);
+            skin.add("tex-flag-" + code, flag);
+            skin.add("flag-" + code, new TextureRegionDrawable(new TextureRegion(flag)), Drawable.class);
         }
     }
 

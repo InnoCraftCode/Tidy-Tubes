@@ -1,5 +1,7 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.Names;
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.GameConfig;
 import com.ben.laama.sortpuzzle.save.SaveData;
 
@@ -44,7 +46,7 @@ public final class Shop {
 
     /** Shop grid filters: 100 items a tab need a way to find what matters now. */
     public enum Filter {
-        ALL("ALL"), OWNED("OWNED"), COINS("FOR COINS"), EARN("TO EARN");
+        ALL(T.k("ALL")), OWNED(T.k("OWNED")), COINS(T.k("FOR COINS")), EARN(T.k("TO EARN"));
 
         private final String label;
 
@@ -127,19 +129,28 @@ public final class Shop {
         if (required < 0 || isOwned(save, item)) {
             return "";
         }
-        return Math.min(save.totalStars(), required) + " / " + required + " stars";
+        return T.rawf("{0} / {1} stars", Math.min(save.totalStars(), required), required);
+    }
+
+    /** "42 / 60" for a locked star-road item; empty for anything else or once owned. */
+    public static String starCount(SaveData save, Cosmetic item) {
+        int required = StarRoad.starsRequired(item);
+        if (required < 0 || isOwned(save, item)) {
+            return "";
+        }
+        return Math.min(save.totalStars(), required) + " / " + required;
     }
 
     /** Text explaining how a locked progression item is earned; empty for shop items. */
     public static String unlockHint(Cosmetic item) {
         switch (item.unlock()) {
             case DAILY_STREAK:
-                return "Win " + GameConfig.DAILY_PALETTE_STREAK + " daily puzzles in a row";
+                return T.rawf("Win {0} daily puzzles in a row", GameConfig.DAILY_PALETTE_STREAK);
             case STARS:
-                return "Collect " + StarRoad.starsRequired(item) + " campaign stars";
+                return T.rawf("Collect {0} campaign stars", StarRoad.starsRequired(item));
             case CHAPTER:
-                return "Clear chapter " + item.requirement() + ", "
-                    + World.biomeOfChapter(item.requirement()).name;
+                return T.rawf("Clear chapter {0}, {1}", item.requirement(),
+                    Names.name(World.biomeOfChapter(item.requirement()).name));
             default:
                 return "";
         }

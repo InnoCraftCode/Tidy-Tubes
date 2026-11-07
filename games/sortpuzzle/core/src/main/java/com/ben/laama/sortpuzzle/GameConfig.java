@@ -1,5 +1,7 @@
 package com.ben.laama.sortpuzzle;
 
+import com.ben.laama.sortpuzzle.i18n.T;
+
 /**
  * Central, immutable tuning values for the whole game.
  *
@@ -14,10 +16,10 @@ public final class GameConfig {
     // ------------------------------------------------------------------- brand
     /** Display name shown in-game. The Android launcher label lives in {@code strings.xml}. */
     public static final String APP_NAME = "Tidy Tubes";
-    public static final String TAGLINE = "Sort. Breathe. Repeat.";
+    public static final String TAGLINE = T.k("Sort. Breathe. Repeat.");
     public static final int RELAXING_MUSIC_TRACK_COUNT = 10;
     /** Shown on the About card. Kept in sync with {@code build.gradle.kts} by hand. */
-    public static final String VERSION_NAME = "1.1.2";
+    public static final String VERSION_NAME = "1.2.1";
     /** Store page, used in the share text. */
     public static final String STORE_URL =
         "https://play.google.com/store/apps/details?id=com.ben.laama.sortpuzzle";

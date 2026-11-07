@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import com.ben.laama.sortpuzzle.Main;
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.ui.Palette;
 import com.ben.laama.sortpuzzle.ui.Ui;
 
@@ -16,20 +17,23 @@ import com.ben.laama.sortpuzzle.ui.Ui;
 public final class MusicSelectionScreen extends BaseScreen {
 
     private static final String[] TITLES = {
-        "Quiet Moon", "Soft Horizon", "Stillwater", "Cloud Drift", "Lavender Sky",
-        "Gentle Dawn", "Blue Hour", "Slow Bloom", "Starfall", "Deep Rest"
+        T.k("Quiet Moon"), T.k("Soft Horizon"), T.k("Stillwater"), T.k("Cloud Drift"), T.k("Lavender Sky"),
+        T.k("Gentle Dawn"), T.k("Blue Hour"), T.k("Slow Bloom"), T.k("Starfall"), T.k("Deep Rest")
     };
     private static final String[] DESCRIPTIONS = {
-        "Warm, slow-moving chords", "A calm open sound", "Soft notes, lots of space",
-        "Light melody over a smooth pad", "A mellow, floating theme", "Gentle morning tones",
-        "Low-key evening ambience", "A quiet, gradual melody", "Sparse notes for winding down",
-        "The softest, slowest loop"
+        T.k("Warm, slow-moving chords"), T.k("A calm open sound"), T.k("Soft notes, lots of space"),
+        T.k("Light melody over a smooth pad"), T.k("A mellow, floating theme"), T.k("Gentle morning tones"),
+        T.k("Low-key evening ambience"), T.k("A quiet, gradual melody"), T.k("Sparse notes for winding down"),
+        T.k("The softest, slowest loop")
     };
 
     /** @return the display name of a track, for Settings and anywhere else that shows the choice */
     public static String title(int track) {
-        return TITLES[track];
+        return T.r(TITLES[track]);
     }
+
+    /** Text column inside a 310-wide track card with 22 units of padding each side. */
+    private static final float CARD_TEXT_WIDTH = 310f - 44f;
 
     private final boolean firstLaunch;
     private final int savedTrack;
@@ -51,16 +55,16 @@ public final class MusicSelectionScreen extends BaseScreen {
         if (!firstLaunch) {
             Table header = new Table();
             header.add(Ui.iconButton(skin, "icon-back", this::cancel)).left();
-            header.add(new Label("Relaxing music", skin, "title")).expandX();
+            header.add(new Label(T.r("Relaxing music"), skin, "title")).expandX();
             header.add().size(Ui.ICON_BUTTON);
             root.add(header).growX().row();
         } else {
-            root.add(new Label("Choose your calm", skin, "title")).row();
+            root.add(new Label(T.r("Choose your calm"), skin, "title")).row();
         }
         String intro = !game.sound().isMusicOn()
-            ? "Music is off, so previews are silent. Turn Music on in Settings to hear them."
-            : savedTrack >= 0 ? "Current track: " + TITLES[savedTrack]
-            : "Pick a gentle loop for focus or winding down. Sound is optional.";
+            ? T.r("Music is off, so previews are silent. Turn Music on in Settings to hear them.")
+            : savedTrack >= 0 ? T.f("Current track: {0}", T.raw(TITLES[savedTrack]))
+            : T.r("Pick a gentle loop for focus or winding down. Sound is optional.");
         root.add(new Label(intro, skin, "caption")).padTop(8f).padBottom(18f).row();
 
         Table tracks = new Table();
@@ -75,7 +79,7 @@ public final class MusicSelectionScreen extends BaseScreen {
         scroll.setFadeScrollBars(false);
         root.add(scroll).grow().row();
 
-        confirmButton = Ui.button(skin, firstLaunch ? "START WITH THIS MUSIC" : "SAVE MUSIC",
+        confirmButton = Ui.button(skin, firstLaunch ? T.r("START WITH THIS MUSIC") : T.r("SAVE MUSIC"),
             "primary", this::confirm);
         root.add(confirmButton).width(520f).height(78f).padTop(14f);
         updateCards();
@@ -88,12 +92,19 @@ public final class MusicSelectionScreen extends BaseScreen {
     private Table createTrackCard(int index) {
         Table card = Ui.card(skin);
         card.setTouchable(Touchable.enabled);
-        card.defaults().left();
-        card.add(new Label(TITLES[index], skin, "label")).growX().row();
-        card.add(new Label(DESCRIPTIONS[index], skin, "caption"))
-            .growX().padTop(6f).row();
+        // Tighter than the standard card: two caption lines must fit the fixed 150-unit cell.
+        card.pad(16f, 22f, 16f, 22f);
+        card.defaults().left().width(CARD_TEXT_WIDTH);
+        Label title = new Label(T.r(TITLES[index]), skin, "label");
+        title.setEllipsis(true);
+        card.add(title).row();
+        // Wrapped: translations are often longer than the English line and ran out of the card.
+        Label description = new Label(T.r(DESCRIPTIONS[index]), skin, "caption");
+        description.setWrap(true);
+        card.add(description).padTop(4f).row();
         Label hint = new Label("", skin, "caption");
-        card.add(hint).padTop(9f).row();
+        hint.setEllipsis(true);
+        card.add(hint).padTop(6f).expandY().bottom().row();
         card.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -111,8 +122,8 @@ public final class MusicSelectionScreen extends BaseScreen {
             boolean selected = i == selectedTrack;
             boolean current = i == savedTrack;
             String state = selected
-                ? (current ? "CURRENT TRACK" : game.sound().isMusicOn() ? "SELECTED  •  PREVIEWING" : "SELECTED")
-                : current ? "CURRENT TRACK" : "TAP TO PREVIEW";
+                ? (current ? T.r("CURRENT TRACK") : game.sound().isMusicOn() ? T.r("SELECTED  •  PREVIEWING") : T.r("SELECTED"))
+                : current ? T.r("CURRENT TRACK") : T.r("TAP TO PREVIEW");
             trackCards[i].setBackground(skin.newDrawable("card",
                 selected ? Palette.SURFACE_STRONG : Palette.SURFACE));
             ((Label) trackCards[i].getUserObject()).setText(state);

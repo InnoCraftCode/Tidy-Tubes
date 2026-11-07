@@ -1,5 +1,6 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
 import java.time.LocalDate;
 
 /**
@@ -62,11 +63,13 @@ public final class DailyRewards {
     public static String label(int day) {
         int coins = coinsFor(day);
         int boosters = boostersFor(day);
+        // Logical (unshaped) text in the interface language: callers pass it to T.f or T.show.
         if (coins > 0 && boosters > 0) {
-            return "+" + coins + " & " + boosters + " tube" + (boosters > 1 ? "s" : "");
+            return boosters > 1 ? T.rawf("+{0} & {1} tubes", coins, boosters)
+                : T.rawf("+{0} & {1} tube", coins, boosters);
         }
         if (boosters > 0) {
-            return "+" + boosters + " tube" + (boosters > 1 ? "s" : "");
+            return boosters > 1 ? T.rawf("+{0} tubes", boosters) : T.rawf("+{0} tube", boosters);
         }
         return "+" + coins;
     }

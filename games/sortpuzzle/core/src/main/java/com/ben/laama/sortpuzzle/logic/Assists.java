@@ -1,5 +1,6 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.GameConfig;
 
 /**
@@ -58,13 +59,28 @@ public enum Assists {
         return videoReward;
     }
 
-    /** "5 undos" / "1 extra tube" - what one pack or one video gives. */
+    /**
+     * "5 undos" / "1 extra tube" - what one pack or one video gives, in the interface language
+     * (logical text, see {@link T#raw}).
+     */
     public String packLabel() {
-        return packSize + " " + plural(packSize);
+        return countLabel(packSize);
     }
 
     public String videoLabel() {
-        return videoReward + " " + plural(videoReward);
+        return countLabel(videoReward);
+    }
+
+    /** "{n} undos" in the interface language. */
+    public String countLabel(int count) {
+        switch (this) {
+            case TUBE:
+                return count == 1 ? T.rawf("{0} extra tube", count) : T.rawf("{0} extra tubes", count);
+            case UNDO:
+                return count == 1 ? T.rawf("{0} undo", count) : T.rawf("{0} undos", count);
+            default:
+                return count == 1 ? T.rawf("{0} reset", count) : T.rawf("{0} resets", count);
+        }
     }
 
     public String plural(int count) {

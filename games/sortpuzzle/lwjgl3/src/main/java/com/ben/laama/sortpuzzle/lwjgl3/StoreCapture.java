@@ -61,7 +61,11 @@ public final class StoreCapture extends ApplicationAdapter {
     private final boolean video;
     /** captureMode=review: the store shots plus every shop tab and Goals, for design checks. */
     private static boolean review;
+    /** captureMode=trailer: one frame folder per scene, cut together by make-trailer.ps1. */
+    private static boolean trailer;
     private final File output;
+    /** Folder the recorded frames go to: the output itself, or the current trailer scene. */
+    private File frameDir;
     private final Deque<Step> timeline = new ArrayDeque<>();
 
     private Main game;
@@ -85,7 +89,8 @@ public final class StoreCapture extends ApplicationAdapter {
      * The size is the frame-buffer (screenshot) size; the window shows a half-size preview.
      */
     public static void main(String[] args) {
-        boolean video = args.length > 0 && args[0].equals("video");
+        trailer = args.length > 0 && args[0].equals("trailer");
+        boolean video = args.length > 0 && (args[0].equals("video") || trailer);
         review = args.length > 0 && args[0].equals("review");
         File output = new File(args.length > 1 ? args[1] : "capture");
         File prefs = new File(args.length > 2 ? args[2] : "capture-prefs");
@@ -202,6 +207,12 @@ public final class StoreCapture extends ApplicationAdapter {
             run(() -> game.goProgress());
             wait(1.4f);
             shot("12-goals");
+            run(() -> game.goLanguage());
+            wait(1.4f);
+            shot("13-language");
+            run(() -> game.goMusicSelection());
+            wait(1.4f);
+            shot("14-music");
         }
     }
 
@@ -261,6 +272,111 @@ public final class StoreCapture extends ApplicationAdapter {
         run(() -> recording = false);
     }
 
+    /**
+     * Marketing trailer: short, self-contained scenes, each in its own folder. Navigation happens
+     * off camera, so every scene opens on a settled screen; make-trailer.ps1 adds the titles.
+     */
+    private void trailerScript() {
+        com.ben.laama.sortpuzzle.audio.SoundManager.observer = (cue, pitch) -> {
+            if (recording) {
+                events.append(frameNumber).append(' ').append(cue.name()).append(' ')
+                    .append(String.format(java.util.Locale.ROOT, "%.3f", pitch)).append('\n');
+            }
+        };
+        waitFor(() -> game.getScreen() instanceof HomeScreen, 10f);
+        // The first home was built before the progress was seeded: rebuild it with the stars.
+        run(() -> game.goHome());
+        wait(1.4f);
+        scene("01-home");
+        wait(2.6f);
+        cut();
+
+        // The untouched ten-colour board, for the close-ups of the cold open.
+        level(104);
+        wait(0.6f);
+        scene("00-mess");
+        wait(5.0f);
+        cut();
+
+        level(8);
+        wait(0.6f);
+        scene("02-solve");
+        run(() -> gameScreen().autoPlay(0.5f, 99));
+        waitFor(() -> gameScreen().isWon(), 40f);
+        wait(2.4f);
+        cut();
+
+        level(104);
+        wait(0.6f);
+        scene("03-ten-colours");
+        run(() -> gameScreen().autoPlay(0.45f, 8));
+        wait(4.2f);
+        run(() -> gameScreen().onHint());
+        wait(1.6f);
+        cut();
+
+        run(() -> game.switchTo(new ShopScreen(game, Cosmetic.Category.THEME)));
+        waitFor(() -> game.getScreen() instanceof ShopScreen, 8f);
+        wait(1.2f);
+        scene("04-shop");
+        wait(1.8f);
+        run(() -> ((ShopScreen) game.getScreen()).scrollCatalogueTo(0.35f));
+        wait(1.6f);
+        run(() -> game.switchTo(new ShopScreen(game, Cosmetic.Category.BALL_PALETTE)));
+        wait(2.2f);
+        cut();
+
+        run(() -> game.goProgress());
+        waitFor(() -> game.getScreen() instanceof ProgressScreen, 8f);
+        wait(1.0f);
+        scene("05-goals");
+        wait(3.4f);
+        cut();
+
+        run(() -> game.goMusicSelection());
+        waitFor(() -> game.getScreen() instanceof MusicSelectionScreen, 8f);
+        wait(1.0f);
+        scene("06-music");
+        wait(3.0f);
+        cut();
+
+        // Last, because it leaves the game in Arabic.
+        run(() -> game.goLanguage());
+        wait(1.0f);
+        scene("07-languages");
+        wait(2.0f);
+        run(() -> game.changeLanguage(com.ben.laama.sortpuzzle.i18n.Language.AR, false));
+        wait(1.0f);
+        run(() -> game.goHome());
+        wait(2.2f);
+        cut();
+    }
+
+    /** Starts recording a trailer scene into its own folder, frames numbered from 0. */
+    private void scene(String name) {
+        run(() -> {
+            frameDir = new File(output, name);
+            frameDir.mkdirs();
+            frameNumber = 0;
+            events.setLength(0);
+            recording = true;
+        });
+    }
+
+    /** Stops the scene and writes its sound events ("frame CUE pitch" per line). */
+    private void cut() {
+        run(() -> {
+            recording = false;
+            try {
+                java.nio.file.Files.writeString(new File(frameDir, "events.txt").toPath(), events);
+            } catch (java.io.IOException e) {
+                throw new IllegalStateException(e);
+            }
+        });
+    }
+
+    private final StringBuilder events = new StringBuilder();
+
     // ---------------------------------------------------------------- lifecycle
 
     @Override
@@ -271,6 +387,10 @@ public final class StoreCapture extends ApplicationAdapter {
         game = new Main();
         game.create();
         game.save().setMusicTrack(0);
+        // -PcaptureLang=<code> (default English): the store kit per language, or an RTL check.
+        com.ben.laama.sortpuzzle.i18n.Language language =
+            com.ben.laama.sortpuzzle.i18n.Language.fromCode(System.getProperty("capture.lang", "en"));
+        game.changeLanguage(language == null ? com.ben.laama.sortpuzzle.i18n.Language.EN : language, false);
         game.goHome();
         // Look like a player some way in: the level grid shows progress, the HUD has coins,
         // and the first-launch tutorial card stays out of the pictures.
@@ -280,7 +400,10 @@ public final class StoreCapture extends ApplicationAdapter {
         game.save().markTutorialSeen();
         frame = new FrameBuffer(Pixmap.Format.RGBA8888, WIDTH, HEIGHT, false);
         preview = new SpriteBatch();
-        if (video) {
+        frameDir = output;
+        if (trailer) {
+            trailerScript();
+        } else if (video) {
             videoScript();
         } else {
             screenshotScript();
@@ -308,7 +431,7 @@ public final class StoreCapture extends ApplicationAdapter {
             pendingShot = null;
         }
         if (recording) {
-            save(new File(output, String.format("%05d.png", frameNumber++)));
+            save(new File(frameDir, String.format("%05d.png", frameNumber++)));
         }
         frame.end();
 
