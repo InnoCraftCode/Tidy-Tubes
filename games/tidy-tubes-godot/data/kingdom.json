@@ -1,0 +1,44 @@
+{
+  "_doc": "Renovation content. Rooms open in order (the first is always open, the next one when the previous is fully restored). Tasks inside a room are done in order; cost is in spendable stars. 'title' is the English text and the translation key. 'reward' is an optional cosmetic id granted when the task is done (former star-road skins, assigned in phase 4).",
+  "rooms": [
+    {
+      "id": "main_hall",
+      "title": "Main Hall",
+      "chapter": 1,
+      "tasks": [
+        {"id": "clear_dust", "title": "Sweep away the grey dust", "cost": 1},
+        {"id": "repair_doors", "title": "Repair the great doors", "cost": 2},
+        {"id": "mend_carpet", "title": "Mend the royal carpet", "cost": 2},
+        {"id": "relight_chandelier", "title": "Relight the crystal chandelier", "cost": 3},
+        {"id": "restore_throne", "title": "Restore the throne", "cost": 3},
+        {"id": "hang_banners", "title": "Hang the colour banners", "cost": 4}
+      ]
+    },
+    {
+      "id": "royal_garden",
+      "title": "Royal Garden",
+      "chapter": 2,
+      "tasks": [
+        {"id": "pull_weeds", "title": "Pull the grey weeds", "cost": 2},
+        {"id": "fix_path", "title": "Fix the stone path", "cost": 3},
+        {"id": "plant_flowers", "title": "Plant rainbow flowers", "cost": 3},
+        {"id": "restore_fountain", "title": "Restore the fountain", "cost": 4},
+        {"id": "build_gazebo", "title": "Rebuild the gazebo", "cost": 4},
+        {"id": "light_lanterns", "title": "Light the garden lanterns", "cost": 5}
+      ]
+    },
+    {
+      "id": "magic_library",
+      "title": "Magical Library",
+      "chapter": 3,
+      "tasks": [
+        {"id": "open_windows", "title": "Open the stained-glass windows", "cost": 3},
+        {"id": "repair_shelves", "title": "Repair the tall shelves", "cost": 4},
+        {"id": "sort_books", "title": "Sort the colour books", "cost": 4},
+        {"id": "wake_globe", "title": "Wake the star globe", "cost": 5},
+        {"id": "restore_desk", "title": "Restore the wizard's desk", "cost": 5},
+        {"id": "secret_door", "title": "Open the secret door", "cost": 6}
+      ]
+    }
+  ]
+}
