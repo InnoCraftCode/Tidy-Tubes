@@ -1,0 +1,81 @@
+<en-US>
+Version 1.3.1
+• 1,000,000 levels, and the World map now jumps to any chapter.
+• Star gates: every 10th chapter opens with campaign stars. Replay levels in fewer moves to earn more.
+• A harder daily puzzle with fewer moves.
+• Your stars and coins at the top of the home screen.
+• Smoother animations everywhere.
+• New Quit button in Settings.
+</en-US>
+<fr-FR>
+Version 1.3.1
+• 1 000 000 niveaux, et la carte du Monde va directement à n'importe quel chapitre.
+• Portes d'étoiles : un chapitre sur 10 s'ouvre avec les étoiles de campagne. Rejoue des niveaux en moins de coups pour en gagner.
+• Un puzzle du jour plus difficile, avec moins de coups.
+• Tes étoiles et tes pièces en haut de l'accueil.
+• Des animations plus fluides partout.
+• Nouveau bouton Quitter dans les Réglages.
+</fr-FR>
+<ar>
+الإصدار 1.3.1
+• مليون مستوى، وخريطة العالم تنقلك مباشرة إلى أي فصل.
+• بوابات النجوم: كل فصل عاشر يُفتح بنجوم الحملة. أعد لعب المستويات بحركات أقل لتربح المزيد.
+• لغز يومي أصعب بحركات أقل.
+• نجومك وعملاتك في أعلى الشاشة الرئيسية.
+• رسوم متحركة أكثر سلاسة في كل مكان.
+• زر خروج جديد في الإعدادات.
+</ar>
+<es-ES>
+Versión 1.3.1
+• 1 000 000 de niveles, y el mapa del Mundo salta a cualquier capítulo.
+• Puertas de estrellas: uno de cada 10 capítulos se abre con estrellas de campaña. Repite niveles en menos movimientos para ganar más.
+• Un puzle diario más difícil, con menos movimientos.
+• Tus estrellas y monedas arriba en la pantalla de inicio.
+• Animaciones más fluidas en todo el juego.
+• Nuevo botón Salir en Ajustes.
+</es-ES>
+<pt-BR>
+Versão 1.3.1
+• 1.000.000 de níveis, e o mapa do Mundo vai direto a qualquer capítulo.
+• Portões de estrelas: um a cada 10 capítulos abre com estrelas da campanha. Rejogue níveis com menos movimentos para ganhar mais.
+• Um quebra-cabeça diário mais difícil, com menos movimentos.
+• Suas estrelas e moedas no topo da tela inicial.
+• Animações mais suaves em todo o jogo.
+• Novo botão Sair nas Configurações.
+</pt-BR>
+<de-DE>
+Version 1.3.1
+• 1.000.000 Level, und die Weltkarte springt zu jedem Kapitel.
+• Sternentore: Jedes 10. Kapitel öffnet sich mit Kampagnensternen. Spiele Level mit weniger Zügen erneut, um mehr zu verdienen.
+• Ein schwereres Tagesrätsel mit weniger Zügen.
+• Deine Sterne und Münzen oben auf dem Startbildschirm.
+• Flüssigere Animationen überall.
+• Neuer Beenden-Knopf in den Einstellungen.
+</de-DE>
+<id>
+Versi 1.3.1
+• 1.000.000 level, dan peta Dunia langsung menuju bab mana pun.
+• Gerbang bintang: setiap bab ke-10 terbuka dengan bintang kampanye. Ulangi level dengan langkah lebih sedikit untuk mendapat lebih banyak.
+• Teka-teki harian yang lebih sulit dengan langkah lebih sedikit.
+• Bintang dan koinmu di bagian atas layar utama.
+• Animasi lebih halus di mana-mana.
+• Tombol Keluar baru di Pengaturan.
+</id>
+<tr-TR>
+Sürüm 1.3.1
+• 1.000.000 seviye ve Dünya haritası artık her bölüme doğrudan gider.
+• Yıldız kapıları: her 10. bölüm kampanya yıldızlarıyla açılır. Daha fazla kazanmak için seviyeleri daha az hamleyle tekrar oyna.
+• Daha az hamleli, daha zor bir günlük bulmaca.
+• Yıldızların ve paraların ana ekranın en üstünde.
+• Her yerde daha akıcı animasyonlar.
+• Ayarlar'da yeni Çıkış düğmesi.
+</tr-TR>
+<hi-IN>
+संस्करण 1.3.1
+• 10 लाख लेवल, और World मैप अब किसी भी अध्याय पर सीधे ले जाता है।
+• स्टार गेट: हर 10वां अध्याय कैंपेन स्टार से खुलता है। ज़्यादा स्टार पाने के लिए कम चालों में लेवल दोबारा खेलें।
+• कम चालों वाली, ज़्यादा कठिन दैनिक पहेली।
+• होम स्क्रीन के ऊपर आपके स्टार और सिक्के।
+• हर जगह ज़्यादा स्मूद एनिमेशन।
+• सेटिंग्स में नया बाहर निकलें बटन।
+</hi-IN>

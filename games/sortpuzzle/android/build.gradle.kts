@@ -82,7 +82,7 @@ android {
         applicationId = "com.ben.laama.sortpuzzle"
         minSdk = 24
         targetSdk = 36
-        versionCode = 16
+        versionCode = 17
         versionName = rootProject.version.toString()
 
         // A string resource, as Google's guide does: a bare numeric manifest value is parsed as an

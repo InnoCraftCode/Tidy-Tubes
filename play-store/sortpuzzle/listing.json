@@ -1,8 +1,8 @@
 {
   "appName": "Tidy Tubes",
   "packageId": "com.ben.laama.sortpuzzle",
-  "versionName": "1.3.0",
-  "versionCode": 16,
+  "versionName": "1.3.1",
+  "versionCode": 17,
   "category": "Jeux > Réflexion (Puzzle)",
   "tags": ["Réflexion", "Casse-tête", "Tri de couleurs", "Hors ligne", "Relaxant"],
   "contactEmail": "benlamschille@gmail.com",
@@ -59,7 +59,7 @@
         "",
         "Free to play. Contains ads: rewarded videos (extra hints, moves, tubes, undos or resets) are always optional, and beyond the free ones you can also pay with in-game coins earned by clearing levels. No purchases."
       ],
-      "releaseNotes": "Version 1.3.0\n• 1,000,000 levels, and the World map now jumps to any chapter.\n• Star gates: every 10th chapter opens with campaign stars. Replay levels in fewer moves to earn more.\n• A harder daily puzzle with fewer moves.\n• Your stars and coins at the top of the home screen.\n• Smoother animations everywhere.\n• New Quit button in Settings.",
+      "releaseNotes": "Version 1.3.1\n• 1,000,000 levels, and the World map now jumps to any chapter.\n• Star gates: every 10th chapter opens with campaign stars. Replay levels in fewer moves to earn more.\n• A harder daily puzzle with fewer moves.\n• Your stars and coins at the top of the home screen.\n• Smoother animations everywhere.\n• New Quit button in Settings.",
       "captions": ["Home screen", "A level in progress", "Hints from a real solver", "Level cleared", "Levels in chapters of ten", "Up to ten colours", "Settings and about", "Shop: styles for your coins"]
     },
     {
@@ -88,7 +88,7 @@
         "",
         "Gratuit. Contient des publicités : les vidéos récompensées (indices, coups, tubes, annulations ou recommencements supplémentaires) sont toujours facultatives, et au-delà des gratuits vous pouvez aussi payer avec les pièces gagnées en réussissant des niveaux. Aucun achat."
       ],
-      "releaseNotes": "Version 1.3.0\n• 1 000 000 niveaux, et la carte du Monde va directement à n'importe quel chapitre.\n• Portes d'étoiles : un chapitre sur 10 s'ouvre avec les étoiles de campagne. Rejoue des niveaux en moins de coups pour en gagner.\n• Un puzzle du jour plus difficile, avec moins de coups.\n• Tes étoiles et tes pièces en haut de l'accueil.\n• Des animations plus fluides partout.\n• Nouveau bouton Quitter dans les Réglages.",
+      "releaseNotes": "Version 1.3.1\n• 1 000 000 niveaux, et la carte du Monde va directement à n'importe quel chapitre.\n• Portes d'étoiles : un chapitre sur 10 s'ouvre avec les étoiles de campagne. Rejoue des niveaux en moins de coups pour en gagner.\n• Un puzzle du jour plus difficile, avec moins de coups.\n• Tes étoiles et tes pièces en haut de l'accueil.\n• Des animations plus fluides partout.\n• Nouveau bouton Quitter dans les Réglages.",
       "captions": ["Écran d'accueil", "Un niveau en cours", "Indices d'un vrai solveur", "Niveau réussi", "Niveaux par chapitres de dix", "Jusqu'à dix couleurs", "Réglages et à propos", "Boutique : des styles pour vos pièces"]
     },
     {
@@ -117,7 +117,7 @@
         "",
         "مجانية. تحتوي على إعلانات: مقاطع الفيديو المكافِئة (تلميحات أو حركات أو أنابيب أو تراجعات أو إعادات إضافية) اختيارية دائمًا، وبعد المجانية منها يمكنك أيضًا الدفع بالعملات التي تكسبها داخل اللعبة بإنهاء المستويات. لا توجد مشتريات."
       ],
-      "releaseNotes": "الإصدار 1.3.0\n• مليون مستوى، وخريطة العالم تنقلك مباشرة إلى أي فصل.\n• بوابات النجوم: كل فصل عاشر يُفتح بنجوم الحملة. أعد لعب المستويات بحركات أقل لتربح المزيد.\n• لغز يومي أصعب بحركات أقل.\n• نجومك وعملاتك في أعلى الشاشة الرئيسية.\n• رسوم متحركة أكثر سلاسة في كل مكان.\n• زر خروج جديد في الإعدادات.",
+      "releaseNotes": "الإصدار 1.3.1\n• مليون مستوى، وخريطة العالم تنقلك مباشرة إلى أي فصل.\n• بوابات النجوم: كل فصل عاشر يُفتح بنجوم الحملة. أعد لعب المستويات بحركات أقل لتربح المزيد.\n• لغز يومي أصعب بحركات أقل.\n• نجومك وعملاتك في أعلى الشاشة الرئيسية.\n• رسوم متحركة أكثر سلاسة في كل مكان.\n• زر خروج جديد في الإعدادات.",
       "captions": ["الشاشة الرئيسية", "مستوى قيد اللعب", "تلميحات من حلّال حقيقي", "تم إنهاء المستوى", "مستويات في فصول من عشرة", "حتى عشرة ألوان", "الإعدادات وحول اللعبة", "المتجر: أنماط مقابل عملاتك"]
     },
     {
@@ -146,7 +146,7 @@
         "",
         "Gratis. Contiene anuncios: los vídeos con recompensa (pistas, movimientos, tubos, deshacer o reinicios extra) son siempre opcionales y, más allá de los gratuitos, también puedes pagarlos con las monedas que ganas al superar niveles. Sin compras."
       ],
-      "releaseNotes": "Versión 1.3.0\n• 1 000 000 de niveles, y el mapa del Mundo salta a cualquier capítulo.\n• Puertas de estrellas: uno de cada 10 capítulos se abre con estrellas de campaña. Repite niveles en menos movimientos para ganar más.\n• Un puzle diario más difícil, con menos movimientos.\n• Tus estrellas y monedas arriba en la pantalla de inicio.\n• Animaciones más fluidas en todo el juego.\n• Nuevo botón Salir en Ajustes.",
+      "releaseNotes": "Versión 1.3.1\n• 1 000 000 de niveles, y el mapa del Mundo salta a cualquier capítulo.\n• Puertas de estrellas: uno de cada 10 capítulos se abre con estrellas de campaña. Repite niveles en menos movimientos para ganar más.\n• Un puzle diario más difícil, con menos movimientos.\n• Tus estrellas y monedas arriba en la pantalla de inicio.\n• Animaciones más fluidas en todo el juego.\n• Nuevo botón Salir en Ajustes.",
       "captions": ["Pantalla de inicio", "Un nivel en curso", "Pistas de un solucionador real", "Nivel superado", "Niveles en capítulos de diez", "Hasta diez colores", "Ajustes y acerca de", "Tienda: estilos por tus monedas"]
     },
     {
@@ -175,7 +175,7 @@
         "",
         "Grátis. Contém anúncios: os vídeos com recompensa (dicas, movimentos, tubos, desfazer ou reinícios extras) são sempre opcionais e, além dos gratuitos, você também pode pagar com as moedas ganhas ao concluir níveis. Sem compras."
       ],
-      "releaseNotes": "Versão 1.3.0\n• 1.000.000 de níveis, e o mapa do Mundo vai direto a qualquer capítulo.\n• Portões de estrelas: um a cada 10 capítulos abre com estrelas da campanha. Rejogue níveis com menos movimentos para ganhar mais.\n• Um quebra-cabeça diário mais difícil, com menos movimentos.\n• Suas estrelas e moedas no topo da tela inicial.\n• Animações mais suaves em todo o jogo.\n• Novo botão Sair nas Configurações.",
+      "releaseNotes": "Versão 1.3.1\n• 1.000.000 de níveis, e o mapa do Mundo vai direto a qualquer capítulo.\n• Portões de estrelas: um a cada 10 capítulos abre com estrelas da campanha. Rejogue níveis com menos movimentos para ganhar mais.\n• Um quebra-cabeça diário mais difícil, com menos movimentos.\n• Suas estrelas e moedas no topo da tela inicial.\n• Animações mais suaves em todo o jogo.\n• Novo botão Sair nas Configurações.",
       "captions": ["Tela inicial", "Um nível em andamento", "Dicas de um solucionador de verdade", "Nível concluído", "Níveis em capítulos de dez", "Até dez cores", "Configurações e sobre", "Loja: estilos pelas suas moedas"]
     },
     {
@@ -204,7 +204,7 @@
         "",
         "Kostenlos. Enthält Werbung: Videos mit Belohnung (zusätzliche Tipps, Züge, Röhren, Rückgängig oder Neustarts) sind immer freiwillig, und über die kostenlosen hinaus kannst du auch mit Münzen bezahlen, die du durch geschaffte Level verdienst. Keine Käufe."
       ],
-      "releaseNotes": "Version 1.3.0\n• 1.000.000 Level, und die Weltkarte springt zu jedem Kapitel.\n• Sternentore: Jedes 10. Kapitel öffnet sich mit Kampagnensternen. Spiele Level mit weniger Zügen erneut, um mehr zu verdienen.\n• Ein schwereres Tagesrätsel mit weniger Zügen.\n• Deine Sterne und Münzen oben auf dem Startbildschirm.\n• Flüssigere Animationen überall.\n• Neuer Beenden-Knopf in den Einstellungen.",
+      "releaseNotes": "Version 1.3.1\n• 1.000.000 Level, und die Weltkarte springt zu jedem Kapitel.\n• Sternentore: Jedes 10. Kapitel öffnet sich mit Kampagnensternen. Spiele Level mit weniger Zügen erneut, um mehr zu verdienen.\n• Ein schwereres Tagesrätsel mit weniger Zügen.\n• Deine Sterne und Münzen oben auf dem Startbildschirm.\n• Flüssigere Animationen überall.\n• Neuer Beenden-Knopf in den Einstellungen.",
       "captions": ["Startbildschirm", "Ein laufendes Level", "Tipps von einem echten Löser", "Level geschafft", "Level in Kapiteln zu zehn", "Bis zu zehn Farben", "Einstellungen und Info", "Shop: Styles für deine Münzen"]
     },
     {
@@ -233,7 +233,7 @@
         "",
         "Gratis. Mengandung iklan: video berhadiah (petunjuk, langkah, tabung, undo, atau reset tambahan) selalu opsional, dan selain yang gratis kamu juga bisa membayar dengan koin yang didapat dari menyelesaikan level. Tanpa pembelian."
       ],
-      "releaseNotes": "Versi 1.3.0\n• 1.000.000 level, dan peta Dunia langsung menuju bab mana pun.\n• Gerbang bintang: setiap bab ke-10 terbuka dengan bintang kampanye. Ulangi level dengan langkah lebih sedikit untuk mendapat lebih banyak.\n• Teka-teki harian yang lebih sulit dengan langkah lebih sedikit.\n• Bintang dan koinmu di bagian atas layar utama.\n• Animasi lebih halus di mana-mana.\n• Tombol Keluar baru di Pengaturan.",
+      "releaseNotes": "Versi 1.3.1\n• 1.000.000 level, dan peta Dunia langsung menuju bab mana pun.\n• Gerbang bintang: setiap bab ke-10 terbuka dengan bintang kampanye. Ulangi level dengan langkah lebih sedikit untuk mendapat lebih banyak.\n• Teka-teki harian yang lebih sulit dengan langkah lebih sedikit.\n• Bintang dan koinmu di bagian atas layar utama.\n• Animasi lebih halus di mana-mana.\n• Tombol Keluar baru di Pengaturan.",
       "captions": ["Layar utama", "Level yang sedang dimainkan", "Petunjuk dari pemecah sungguhan", "Level selesai", "Level dalam bab berisi sepuluh", "Hingga sepuluh warna", "Pengaturan dan tentang", "Toko: gaya untuk koinmu"]
     },
     {
@@ -262,7 +262,7 @@
         "",
         "Ücretsiz. Reklam içerir: ödüllü videolar (ek ipucu, hamle, tüp, geri alma veya sıfırlama) her zaman isteğe bağlıdır; ücretsiz olanların ötesinde, seviyeleri bitirerek kazandığın oyun içi paralarla da ödeyebilirsin. Satın alma yok."
       ],
-      "releaseNotes": "Sürüm 1.3.0\n• 1.000.000 seviye ve Dünya haritası artık her bölüme doğrudan gider.\n• Yıldız kapıları: her 10. bölüm kampanya yıldızlarıyla açılır. Daha fazla kazanmak için seviyeleri daha az hamleyle tekrar oyna.\n• Daha az hamleli, daha zor bir günlük bulmaca.\n• Yıldızların ve paraların ana ekranın en üstünde.\n• Her yerde daha akıcı animasyonlar.\n• Ayarlar'da yeni Çıkış düğmesi.",
+      "releaseNotes": "Sürüm 1.3.1\n• 1.000.000 seviye ve Dünya haritası artık her bölüme doğrudan gider.\n• Yıldız kapıları: her 10. bölüm kampanya yıldızlarıyla açılır. Daha fazla kazanmak için seviyeleri daha az hamleyle tekrar oyna.\n• Daha az hamleli, daha zor bir günlük bulmaca.\n• Yıldızların ve paraların ana ekranın en üstünde.\n• Her yerde daha akıcı animasyonlar.\n• Ayarlar'da yeni Çıkış düğmesi.",
       "captions": ["Ana ekran", "Devam eden bir seviye", "Gerçek bir çözücüden ipuçları", "Seviye tamamlandı", "Onar seviyelik bölümler", "On renge kadar", "Ayarlar ve hakkında", "Mağaza: paralarına karşılık stiller"]
     },
     {
@@ -291,7 +291,7 @@
         "",
         "मुफ़्त। विज्ञापन शामिल हैं: इनाम वाले वीडियो (अतिरिक्त संकेत, चालें, ट्यूब, अनडू या रीसेट) हमेशा वैकल्पिक हैं, और मुफ़्त वालों के बाद आप लेवल पूरे करके कमाए गए सिक्कों से भी भुगतान कर सकते हैं। कोई खरीदारी नहीं।"
       ],
-      "releaseNotes": "संस्करण 1.3.0\n• 10 लाख लेवल, और World मैप अब किसी भी अध्याय पर सीधे ले जाता है।\n• स्टार गेट: हर 10वां अध्याय कैंपेन स्टार से खुलता है। ज़्यादा स्टार पाने के लिए कम चालों में लेवल दोबारा खेलें।\n• कम चालों वाली, ज़्यादा कठिन दैनिक पहेली।\n• होम स्क्रीन के ऊपर आपके स्टार और सिक्के।\n• हर जगह ज़्यादा स्मूद एनिमेशन।\n• सेटिंग्स में नया बाहर निकलें बटन।",
+      "releaseNotes": "संस्करण 1.3.1\n• 10 लाख लेवल, और World मैप अब किसी भी अध्याय पर सीधे ले जाता है।\n• स्टार गेट: हर 10वां अध्याय कैंपेन स्टार से खुलता है। ज़्यादा स्टार पाने के लिए कम चालों में लेवल दोबारा खेलें।\n• कम चालों वाली, ज़्यादा कठिन दैनिक पहेली।\n• होम स्क्रीन के ऊपर आपके स्टार और सिक्के।\n• हर जगह ज़्यादा स्मूद एनिमेशन।\n• सेटिंग्स में नया बाहर निकलें बटन।",
       "captions": ["होम स्क्रीन", "चल रहा एक लेवल", "असली सॉल्वर से संकेत", "लेवल पूरा", "दस-दस लेवल के अध्याय", "दस रंगों तक", "सेटिंग्स और जानकारी", "दुकान: आपके सिक्कों के बदले स्टाइल"]
     }
   ]

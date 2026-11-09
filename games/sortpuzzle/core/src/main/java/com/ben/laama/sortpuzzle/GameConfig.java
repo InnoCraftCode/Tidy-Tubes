@@ -19,7 +19,7 @@ public final class GameConfig {
     public static final String TAGLINE = T.k("Sort. Breathe. Repeat.");
     public static final int RELAXING_MUSIC_TRACK_COUNT = 10;
     /** Shown on the About card. Kept in sync with {@code build.gradle.kts} by hand. */
-    public static final String VERSION_NAME = "1.3.0";
+    public static final String VERSION_NAME = "1.3.1";
     /** Store page, used in the share text. */
     public static final String STORE_URL =
         "https://play.google.com/store/apps/details?id=com.ben.laama.sortpuzzle";
