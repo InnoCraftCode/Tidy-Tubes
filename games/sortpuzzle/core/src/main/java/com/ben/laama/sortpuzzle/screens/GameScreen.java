@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
+import com.ben.laama.sortpuzzle.logic.LevelNumbers;
 import com.ben.laama.sortpuzzle.GameConfig;
 import com.ben.laama.sortpuzzle.Main;
 import com.ben.laama.sortpuzzle.i18n.Names;
@@ -186,7 +187,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
 
         hud = new HudTable(skin, this);
         String title = dailyChallenge ? T.r("DAILY CHALLENGE")
-            : this.challengeRun ? T.r("CUSTOM CHALLENGE") : T.f("Level {0}", levelIndex);
+            : this.challengeRun ? T.r("CUSTOM CHALLENGE") : T.f("Level {0}", LevelNumbers.format(levelIndex));
         String subtitle = this.challengeRun
             ? T.f("{0}  •  {1} colours", this.challengeRules.summary(), Difficulty.colorsFor(levelIndex))
             : T.f("{0}  •  {1} colours", T.raw(Difficulty.bandName(levelIndex)), Difficulty.colorsFor(levelIndex));
@@ -356,8 +357,9 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         }
         parMoves = par;
         level = level.withPar(par);
-        moveLimit = challengeRun && challengeRules.parMoveLimit()
-            ? par : Difficulty.moveLimitFor(par);
+        moveLimit = challengeRun && challengeRules.parMoveLimit() ? par
+            : dailyChallenge ? Difficulty.dailyMoveLimitFor(par)
+            : Difficulty.moveLimitFor(par);
         hud.showPar(par);
         hud.setMoves(moves, moveLimit);
         if (phase == Phase.PLAYING && isOutOfMoves()) {
@@ -1517,9 +1519,9 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             heading = T.f("Daily puzzle  •  {0}", LocalDate.parse(dailyDate).format(
                 java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy", new java.util.Locale(T.language().code))));
         } else if (challengeRun) {
-            heading = T.f("Challenge  •  level {0}", levelIndex);
+            heading = T.f("Challenge  •  level {0}", LevelNumbers.format(levelIndex));
         } else {
-            heading = T.f("Level {0}  •  {1} colours", levelIndex, level.colors());
+            heading = T.f("Level {0}  •  {1} colours", LevelNumbers.format(levelIndex), level.colors());
         }
         int par = parMoves == Level.PAR_UNKNOWN ? 0 : parMoves;
         ShareCard.Result result = new ShareCard.Result(heading, level.colors(), level.emptyTubes(),
@@ -1534,7 +1536,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         }
         // Platform text: logical order, the share sheet lays it out itself.
         String what = dailyChallenge ? T.raw("today's Tidy Tubes puzzle")
-            : T.rawf("level {0} of Tidy Tubes", levelIndex);
+            : T.rawf("level {0} of Tidy Tubes", LevelNumbers.format(levelIndex));
         String text = (moves == 1 ? T.rawf("I solved {0} in 1 move", what)
             : T.rawf("I solved {0} in {1} moves", what, moves))
             + (par > 0 ? T.rawf(" (best possible {0})", par) : "") + T.raw(". Can you beat it? ")
@@ -1610,7 +1612,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
 
         // --- header: what was played, then the big word, which pops in like the praise did
         String context = dailyChallenge ? T.r("DAILY CHALLENGE")
-            : challengeRun ? T.r("CHALLENGE") : T.f("LEVEL {0}", levelIndex);
+            : challengeRun ? T.r("CHALLENGE") : T.f("LEVEL {0}", LevelNumbers.format(levelIndex));
         Label contextLabel = new Label(context, skin, "accent");
         content.add(contextLabel).row();
         Label word = new Label(perfect ? T.r("Perfect!") : dailyChallenge ? T.r("Done!") : T.r("Cleared!"),
@@ -1766,7 +1768,7 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
         if (!dailyChallenge && !challengeRun && summary.firstClear
             && Breathing.offersBreathAfter(levelIndex, GameConfig.BREATHE_EVERY_N_LEVELS)) {
             Table breath = new Table();
-            breath.add(new Label(T.f("{0} levels in. Take a breath?", levelIndex), skin, "caption"))
+            breath.add(new Label(T.f("{0} levels in. Take a breath?", LevelNumbers.format(levelIndex)), skin, "caption"))
                 .padRight(12f);
             breath.add(Ui.button(skin, T.f("BREATHE  •  {0} s", (int) Breathing.TOTAL_SECONDS),
                 "ghost", () -> {
@@ -1795,7 +1797,9 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
             .width((actionsWidth - 12f) * 0.5f).height(60f);
         content.add(secondary).padTop(12f).row();
 
-        TextButton home = Ui.button(skin, T.r("HOME"), "ghost", game::goHome);
+        // Leaving a finished daily is its break, whichever way out the player takes.
+        TextButton home = Ui.button(skin, T.r("HOME"), "ghost",
+            dailyChallenge ? () -> afterBreak(game::goHome) : game::goHome);
         home.getLabel().setColor(Palette.TEXT_DIM);
         content.add(home).width(actionsWidth * 0.5f).height(52f).padTop(10f).row();
 
@@ -1926,7 +1930,9 @@ public final class GameScreen extends BaseScreen implements HudTable.Listener {
     private void afterBreak(Runnable then) {
         // Onboarding is ad-free: the first levels decide whether the player comes back.
         boolean onboarding = game.save().completedCount() < GameConfig.INTERSTITIAL_MIN_CLEARED;
-        if (!onboarding && game.pacing().onBreak() && game.ads().isInterstitialReady()) {
+        // A finished daily always qualifies (interval permitting); campaign levels every Nth.
+        boolean due = dailyChallenge ? game.pacing().onDailyDone() : game.pacing().onBreak();
+        if (!onboarding && due && game.ads().isInterstitialReady()) {
             game.pacing().onFullScreenAdShown();
             game.ads().showInterstitial(then);
         } else {

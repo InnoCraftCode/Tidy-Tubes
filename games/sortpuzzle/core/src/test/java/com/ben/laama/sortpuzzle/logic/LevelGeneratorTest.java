@@ -35,6 +35,19 @@ class LevelGeneratorTest {
     }
 
     @Test
+    @DisplayName("levels near the one-million cap generate and are solvable")
+    void lastLevelsAreSolvable() {
+        for (int level = GameConfig.MAX_LEVEL - 4; level <= GameConfig.MAX_LEVEL; level++) {
+            BoardState board = LevelGenerator.generate(level).start();
+            Solver.Result result = Solver.findAny(board, GameConfig.ANY_SOLUTION_NODE_BUDGET);
+
+            assertTrue(result.solved(), "level " + level + " is not solvable: " + result);
+            assertTrue(replayWins(board, result.moves()),
+                "level " + level + " produced a solution that does not solve it");
+        }
+    }
+
+    @Test
     @DisplayName("a level index always yields the same board")
     void generationIsDeterministic() {
         for (int level = 1; level <= SWEEP; level++) {

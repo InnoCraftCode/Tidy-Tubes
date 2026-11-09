@@ -51,11 +51,47 @@ class AdPacingTest {
     }
 
     @Test
-    @DisplayName("the shipped caps skip two breaks and keep interstitials 120 s apart")
+    @DisplayName("the shipped caps skip two breaks, show every 2nd level and keep ads 120 s apart")
     void shippedCaps() {
         assertEquals(2, GameConfig.INTERSTITIAL_INITIAL_BREAKS_TO_SKIP);
-        assertTrue(GameConfig.INTERSTITIAL_EVERY_N_LEVELS >= 3);
+        // AdMob guidance: at most one interstitial per two user actions.
+        assertTrue(GameConfig.INTERSTITIAL_EVERY_N_LEVELS >= 2);
         assertEquals(120_000L, GameConfig.INTERSTITIAL_MIN_INTERVAL_MS);
+    }
+
+    @Test
+    @DisplayName("a purchase may show an ad, but only outside the minimum interval")
+    void purchase() {
+        AdPacing pacing = new AdPacing(2, 2, 120_000, now::get);
+        assertTrue(pacing.onPurchase()); // no full-screen ad yet this session
+        pacing.onFullScreenAdShown();
+        now.addAndGet(60_000);
+        assertFalse(pacing.onPurchase());
+        now.addAndGet(60_000);
+        assertTrue(pacing.onPurchase());
+    }
+
+    @Test
+    @DisplayName("every finished daily may show an ad, outside the minimum interval")
+    void dailyDone() {
+        AdPacing pacing = new AdPacing(2, 2, 120_000, now::get);
+
+        assertTrue(pacing.onDailyDone()); // not skipped like the first level breaks
+        pacing.onFullScreenAdShown();
+        now.addAndGet(60_000);
+        assertFalse(pacing.onDailyDone());
+        now.addAndGet(60_000);
+        assertTrue(pacing.onDailyDone());
+    }
+
+    @Test
+    @DisplayName("a purchase does not count as a level break")
+    void purchaseIsNotABreak() {
+        AdPacing pacing = new AdPacing(0, 2, 0, now::get);
+        pacing.onPurchase();
+        pacing.onPurchase();
+        assertFalse(pacing.onBreak()); // still the 1st break
+        assertTrue(pacing.onBreak());  // 2nd break
     }
 
     @Test

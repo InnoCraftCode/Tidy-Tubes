@@ -32,12 +32,29 @@ class DailyChallengeTest {
     }
 
     @Test
-    @DisplayName("daily level profiles stay inside the first 100 balanced campaign levels")
-    void difficultyProfileIsBounded() {
+    @DisplayName("daily level profiles always come from the hard band (51-150, 8+ colours)")
+    void difficultyProfileIsHard() {
         LocalDate first = LocalDate.of(2026, 1, 1);
         for (int day = 0; day < 365; day++) {
             int level = DailyChallenge.levelFor(first.plusDays(day));
-            assertTrue(level >= 1 && level <= 100);
+            assertTrue(level >= 51 && level <= 150, "day " + day + " -> level " + level);
+            assertTrue(Difficulty.colorsFor(level) >= 8, "day " + day + " has too few colours");
+        }
+    }
+
+    @Test
+    @DisplayName("two weeks of hard daily boards are all solvable")
+    void hardDailiesAreSolvable() {
+        LocalDate first = LocalDate.of(2026, 11, 9);
+        for (int day = 0; day < 14; day++) {
+            LocalDate date = first.plusDays(day);
+            com.ben.laama.sortpuzzle.model.BoardState board = LevelGenerator
+                .generate(DailyChallenge.levelFor(date), DailyChallenge.seedFor(date)).start();
+
+            Solver.Result result = Solver.findAny(board,
+                com.ben.laama.sortpuzzle.GameConfig.ANY_SOLUTION_NODE_BUDGET);
+
+            assertTrue(result.solved(), date + " is not solvable: " + result);
         }
     }
 

@@ -119,6 +119,21 @@ public final class Difficulty {
         return parMoves + slack;
     }
 
+    /**
+     * The daily puzzle's move limit: par plus a much smaller slack than the campaign's, so the
+     * daily rewards a clean solve. Never below par, so the puzzle always stays winnable.
+     *
+     * @return the move limit, or {@code 0} when par is unknown and no limit should apply
+     */
+    public static int dailyMoveLimitFor(int parMoves) {
+        if (parMoves <= 0) {
+            return 0;
+        }
+        int slack = Math.max(GameConfig.DAILY_MOVE_LIMIT_BASE_SLACK,
+            Math.round(parMoves * GameConfig.DAILY_MOVE_LIMIT_SLACK_RATIO));
+        return parMoves + slack;
+    }
+
     /** Human-facing band name, used by the level-select header. */
     public static String bandName(int level) {
         requireValid(level);

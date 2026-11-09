@@ -76,6 +76,10 @@ public final class ProgressScreen extends BaseScreen {
         startChallenge.setDisabled(true);
         challenge.add(startChallenge).growX().height(72f).padTop(10f).row();
         content.add(challenge).row();
+        // Cards float in one after the other, top to bottom.
+        for (int i = 0; i < content.getChildren().size; i++) {
+            com.ben.laama.sortpuzzle.ui.Motion.enter(content.getChildren().get(i), i);
+        }
 
         ScrollPane scroll = new ScrollPane(content, skin);
         scroll.setScrollingDisabled(true, false);

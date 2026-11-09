@@ -12,6 +12,8 @@ import com.ben.laama.sortpuzzle.ads.AdProvider;
 import com.ben.laama.sortpuzzle.ads.AdProviders;
 import com.ben.laama.sortpuzzle.logic.LeaderboardScores;
 import com.ben.laama.sortpuzzle.logic.ReminderPlanner;
+import com.ben.laama.sortpuzzle.logic.StarGates;
+import com.ben.laama.sortpuzzle.logic.World;
 import com.ben.laama.sortpuzzle.notify.NoOpReminders;
 import com.ben.laama.sortpuzzle.notify.Reminders;
 import com.ben.laama.sortpuzzle.services.Analytics;
@@ -293,6 +295,21 @@ public final class Main extends Game {
         return pacing;
     }
 
+    /**
+     * After a successful coin purchase in the shop: an interstitial may show, never during
+     * onboarding and never sooner than the minimum interval after another full-screen ad.
+     * {@code then} always runs, after the ad is closed when one was shown.
+     */
+    public void afterPurchase(Runnable then) {
+        boolean onboarding = save.completedCount() < GameConfig.INTERSTITIAL_MIN_CLEARED;
+        if (!onboarding && pacing.onPurchase() && ads.isInterstitialReady()) {
+            pacing.onFullScreenAdShown();
+            ads.showInterstitial(then);
+        } else {
+            then.run();
+        }
+    }
+
     // ----------------------------------------------------------- navigation
     public void goHome() {
         switchTo(new HomeScreen(this));
@@ -315,7 +332,14 @@ public final class Main extends Game {
     }
 
     public void goToLevel(int levelIndex) {
-        switchTo(new GameScreen(this, levelIndex));
+        // "Next" after the last level replays it instead of opening a level past the end.
+        int level = Math.min(levelIndex, GameConfig.MAX_LEVEL);
+        if (!StarGates.canPlay(save, level) && save.isUnlocked(level)) {
+            // Reached but star-gated: the map shows how many stars the chapter still needs.
+            switchTo(new LevelSelectScreen(this, World.chapterOf(level)));
+            return;
+        }
+        switchTo(new GameScreen(this, level));
     }
 
     public void goToDailyChallenge() {

@@ -24,6 +24,7 @@ import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.logic.Cosmetic;
 import com.ben.laama.sortpuzzle.ui.AnimatedBackground;
 import com.ben.laama.sortpuzzle.ui.Cosmetics;
+import com.ben.laama.sortpuzzle.ui.Motion;
 import com.ben.laama.sortpuzzle.ui.Responsive;
 import com.ben.laama.sortpuzzle.ui.SafeInsets;
 
@@ -120,9 +121,23 @@ public abstract class BaseScreen extends ScreenAdapter {
         Group root = stage.getRoot();
         root.setTouchable(Touchable.disabled);
         root.clearActions();
+        if (Motion.reduced) {
+            root.addAction(Actions.sequence(Actions.fadeOut(0.12f, Interpolation.pow2In), Actions.run(then)));
+            return;
+        }
+        // The content recedes slightly while everything fades; the next screen's content then
+        // grows into place (see show()). The backdrop is never scaled, so no edge shows.
+        centreOrigin(safeArea);
+        safeArea.clearActions();
+        safeArea.addAction(Actions.scaleTo(0.99f, 0.99f, 0.16f, Interpolation.pow2In));
         root.addAction(Actions.sequence(
             Actions.fadeOut(0.16f, Interpolation.pow2In),
             Actions.run(then)));
+    }
+
+    /** Puts a group's origin on the stage centre, whatever its own size and offset. */
+    private void centreOrigin(Group group) {
+        group.setOrigin(stage.getWidth() / 2f - group.getX(), stage.getHeight() / 2f - group.getY());
     }
 
     /**
@@ -152,8 +167,18 @@ public abstract class BaseScreen extends ScreenAdapter {
     public void show() {
         applyLook();
         // Every screen fades in, so switching screens never pops.
-        stage.getRoot().getColor().a = 0f;
-        stage.getRoot().addAction(Actions.fadeIn(0.25f, Interpolation.fade));
+        Group root = stage.getRoot();
+        root.getColor().a = 0f;
+        if (Motion.reduced) {
+            root.addAction(Actions.fadeIn(0.2f, Interpolation.fade));
+        } else {
+            // Fade in while the content settles from 98.5 % to full size: a soft zoom, never a
+            // slide that would fight the safe-area layout. Ends exactly at scale 1.
+            root.addAction(Actions.fadeIn(0.25f, Interpolation.fade));
+            centreOrigin(safeArea);
+            safeArea.setScale(0.985f);
+            safeArea.addAction(Actions.scaleTo(1f, 1f, 0.3f, Interpolation.pow2Out));
+        }
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchKey(Input.Keys.BACK, true);
         stage.setKeyboardFocus(stage.getRoot());

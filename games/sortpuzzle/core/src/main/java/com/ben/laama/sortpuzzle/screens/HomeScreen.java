@@ -18,13 +18,16 @@ import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.ads.AdProvider;
 import com.ben.laama.sortpuzzle.audio.SoundManager;
 import com.ben.laama.sortpuzzle.logic.DailyChallenge;
+import com.ben.laama.sortpuzzle.logic.LevelNumbers;
 import com.ben.laama.sortpuzzle.logic.DailyRewards;
 import com.ben.laama.sortpuzzle.logic.Difficulty;
 import com.ben.laama.sortpuzzle.logic.ReminderAskPolicy;
 import com.ben.laama.sortpuzzle.logic.Shop;
+import com.ben.laama.sortpuzzle.logic.StarGates;
 import com.ben.laama.sortpuzzle.logic.World;
 import com.ben.laama.sortpuzzle.save.SaveData;
 import com.ben.laama.sortpuzzle.ui.BrandMark;
+import com.ben.laama.sortpuzzle.ui.Motion;
 import com.ben.laama.sortpuzzle.ui.Palette;
 import com.ben.laama.sortpuzzle.ui.Ui;
 
@@ -39,6 +42,8 @@ public final class HomeScreen extends BaseScreen {
     private final Label boostersLabel;
     private TextButton dailyBonusButton;
     private ImageButton soundButton;
+    private Table coinChip;
+    private int shownCoins;
     private TextButton claimButton;
     private Table calendar;
 
@@ -74,7 +79,21 @@ public final class HomeScreen extends BaseScreen {
             game.sound().play(SoundManager.Cue.BUTTON);
             game.goSettings();
         });
-        bar.add(soundButton).size(Ui.ICON_BUTTON).left().expandX();
+        // Campaign stars, centred at the top; "90 / 180" while a star gate is ahead.
+        int stars = save.totalStars();
+        int target = StarGates.nextTarget(save);
+        Label starsLabel = new Label(target > 0 ? stars + " / " + target : String.valueOf(stars),
+            skin, "gold");
+        Table starChip = Ui.chip(skin, "icon-star", Palette.GOLD, starsLabel);
+        // The purse sits next to the stars in the header (refreshPurse updates it).
+        coinsLabel = new Label(String.valueOf(save.coins), skin, "gold");
+        shownCoins = save.coins;
+        coinChip = Ui.chip(skin, "icon-coin", Palette.GOLD, coinsLabel);
+        Table wallet = new Table();
+        wallet.add(starChip).padRight(10f);
+        wallet.add(coinChip);
+        bar.add(soundButton).size(Ui.ICON_BUTTON).left();
+        bar.add(wallet).expandX();
         bar.add(settings).size(Ui.ICON_BUTTON).right();
 
         // ---- brand ---------------------------------------------------------------
@@ -90,7 +109,7 @@ public final class HomeScreen extends BaseScreen {
         int level = save.currentLevel;
         World.Biome biome = World.biomeFor(level);
         String caption = T.f("{0}  •  {1} colours", T.raw(biome.name), Difficulty.colorsFor(level));
-        play = Ui.twoLineButton(skin, "primary", T.f("CONTINUE  •  LEVEL {0}", level), caption, () -> {
+        play = Ui.twoLineButton(skin, "primary", T.f("CONTINUE  •  LEVEL {0}", LevelNumbers.format(level)), caption, () -> {
             game.sound().play(SoundManager.Cue.BUTTON);
             game.goToLevel(game.save().currentLevel);
         });
@@ -119,18 +138,20 @@ public final class HomeScreen extends BaseScreen {
         Ui.shrinkTextToFit(navigation, NAVIGATION_MAX_WIDTH);
 
         // ---- purse chips ---------------------------------------------------------
-        coinsLabel = new Label(String.valueOf(save.coins), skin, "gold");
+        // Stars and coins live in the header; these chips are tubes and cleared levels.
         boostersLabel = new Label(T.f("{0} tubes", save.boosters), skin, "label");
-        Label cleared = new Label(T.f("{0} cleared  •  {1} stars", save.completedCount(),
-            save.totalStars()), skin, "label");
+        Label cleared = new Label(T.f("{0} cleared", save.completedCount()), skin, "label");
         chips = new Table();
-        chips.add(Ui.chip(skin, "icon-coin", Palette.GOLD, coinsLabel)).padRight(10f);
         chips.add(Ui.chip(skin, "icon-tube", Palette.PRIMARY, boostersLabel)).padRight(10f);
         chips.add(Ui.chip(skin, "icon-check", Palette.SUCCESS, cleared));
 
         // ---- daily reward calendar --------------------------------------------------
         rewardCard = dailyRewardCard(save);
         arrange(isLandscape());
+
+        // Entrance: top to bottom, one beat apart; then the main action breathes gently.
+        Motion.cascade(bar, brand, play, dailyCard, navigation, chips, rewardCard);
+        Motion.breathe(play);
 
         root.getColor().a = 0f;
         root.addAction(Actions.fadeIn(0.28f, Interpolation.fade));
@@ -407,7 +428,9 @@ public final class HomeScreen extends BaseScreen {
 
     private void refreshPurse() {
         SaveData save = game.save();
-        coinsLabel.setText(String.valueOf(save.coins));
+        // The header purse rolls up to the new total and pops, so a reward is seen landing.
+        Motion.countTo(coinsLabel, shownCoins, save.coins, coinChip);
+        shownCoins = save.coins;
         boostersLabel.setText(T.f("{0} tubes", save.boosters));
     }
 

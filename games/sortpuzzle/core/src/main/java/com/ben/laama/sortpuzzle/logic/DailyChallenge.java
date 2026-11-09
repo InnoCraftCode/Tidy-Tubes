@@ -1,5 +1,7 @@
 package com.ben.laama.sortpuzzle.logic;
 
+import com.ben.laama.sortpuzzle.GameConfig;
+
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 
@@ -23,9 +25,13 @@ public final class DailyChallenge {
         return date.toString();
     }
 
-    /** All players get the same difficulty profile for a given UTC day. */
+    /**
+     * All players get the same difficulty profile for a given UTC day, always from the hard
+     * band: levels {@code DAILY_FIRST_LEVEL} to {@code DAILY_FIRST_LEVEL + 99} (8-10 colours).
+     */
     public static int levelFor(LocalDate date) {
-        return Math.floorMod(requireDate(date).toEpochDay(), DIFFICULTY_CYCLE) + 1;
+        return GameConfig.DAILY_FIRST_LEVEL
+            + Math.floorMod(requireDate(date).toEpochDay(), DIFFICULTY_CYCLE);
     }
 
     /** A day-specific seed keeps the daily board distinct from its campaign counterpart. */

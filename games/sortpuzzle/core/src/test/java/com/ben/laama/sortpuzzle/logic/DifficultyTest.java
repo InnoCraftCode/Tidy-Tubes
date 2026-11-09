@@ -100,6 +100,15 @@ class DifficultyTest {
     }
 
     @Test
+    @DisplayName("the daily move limit is tighter than the campaign's but never below par")
+    void dailyMoveLimitIsTighterButWinnable() {
+        assertEquals(0, Difficulty.dailyMoveLimitFor(0), "unknown par means no limit");
+        assertEquals(28, Difficulty.dailyMoveLimitFor(20)); // 20 + round(20 * 0.4)
+        assertEquals(36, Difficulty.moveLimitFor(20));      // campaign: 20 + round(20 * 0.8)
+        assertEquals(8, Difficulty.dailyMoveLimitFor(5));   // small par: base slack of 3
+    }
+
+    @Test
     @DisplayName("the move limit scales with par and always leaves real slack")
     void moveLimit() {
         assertEquals(0, Difficulty.moveLimitFor(0), "unknown par means no limit");

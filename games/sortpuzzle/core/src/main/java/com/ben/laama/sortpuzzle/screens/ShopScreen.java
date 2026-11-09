@@ -644,7 +644,8 @@ public final class ShopScreen extends BaseScreen {
                     "assist." + assist.id(), AnalyticsEvents.P_PRICE, assist.packPrice(),
                     AnalyticsEvents.P_COINS, save.coins);
                 refresh();
-                Ui.toast(stage, skin, T.f("+{0} in stock", assist.packLabel()), Palette.SUCCESS);
+                game.afterPurchase(() -> Ui.toast(stage, skin, T.f("+{0} in stock", assist.packLabel()),
+                    Palette.SUCCESS));
             }
         });
         buy.getColor().a = save.coins >= assist.packPrice() ? 1f : 0.55f;
@@ -747,8 +748,8 @@ public final class ShopScreen extends BaseScreen {
                     "booster." + pack.count(), AnalyticsEvents.P_PRICE, pack.price(),
                     AnalyticsEvents.P_COINS, save.coins);
                 refresh();
-                Ui.toast(stage, skin, T.f("+{0} in stock",
-                    com.ben.laama.sortpuzzle.logic.Assists.TUBE.countLabel(pack.count())), Palette.SUCCESS);
+                game.afterPurchase(() -> Ui.toast(stage, skin, T.f("+{0} in stock",
+                    com.ben.laama.sortpuzzle.logic.Assists.TUBE.countLabel(pack.count())), Palette.SUCCESS));
             }
         });
         buy.getColor().a = pack.canBuy(save) ? 1f : 0.55f;
@@ -970,7 +971,8 @@ public final class ShopScreen extends BaseScreen {
             AnalyticsEvents.P_PRICE, item.price(), AnalyticsEvents.P_COINS, save.coins);
         previewed = null;
         refresh();
-        Ui.toast(stage, skin, T.f("{0} is yours and in use", Names.name(item.displayName())), Palette.SUCCESS);
+        game.afterPurchase(() -> Ui.toast(stage, skin,
+            T.f("{0} is yours and in use", Names.name(item.displayName())), Palette.SUCCESS));
     }
 
     private void goBack() {

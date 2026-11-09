@@ -16,6 +16,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SaveDataProgressTest {
 
     @Test
+    @DisplayName("winning the last level unlocks nothing past one million")
+    void lastLevelHasNoSuccessor() {
+        SaveData save = new SaveData();
+        save.highestUnlocked = GameConfig.MAX_LEVEL;
+        save.currentLevel = GameConfig.MAX_LEVEL;
+
+        save.recordWin(GameConfig.MAX_LEVEL, 30, 25);
+
+        assertEquals(1_000_000, save.highestUnlocked);
+        assertEquals(1_000_000, save.currentLevel);
+        assertTrue(save.isCompleted(GameConfig.MAX_LEVEL));
+    }
+
+    @Test
     @DisplayName("daily wins pay once per date and only consecutive dates grow the streak")
     void dailyRewardAndStreak() {
         SaveData save = new SaveData();

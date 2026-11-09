@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Align;
 
 import com.ben.laama.sortpuzzle.i18n.T;
 import com.ben.laama.sortpuzzle.logic.Level;
+import com.ben.laama.sortpuzzle.logic.LevelNumbers;
 
 /**
  * The chrome around the board: back, level badge and purse along the top, one status pill
@@ -310,7 +311,7 @@ public final class HudTable extends Table {
 
     // --------------------------------------------------------------------- header
     public void setLevel(int level, String band) {
-        setLevel(T.f("Level {0}", level), band);
+        setLevel(T.f("Level {0}", LevelNumbers.format(level)), band);
     }
 
     public void setLevel(String title, String band) {

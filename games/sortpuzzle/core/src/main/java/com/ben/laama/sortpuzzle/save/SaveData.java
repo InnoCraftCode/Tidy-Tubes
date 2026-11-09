@@ -205,6 +205,7 @@ public class SaveData {
         version = CURRENT_VERSION;
         if (currentLevel < 1) currentLevel = 1;
         if (highestUnlocked < 1) highestUnlocked = 1;
+        if (highestUnlocked > GameConfig.MAX_LEVEL) highestUnlocked = GameConfig.MAX_LEVEL;
         if (currentLevel > highestUnlocked) currentLevel = highestUnlocked;
         if (coins < 0) coins = 0;
         if (boosters < 0) boosters = 0;
@@ -578,10 +579,11 @@ public class SaveData {
         bestStars[i] = Math.max(bestStars[i], com.ben.laama.sortpuzzle.logic.LevelRating
             .starsFor(moves, parMoves));
 
-        if (level + 1 > highestUnlocked) {
-            highestUnlocked = level + 1;
+        int next = Math.min(level + 1, GameConfig.MAX_LEVEL); // the last level has no successor
+        if (next > highestUnlocked) {
+            highestUnlocked = next;
         }
-        currentLevel = Math.min(level + 1, highestUnlocked);
+        currentLevel = Math.min(next, highestUnlocked);
 
         int earned = GameConfig.COINS_PER_WIN;
         boolean atPar = parMoves > 0 && moves <= parMoves;

@@ -19,7 +19,7 @@ public final class GameConfig {
     public static final String TAGLINE = T.k("Sort. Breathe. Repeat.");
     public static final int RELAXING_MUSIC_TRACK_COUNT = 10;
     /** Shown on the About card. Kept in sync with {@code build.gradle.kts} by hand. */
-    public static final String VERSION_NAME = "1.2.1";
+    public static final String VERSION_NAME = "1.3.0";
     /** Store page, used in the share text. */
     public static final String STORE_URL =
         "https://play.google.com/store/apps/details?id=com.ben.laama.sortpuzzle";
@@ -62,6 +62,14 @@ public final class GameConfig {
     public static final int MAX_COLORS = 10;
 
     // -------------------------------------------------------------- difficulty
+    /**
+     * Star gates: every Nth chapter opens only once the player holds enough campaign stars
+     * (daily stars never count): STAR_GATE_STARS_PER_LEVEL for each level before the chapter.
+     */
+    public static final int STAR_GATE_EVERY_CHAPTERS = 10;
+    public static final int STAR_GATE_STARS_PER_LEVEL = 2;
+    /** The campaign ends here: one million generated levels. */
+    public static final int MAX_LEVEL = 1_000_000;
     public static final int EASY_LAST_LEVEL = 10;
     public static final int MEDIUM_LAST_LEVEL = 50;
 
@@ -77,6 +85,13 @@ public final class GameConfig {
     public static final float MOVE_LIMIT_SLACK_RATIO = 0.8f;
     /** Moves granted by one "extra moves" reward when the player runs out. */
     public static final int EXTRA_MOVES_PER_AD = 5;
+    /**
+     * The daily puzzle is a hard one: its profile is drawn from the hard band (levels 51-150:
+     * 8 to 10 colours) and its move limit is tighter than the campaign's.
+     */
+    public static final int DAILY_FIRST_LEVEL = 51;
+    public static final int DAILY_MOVE_LIMIT_BASE_SLACK = 3;
+    public static final float DAILY_MOVE_LIMIT_SLACK_RATIO = 0.4f;
     /** Coin price of the extra moves when no rewarded video is available. */
     public static final int EXTRA_MOVES_PRICE = 60;
 
@@ -84,7 +99,7 @@ public final class GameConfig {
     /** Natural breaks skipped before interstitials are considered in a session. */
     public static final int INTERSTITIAL_INITIAL_BREAKS_TO_SKIP = 2;
     /** An interstitial may show at most once every N completed levels (natural breaks). */
-    public static final int INTERSTITIAL_EVERY_N_LEVELS = 3;
+    public static final int INTERSTITIAL_EVERY_N_LEVELS = 2;
     /** And never sooner than this after the previous full-screen ad, rewarded included. */
     public static final long INTERSTITIAL_MIN_INTERVAL_MS = 120_000L;
     /**

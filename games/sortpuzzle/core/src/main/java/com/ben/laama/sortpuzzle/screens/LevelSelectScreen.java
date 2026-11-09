@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
+import com.ben.laama.sortpuzzle.GameConfig;
 import com.ben.laama.sortpuzzle.Main;
 import com.ben.laama.sortpuzzle.i18n.Names;
 import com.ben.laama.sortpuzzle.i18n.T;
@@ -24,8 +25,10 @@ import com.ben.laama.sortpuzzle.audio.SoundManager;
 import com.ben.laama.sortpuzzle.logic.Cosmetic;
 import com.ben.laama.sortpuzzle.logic.Difficulty;
 import com.ben.laama.sortpuzzle.logic.Shop;
+import com.ben.laama.sortpuzzle.logic.StarGates;
 import com.ben.laama.sortpuzzle.logic.World;
 import com.ben.laama.sortpuzzle.save.SaveData;
+import com.ben.laama.sortpuzzle.ui.Motion;
 import com.ben.laama.sortpuzzle.ui.Palette;
 import com.ben.laama.sortpuzzle.ui.Tex;
 import com.ben.laama.sortpuzzle.ui.Ui;
@@ -41,7 +44,15 @@ public final class LevelSelectScreen extends BaseScreen {
     private static final int CHAPTER = World.CHAPTER_LEVELS;
     /** How many locked chapters to show past the furthest one unlocked. */
     private static final int LOOKAHEAD_CHAPTERS = 3;
-    private static final int MINIMUM_CHAPTERS = 5;
+    /**
+     * How many chapters before the current one the map opens with. Each card owns a sky texture
+     * and ten tiles, so the map builds one window at a time instead of all 100 000 chapters;
+     * the START / EARLIER / LATER / END rows move the window anywhere from level 1 to 1M.
+     */
+    private static final int HISTORY_CHAPTERS = 30;
+    private static final int WINDOW_CHAPTERS = HISTORY_CHAPTERS + 1 + LOOKAHEAD_CHAPTERS;
+    /** How far EARLIER / LATER move the window. */
+    private static final int PAGE_CHAPTERS = 30;
     private static final float CARD_WIDTH = 640f;
     private static final float TILE = 108f;
     private static final float TILE_PAD = 5f;
@@ -52,6 +63,14 @@ public final class LevelSelectScreen extends BaseScreen {
     private Actor currentCard;
     private final Array<Actor> cards = new Array<>();
     private int mapColumns;
+    private int currentChapter;
+    private int windowFirst;
+    private int windowLast;
+    private Table topNav;
+    private Table bottomNav;
+    private final int gateChapter;
+    /** Campaign stars, read once per window build. */
+    private int starsHeld;
 
     /**
      * One column of chapter cards on a portrait screen; two side by side once the world is wide
@@ -65,6 +84,9 @@ public final class LevelSelectScreen extends BaseScreen {
         }
         mapColumns = columns;
         map.clearChildren();
+        if (topNav != null) {
+            map.add(topNav).colspan(columns).padTop(6f).padBottom(6f).row();
+        }
         for (int i = 0; i < cards.size; i++) {
             boolean firstRow = i < columns;
             boolean endOfRow = (i % columns) == columns - 1;
@@ -77,6 +99,12 @@ public final class LevelSelectScreen extends BaseScreen {
                 cell.row();
             }
         }
+        if (bottomNav != null) {
+            if (cards.size % columns != 0) {
+                map.row();
+            }
+            map.add(bottomNav).colspan(columns).padTop(18f).row();
+        }
     }
 
     @Override
@@ -85,12 +113,20 @@ public final class LevelSelectScreen extends BaseScreen {
     }
 
     public LevelSelectScreen(Main game) {
+        this(game, 0);
+    }
+
+    /**
+     * @param gateChapter a star-gated chapter the player just tried to enter, to explain on
+     *                    arrival how many stars it still needs; {@code 0} for a normal visit
+     */
+    public LevelSelectScreen(Main game, int gateChapter) {
         super(game);
+        this.gateChapter = gateChapter;
         SaveData save = game.save();
         background.setIntensity(0.5f);
 
-        int currentChapter = World.chapterOf(save.highestUnlocked);
-        int lastChapter = Math.max(MINIMUM_CHAPTERS, currentChapter + LOOKAHEAD_CHAPTERS);
+        currentChapter = World.chapterOf(save.highestUnlocked);
 
         // The biome dressing is applied in show(), see themeOverride().
 
@@ -115,21 +151,110 @@ public final class LevelSelectScreen extends BaseScreen {
         map = new Table();
         map.top();
         map.pad(6f, 0f, 40f, 0f);
-        for (int chapter = 1; chapter <= lastChapter; chapter++) {
+        scroll = new ScrollPane(map, skin);
+        buildWindow(Math.max(1, currentChapter - HISTORY_CHAPTERS));
+
+        scroll.setFadeScrollBars(true);
+        scroll.setScrollbarsOnTop(true);
+        scroll.setScrollingDisabled(true, false);
+        scroll.setOverscroll(false, true);
+        root.add(scroll).grow().row();
+    }
+
+    /**
+     * Builds the cards of one window of chapters, starting at {@code first}. Only a window is
+     * ever built (each card owns a texture and ten tiles); the navigation rows above and below
+     * move it, so every chapter from 1 to the last one is reachable without freezing the map.
+     */
+    private void buildWindow(int first) {
+        int lastWorld = World.chapterOf(GameConfig.MAX_LEVEL);
+        int start = Math.max(1, Math.min(first, lastWorld - WINDOW_CHAPTERS + 1));
+        int end = Math.min(lastWorld, start + WINDOW_CHAPTERS - 1);
+        windowFirst = start;
+        windowLast = end;
+
+        for (Texture sky : skies) {
+            sky.dispose();
+        }
+        skies.clear();
+        cards.clear();
+        currentCard = null;
+        SaveData save = game.save();
+        starsHeld = save.totalStars();
+        for (int chapter = start; chapter <= end; chapter++) {
             Actor card = chapterCard(World.biomeOfChapter(chapter), save);
             if (chapter == currentChapter) {
                 currentCard = card;
             }
             cards.add(card);
         }
+        topNav = windowFirst > 1 ? navRow(
+            navButton(T.r("START"), () -> jumpTo(1)),
+            navButton(T.r("EARLIER"), () -> jumpTo(windowFirst - PAGE_CHAPTERS)),
+            currentCard == null ? navButton(T.r("MY CHAPTER"), this::jumpHome) : null) : null;
+        bottomNav = windowLast < lastWorld ? navRow(
+            currentCard == null ? navButton(T.r("MY CHAPTER"), this::jumpHome) : null,
+            navButton(T.r("LATER"), () -> jumpTo(windowFirst + PAGE_CHAPTERS)),
+            navButton(T.r("END"), () -> jumpTo(lastWorld))) : null;
+        mapColumns = 0; // force a re-layout
         arrangeMap(stage.getWidth());
 
-        scroll = new ScrollPane(map, skin);
-        scroll.setFadeScrollBars(true);
-        scroll.setScrollbarsOnTop(true);
-        scroll.setScrollingDisabled(true, false);
-        scroll.setOverscroll(false, true);
-        root.add(scroll).grow().row();
+        // Entrance: only the cards around where the map opens cascade in (one before the
+        // focus, then the next five); off-screen cards just appear, nobody sees them arrive.
+        int focus = currentCard != null ? Math.max(0, cards.indexOf(currentCard, true) - 1) : 0;
+        for (int i = focus; i < Math.min(cards.size, focus + 6); i++) {
+            Motion.enter(cards.get(i), i - focus);
+        }
+        if (topNav != null) {
+            Motion.enter(topNav, 0);
+        }
+    }
+
+    private void jumpTo(int first) {
+        game.sound().play(SoundManager.Cue.BUTTON);
+        buildWindow(first);
+        scrollToFocus();
+    }
+
+    private void jumpHome() {
+        jumpTo(Math.max(1, currentChapter - HISTORY_CHAPTERS));
+    }
+
+    private TextButton navButton(String text, Runnable action) {
+        return Ui.button(skin, text, "ghost", action);
+    }
+
+    private Table navRow(TextButton... buttons) {
+        Table row = new Table();
+        for (TextButton button : buttons) {
+            if (button != null) {
+                row.add(button).height(64f).pad(0f, 6f, 0f, 6f);
+            }
+        }
+        return row;
+    }
+
+    /** Scrolls to the player's chapter when it is in the window, else to the top. */
+    private void scrollToFocus() {
+        stage.act(0f);
+        scroll.validate();
+        map.validate();
+        float y = 0f;
+        if (currentCard != null) {
+            float fromTop = map.getHeight() - currentCard.getY() - currentCard.getHeight();
+            y = Math.max(0f, fromTop - 24f);
+        }
+        scroll.setScrollY(y);
+        scroll.updateVisualScroll();
+    }
+
+    /** Long level numbers (up to 1000000) shrink to fit inside their tile instead of overflowing. */
+    private static void fitToTile(Label number) {
+        float max = TILE - 16f;
+        float width = number.getPrefWidth();
+        if (width > max) {
+            Ui.setTextScale(number, max / width);
+        }
     }
 
     /** One biome: its sky, name, progress line and the ten tiles. */
@@ -139,7 +264,10 @@ public final class LevelSelectScreen extends BaseScreen {
         Color bottom = Color.valueOf(theme != null ? theme.hex(1) : "0B0E24");
         Color lightA = Color.valueOf(theme != null ? theme.hex(2) : "3FB7C9");
         Color lightB = Color.valueOf(theme != null ? theme.hex(3) : "7B5CE6");
-        boolean reached = save.highestUnlocked >= biome.firstLevel;
+        int stars = starsHeld;
+        int needed = StarGates.requiredStars(biome.chapter);
+        boolean starLocked = !StarGates.isOpenFor(save, biome.chapter, stars);
+        boolean reached = save.highestUnlocked >= biome.firstLevel && !starLocked;
         boolean done = save.highestUnlocked > biome.lastLevel;
         float progress = World.progressIn(biome, save.highestUnlocked);
 
@@ -161,7 +289,7 @@ public final class LevelSelectScreen extends BaseScreen {
         titleRow.pad(14f, 22f, 12f, 22f);
         Table names = new Table();
         Label chapterLabel = new Label(T.f("CHAPTER {0}  •  LEVELS {1}–{2}", biome.chapter,
-            biome.firstLevel, biome.lastLevel), skin, "small");
+            String.valueOf(biome.firstLevel), String.valueOf(biome.lastLevel)), skin, "small");
         chapterLabel.setColor(Palette.TEXT_DIM);
         names.add(chapterLabel).left().row();
         Label name = new Label(T.show(Names.name(biome.name)), skin, "heading");
@@ -171,7 +299,15 @@ public final class LevelSelectScreen extends BaseScreen {
             : T.r("LOCKED");
         Label stateLabel = new Label(state, skin, "small");
         stateLabel.setColor(done ? Palette.SUCCESS : reached ? Palette.PRIMARY : Palette.TEXT_DIM);
-        if (!reached) {
+        if (starLocked) {
+            // Star gate: "★ 123 / 180" in gold, the stars held over the stars needed.
+            Table gate = new Table();
+            gate.add(new Image(skin.newDrawable("icon-star", Palette.GOLD))).size(20f).padRight(6f);
+            Label count = new Label(stars + " / " + needed, skin, "small");
+            count.setColor(Palette.GOLD);
+            gate.add(count);
+            titleRow.add(gate).right();
+        } else if (!reached) {
             Table locked = new Table();
             locked.add(new Image(skin.newDrawable("icon-lock", Palette.TEXT_DIM))).size(18f).padRight(6f);
             locked.add(stateLabel);
@@ -196,6 +332,12 @@ public final class LevelSelectScreen extends BaseScreen {
         String colours = first == last ? T.rawf("{0} colours", first) : T.rawf("{0}–{1} colours", first, last);
         card.add(new Label(T.f("{0}  •  {1}", colours, T.raw(Difficulty.bandName(biome.firstLevel))), skin, "caption"))
             .left().padLeft(22f).padTop(10f).row();
+        if (starLocked) {
+            Label gateLine = new Label(T.f("{0} more stars to open this chapter", needed - stars),
+                skin, "caption");
+            gateLine.setColor(Palette.GOLD);
+            card.add(gateLine).left().padLeft(22f).padTop(4f).row();
+        }
 
         // The tiles.
         Table tiles = new Table();
@@ -241,9 +383,11 @@ public final class LevelSelectScreen extends BaseScreen {
 
     private Actor tile(int level) {
         SaveData save = game.save();
-        boolean unlocked = save.isUnlocked(level);
+        // Progress and the chapter's star gate (stars counted once per window, not per tile).
+        boolean unlocked = save.isUnlocked(level)
+            && StarGates.isOpenFor(save, World.chapterOf(level), starsHeld);
         boolean completed = save.isCompleted(level);
-        boolean current = level == save.currentLevel;
+        boolean current = level == save.currentLevel && unlocked;
 
         String style = completed ? "tile-done" : current ? "tile-current"
             : unlocked ? "tile-open" : "tile-locked";
@@ -261,11 +405,14 @@ public final class LevelSelectScreen extends BaseScreen {
         if (!unlocked) {
             Image lock = new Image(skin.newDrawable("icon-lock", Palette.TEXT_DISABLED));
             content.add(lock).size(26f).row();
+            // Exact numbers on the map: "999.6k" on ten tiles in a row would be unreadable.
             Label number = new Label(String.valueOf(level), skin, "caption");
+            fitToTile(number);
             content.add(number).padTop(2f);
         } else {
             Label number = new Label(String.valueOf(level),
                 new Label.LabelStyle(skin.getFont("heading"), textStyle.fontColor));
+            fitToTile(number);
             content.add(number).row();
             int stars = completed ? save.bestStarsFor(level) : 0;
             if (stars > 0) {
@@ -302,13 +449,12 @@ public final class LevelSelectScreen extends BaseScreen {
     public void show() {
         super.show();
         // Open on the chapter the player is in, not at the top of the world.
-        stage.act(0f);
-        scroll.validate();
-        map.validate();
-        if (currentCard != null) {
-            float fromTop = map.getHeight() - currentCard.getY() - currentCard.getHeight();
-            scroll.setScrollY(Math.max(0f, fromTop - 24f));
-            scroll.updateVisualScroll();
+        scrollToFocus();
+        if (gateChapter > 0) {
+            int missing = StarGates.requiredStars(gateChapter) - game.save().totalStars();
+            if (missing > 0) {
+                Ui.toast(stage, skin, T.f("{0} more stars to open this chapter", missing), Palette.GOLD);
+            }
         }
     }
 

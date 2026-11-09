@@ -136,6 +136,9 @@ public final class SettingsScreen extends BaseScreen {
         }
         play.add(Ui.divider(skin)).height(2f).growX().colspan(3).padTop(14f).padBottom(14f).row();
         row(play, "icon-trash", T.r("Reset progress"), Ui.button(skin, T.r("RESET"), "danger", this::confirmReset));
+        play.add(Ui.divider(skin)).height(2f).growX().colspan(3).padTop(14f).padBottom(14f).row();
+        // No ad on quit: AdMob forbids interstitials when the user exits the app.
+        row(play, "icon-close", T.r("Quit game"), Ui.button(skin, T.r("QUIT"), "ghost", Gdx.app::exit));
         list.add(play).row();
 
         // ---- privacy -------------------------------------------------------------
@@ -176,6 +179,10 @@ public final class SettingsScreen extends BaseScreen {
         typefaces.setAlignment(com.badlogic.gdx.utils.Align.left);
         about.add(typefaces).width(CARD_WIDTH - 52f).left().padTop(12f).row();
         list.add(about).row();
+        // Cards float in one after the other, top to bottom.
+        for (int i = 0; i < list.getChildren().size; i++) {
+            com.ben.laama.sortpuzzle.ui.Motion.enter(list.getChildren().get(i), i);
+        }
 
         ScrollPane scroll = new ScrollPane(list, skin);
         scroll.setScrollingDisabled(true, false);

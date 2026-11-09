@@ -107,7 +107,7 @@ public final class ReminderPlanner {
                 return new String[] {T.raw("Almost there!"),
                     T.raw("You started today's puzzle. A few more moves and it's solved.")};
             }
-            return new String[] {T.rawf("Level {0} is waiting", level),
+            return new String[] {T.rawf("Level {0} is waiting", LevelNumbers.format(level)),
                 T.raw("Your tubes are right where you left them. One more?")};
         }
         if (streakAlive) {
@@ -120,10 +120,10 @@ public final class ReminderPlanner {
                     ? new String[] {T.raw("Today's puzzle is ready"),
                         T.raw("A fresh board, the same one for everyone today. Give it a minute.")}
                     : new String[] {T.raw("A calm minute?"),
-                        T.rawf("Sort a few tubes, breathe out. Level {0} is waiting.", level)};
+                        T.rawf("Sort a few tubes, breathe out. Level {0} is waiting.", LevelNumbers.format(level))};
             case 1:
                 return new String[] {T.raw("Can you beat your best?"),
-                    T.rawf("Level {0} in fewer moves: the solver says it's possible.", level)};
+                    T.rawf("Level {0} in fewer moves: the solver says it's possible.", LevelNumbers.format(level))};
             case 2:
                 return new String[] {T.raw("Your tubes miss you"),
                     T.raw("Coins are waiting to be earned, and new styles to unlock in the shop.")};
@@ -132,10 +132,10 @@ public final class ReminderPlanner {
                     ? new String[] {T.raw("Still time for today's puzzle"),
                         T.raw("Win it before midnight (UTC) to keep your streak going.")}
                     : new String[] {T.raw("Three colours, then ten"),
-                        T.rawf("Level {0} is the next step. Short, calm, satisfying.", level)};
+                        T.rawf("Level {0} is the next step. Short, calm, satisfying.", LevelNumbers.format(level))};
             default:
                 return new String[] {T.raw("One level before you go on"),
-                    T.rawf("Sort. Breathe. Repeat. Level {0} takes about a minute.", level)};
+                    T.rawf("Sort. Breathe. Repeat. Level {0} takes about a minute.", LevelNumbers.format(level))};
         }
     }
 }

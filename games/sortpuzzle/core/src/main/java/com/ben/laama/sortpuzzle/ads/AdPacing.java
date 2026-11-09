@@ -43,6 +43,31 @@ public final class AdPacing {
         return lastFullScreenAt == Long.MIN_VALUE || clock.getAsLong() - lastFullScreenAt >= minIntervalMs;
     }
 
+    /**
+     * Call once per completed shop purchase (a voluntary pause, not a level break). It does not
+     * count as a level break; only the minimum interval since the last full-screen ad applies.
+     *
+     * @return whether an interstitial may be shown now
+     */
+    public boolean onPurchase() {
+        return intervalElapsed();
+    }
+
+    /**
+     * Call once when a finished daily puzzle is left (a natural break that comes at most once a
+     * day). Every daily may show an interstitial: it does not count as a level break, only the
+     * minimum interval since the last full-screen ad applies.
+     *
+     * @return whether an interstitial may be shown now
+     */
+    public boolean onDailyDone() {
+        return intervalElapsed();
+    }
+
+    private boolean intervalElapsed() {
+        return lastFullScreenAt == Long.MIN_VALUE || clock.getAsLong() - lastFullScreenAt >= minIntervalMs;
+    }
+
     /** Call when any full-screen ad (interstitial or rewarded) was actually shown. */
     public void onFullScreenAdShown() {
         lastFullScreenAt = clock.getAsLong();

@@ -77,6 +77,11 @@ public final class AndroidLauncher extends AndroidApplication {
         }
         reminders = new AndroidReminders(this);
         reminders.handleLaunchIntent(getIntent()); // cold start from a tapped reminder
+        // Accessibility: "Remove animations" (animator duration scale 0) turns off the menus'
+        // entrances, pops and loops; screens then only fade.
+        com.ben.laama.sortpuzzle.ui.Motion.reduced = android.provider.Settings.Global.getFloat(
+            getContentResolver(), android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f;
+
         initialize(new Main(AdProviders.forAndroid(network), services, analytics, reminders,
             new AndroidShare(this)), config);
         hideSystemBars();

@@ -32,11 +32,12 @@ class WorldTest {
     }
 
     @Test
-    @DisplayName("after a full tour the names repeat with a numeral")
-    void tourNumerals() {
+    @DisplayName("after a full tour the names repeat without a number")
+    void namesRepeatWithoutNumber() {
         int count = World.biomeCount();
-        assertEquals("Harbour II", World.biomeOfChapter(count + 1).name);
-        assertEquals("Deep Sea III", World.biomeOfChapter(2 * count + 2).name);
+        assertEquals("Harbour", World.biomeOfChapter(count + 1).name);
+        assertEquals("Deep Sea", World.biomeOfChapter(2 * count + 2).name);
+        assertEquals("Harbour", World.biomeOfChapter(100_000).name); // the last chapter
     }
 
     @Test

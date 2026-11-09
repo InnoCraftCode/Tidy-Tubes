@@ -5,7 +5,7 @@ import com.ben.laama.sortpuzzle.i18n.T;
 /**
  * The world map, as a sequence of biomes: every chapter of ten levels is a place with a name
  * and a look (one of the catalogue's themes), so progress is seen, not only counted. Biomes
- * cycle, with a roman numeral once the tour starts again, because the campaign has no end.
+ * cycle under the same names until the last level (GameConfig.MAX_LEVEL).
  *
  * <p>Pure data and arithmetic; screens read {@link #biomeFor} to name a chapter, tint its card
  * and (when the player has not chosen a theme of their own) dress the backdrop.</p>
@@ -39,7 +39,6 @@ public final class World {
         "theme.nocturne", "theme.ocean", "theme.forest", "theme.lavender", "theme.sakura",
         "theme.ember", "theme.golden", "theme.midnight", "theme.aurora"
     };
-    private static final String[] ROMAN = {"", " II", " III", " IV", " V", " VI", " VII", " VIII", " IX", " X"};
 
     private World() {
     }
@@ -60,10 +59,10 @@ public final class World {
             throw new IllegalArgumentException("chapters are 1-based, got " + chapter);
         }
         int index = (chapter - 1) % NAMES.length;
-        int tour = (chapter - 1) / NAMES.length;
-        String suffix = tour < ROMAN.length ? ROMAN[tour] : " " + (tour + 1);
         int first = (chapter - 1) * CHAPTER_LEVELS + 1;
-        return new Biome(chapter, NAMES[index] + suffix, THEMES[index], first,
+        // The name alone, without a tour number: "Sakura Garden", never "Sakura Garden 11110".
+        // The chapter line under it already tells the tours apart.
+        return new Biome(chapter, NAMES[index], THEMES[index], first,
             first + CHAPTER_LEVELS - 1);
     }
 
