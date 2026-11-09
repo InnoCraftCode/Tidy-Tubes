@@ -97,11 +97,11 @@ public final class GameConfig {
 
     // --------------------------------------------------------------------- ads
     /** Natural breaks skipped before interstitials are considered in a session. */
-    public static final int INTERSTITIAL_INITIAL_BREAKS_TO_SKIP = 2;
+    public static final int INTERSTITIAL_INITIAL_BREAKS_TO_SKIP = 0;
     /** An interstitial may show at most once every N completed levels (natural breaks). */
     public static final int INTERSTITIAL_EVERY_N_LEVELS = 2;
     /** And never sooner than this after the previous full-screen ad, rewarded included. */
-    public static final long INTERSTITIAL_MIN_INTERVAL_MS = 120_000L;
+    public static final long INTERSTITIAL_MIN_INTERVAL_MS = 90_000L;
     /**
      * No interstitial until this many campaign levels are cleared: a new player's first minutes
      * decide day-1 retention, which is worth far more than one early interstitial.

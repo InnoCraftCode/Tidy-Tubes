@@ -140,8 +140,9 @@ On Android the rewarded video is AdMob (`android/.../AdMobAdProvider.java`, GMA 
 UMP consent); rewards settle exactly once through `RewardGate`. When no video is available —
 no fill, offline, or a build without ad IDs — `RewardOffer` offers the same reward for coins
 (`GameConfig.HINT_UNLOCK_PRICE`, `EXTRA_MOVES_PRICE`), and says so honestly when the player
-cannot afford it. An interstitial may run when the player leaves the level-cleared card, after the first two
-natural breaks, at most every `INTERSTITIAL_EVERY_N_LEVELS` levels, and at least
+cannot afford it. An interstitial may run when the player leaves the level-cleared card, once
+`INTERSTITIAL_MIN_CLEARED` levels are cleared, after `INTERSTITIAL_INITIAL_BREAKS_TO_SKIP` breaks
+of the session, at most every `INTERSTITIAL_EVERY_N_LEVELS` levels, and at least
 `INTERSTITIAL_MIN_INTERVAL_MS` apart (`AdPacing`). The home screen also offers one optional
 rewarded video per UTC day for `DAILY_REWARDED_BONUS_COINS`; it pays only after the ad confirms
 the reward, and declining or an unavailable ad has no penalty. The shop keeps coin purchases

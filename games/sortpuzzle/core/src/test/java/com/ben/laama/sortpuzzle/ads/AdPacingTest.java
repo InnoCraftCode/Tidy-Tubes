@@ -51,12 +51,14 @@ class AdPacingTest {
     }
 
     @Test
-    @DisplayName("the shipped caps skip two breaks, show every 2nd level and keep ads 120 s apart")
+    @DisplayName("the shipped caps skip no break, show every 2nd level and keep ads 90 s apart")
     void shippedCaps() {
-        assertEquals(2, GameConfig.INTERSTITIAL_INITIAL_BREAKS_TO_SKIP);
+        assertEquals(0, GameConfig.INTERSTITIAL_INITIAL_BREAKS_TO_SKIP);
         // AdMob guidance: at most one interstitial per two user actions.
         assertTrue(GameConfig.INTERSTITIAL_EVERY_N_LEVELS >= 2);
-        assertEquals(120_000L, GameConfig.INTERSTITIAL_MIN_INTERVAL_MS);
+        assertEquals(90_000L, GameConfig.INTERSTITIAL_MIN_INTERVAL_MS);
+        // Onboarding stays ad-free: the first levels decide day-1 retention.
+        assertEquals(5, GameConfig.INTERSTITIAL_MIN_CLEARED);
     }
 
     @Test
