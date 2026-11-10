@@ -1,0 +1,507 @@
+{
+    "game":  "threadbound-festival",
+    "kit":  "play-store\\threadbound-festival",
+    "generated":  "2026-11-10T23:35:40",
+    "specSource":  "https://support.google.com/googleplay/android-developer/answer/9866151 (read 2026-10-26)",
+    "overall":  "PASS",
+    "note":  "Technical validation only. Entries under humanReview need a person; they are never marked PASS by this script.",
+    "assets":  [
+                   {
+                       "file":  "play-store\\threadbound-festival\\graphics\\icon-512.png",
+                       "assetType":  "icon",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  32,
+                       "width":  512,
+                       "height":  512,
+                       "aspectRatio":  1,
+                       "sizeKB":  48,
+                       "checks":  [
+                                      {
+                                          "name":  "dimensions 512x512",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "format PNG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "32-bit RGBA (alpha channel present)",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "size \u003c= 1024 KB",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Readable at 48 px; clear silhouette; no badges, ranking, price or award claims; no third-party marks"
+                                       ]
+                   },
+                   {
+                       "file":  "play-store\\threadbound-festival\\graphics\\feature-graphic-1024x500.png",
+                       "assetType":  "feature",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1024,
+                       "height":  500,
+                       "aspectRatio":  2.048,
+                       "sizeKB":  134.1,
+                       "checks":  [
+                                      {
+                                          "name":  "dimensions 1024x500",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "size \u003c= 15 MB",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Key elements inside the central safe area; no exaggerated claims, badges or third-party marks; legible at small sizes"
+                                       ]
+                   },
+                   {
+                       "file":  "play-store\\threadbound-festival\\screenshots\\phone\\01-tangle.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  410.4,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "play-store\\threadbound-festival\\screenshots\\phone\\02-one-tap.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  331.5,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "play-store\\threadbound-festival\\screenshots\\phone\\03-lantern-lift.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  391,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "play-store\\threadbound-festival\\screenshots\\phone\\04-town.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  120.2,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "play-store\\threadbound-festival\\screenshots\\phone\\05-daily.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  417.7,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "play-store\\threadbound-festival\\screenshots\\phone\\06-shop.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  157.4,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "play-store\\threadbound-festival\\screenshots\\phone\\07-wind.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  386.9,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "play-store\\threadbound-festival\\screenshots\\phone\\08-map.png",
+                       "assetType":  "shot",
+                       "status":  "PASS",
+                       "detectedFormat":  "PNG",
+                       "bitsPerPixel":  24,
+                       "width":  1080,
+                       "height":  1920,
+                       "aspectRatio":  0.5625,
+                       "sizeKB":  149.3,
+                       "checks":  [
+                                      {
+                                          "name":  "format PNG or JPEG",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "24-bit, no alpha channel",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "each side 320..3840 px",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "long side \u003c= 2x short side",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring: \u003e= 1080 px and 16:9 / 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "alt text in listing.json",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Shows the real app UI; one feature per image; no misleading overlay, badge or invented number"
+                                       ]
+                   },
+                   {
+                       "file":  "play-store\\threadbound-festival\\screenshots\\phone",
+                       "assetType":  "shots",
+                       "status":  "PASS",
+                       "detectedFormat":  null,
+                       "bitsPerPixel":  null,
+                       "width":  null,
+                       "height":  null,
+                       "aspectRatio":  null,
+                       "sizeKB":  null,
+                       "checks":  [
+                                      {
+                                          "name":  "phone screenshots: at least 2",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "phone screenshots: at most 8",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "featuring eligibility: \u003e= 4 at \u003e= 1080 px 9:16",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+
+                                       ]
+                   },
+                   {
+                       "file":  "games\\threadbound-festival\\export_presets.cfg",
+                       "assetType":  "launch",
+                       "status":  "PASS",
+                       "detectedFormat":  null,
+                       "bitsPerPixel":  null,
+                       "width":  null,
+                       "height":  null,
+                       "aspectRatio":  null,
+                       "sizeKB":  null,
+                       "checks":  [
+                                      {
+                                          "name":  "Godot preset: adaptive foreground/background set",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      },
+                                      {
+                                          "name":  "Godot preset: monochrome icon set",
+                                          "status":  "PASS",
+                                          "reason":  "ok"
+                                      }
+                                  ],
+                       "humanReview":  [
+                                           "Adaptive foreground artwork stays inside the 66 dp safe zone (verify on a device after export)"
+                                       ]
+                   }
+               ]
+}

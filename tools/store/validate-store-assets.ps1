@@ -179,6 +179,16 @@ foreach ($device in @('phone', 'tablet-7', 'tablet-10')) {
 # ------------------------------------------------------------------ launcher icons (app resources)
 $res = Join-Path $gameDir 'android\src\main\res'
 $launcherChecks = @()
+if (Test-Path (Join-Path $gameDir 'project.godot')) {
+    # Godot export: launcher icons are generated at export time from the preset's launcher_icons/*
+    # entries (adaptive foreground/background/monochrome), not from android\src\main\res.
+    $preset = Get-Content (Join-Path $gameDir 'export_presets.cfg') -Raw -ErrorAction SilentlyContinue
+    $hasAdaptive = [bool]($preset -match 'launcher_icons/adaptive_foreground_432x432="res://')
+    $hasMono = [bool]($preset -match 'launcher_icons/adaptive_monochrome_432x432="res://')
+    $launcherChecks += Check 'Godot preset: adaptive foreground/background set' $hasAdaptive 'export_presets.cfg has no launcher_icons/adaptive_foreground_432x432 (Godot exports its default icon)' 'WARNING'
+    $launcherChecks += Check 'Godot preset: monochrome icon set' $hasMono 'export_presets.cfg has no launcher_icons/adaptive_monochrome_432x432' 'WARNING'
+    Add-Result (Rel (Join-Path $gameDir 'export_presets.cfg')) 'launch' $null $launcherChecks @('Adaptive foreground artwork stays inside the 66 dp safe zone (verify on a device after export)')
+} else {
 foreach ($d in @{ mdpi = 1; hdpi = 1.5; xhdpi = 2; xxhdpi = 3; xxxhdpi = 4 }.GetEnumerator()) {
     $fgPath = Join-Path $res "mipmap-$($d.Key)\ic_launcher_foreground.png"
     $expected = [int](108 * $d.Value)
@@ -196,6 +206,7 @@ foreach ($d in @{ mdpi = 1; hdpi = 1.5; xhdpi = 2; xxhdpi = 3; xxxhdpi = 4 }.Get
 $launcherChecks += Check 'adaptive icon xml references foreground/background/monochrome' ((Get-Content (Join-Path $res 'mipmap-anydpi-v26\ic_launcher.xml') -Raw) -match 'monochrome') 'monochrome layer missing'
 $launcherChecks += Check 'monochrome vector exists' (Test-Path (Join-Path $res 'drawable\ic_launcher_monochrome.xml')) 'missing'
 Add-Result (Rel $res) 'launch' $null $launcherChecks @('Adaptive foreground artwork stays inside the 66 dp safe zone (verify on the preview sheet / a device)')
+}
 
 # ------------------------------------------------------------------ report
 $report = [ordered]@{

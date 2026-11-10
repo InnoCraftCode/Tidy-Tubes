@@ -28,7 +28,7 @@ function Get-GameProjects {
     foreach ($parent in @((Join-Path $root 'games'), (Join-Path $root 'templates'), $root)) {
         if (-not (Test-Path $parent)) { continue }
         $dirs += Get-ChildItem $parent -Directory -ErrorAction SilentlyContinue |
-            Where-Object { Test-Path (Join-Path $_.FullName 'settings.gradle.kts') }
+            Where-Object { (Test-Path (Join-Path $_.FullName 'settings.gradle.kts')) -or (Test-Path (Join-Path $_.FullName 'project.godot')) }
     }
     return $dirs | Sort-Object FullName -Unique
 }
@@ -36,7 +36,7 @@ function Get-GameProjects {
 # Accepts an absolute/relative path or a bare project name (looked up in games/, templates/, root).
 function Resolve-GameProject {
     param([Parameter(Mandatory)][string]$Project)
-    if (Test-Path (Join-Path $Project 'settings.gradle.kts')) { return (Resolve-Path $Project).Path }
+    if ((Test-Path (Join-Path $Project 'settings.gradle.kts')) -or (Test-Path (Join-Path $Project 'project.godot'))) { return (Resolve-Path $Project).Path }
     $match = Get-GameProjects | Where-Object { $_.Name -ieq $Project } | Select-Object -First 1
     if ($match) { return $match.FullName }
     throw "Project '$Project' not found. Known projects: $((Get-GameProjects | ForEach-Object Name) -join ', ')"

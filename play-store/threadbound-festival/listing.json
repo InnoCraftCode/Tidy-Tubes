@@ -1,0 +1,156 @@
+{
+  "appName": "Knotlight",
+  "packageId": "com.ben.laama.knotlight",
+  "versionName": "0.7.0",
+  "versionCode": 7,
+  "category": "Jeux > Réflexion (Puzzle)",
+  "tags": [
+    "Réflexion",
+    "Casse-tête",
+    "Démêler",
+    "Relaxant",
+    "Hors ligne"
+  ],
+  "contactEmail": "benlamschille@gmail.com",
+  "website": "https://innocraftcode.github.io/knotlight/ (dépôt GitHub InnoCraftCode/knotlight, GitHub Pages ; app-ads.txt à la racine)",
+  "privacyPolicyUrl": "https://innocraftcode.github.io/knotlight/privacy-policy/ (hébergée par le dépôt InnoCraftCode/knotlight ; source : privacy-policy/knotlight/index.html de ce workspace)",
+  "termsOfUseUrl": "https://innocraftcode.github.io/knotlight/terms/ (hébergée par le dépôt InnoCraftCode/knotlight ; source : terms/knotlight/index.html de ce workspace)",
+  "containsAds": "Oui. AdMob (GMA Next-Gen SDK 1.6.0 + UMP 4.0.0) via le plugin ThreadboundAds : vidéos récompensées facultatives (indice quand il n'en reste plus, +1 place dans le panier quand on est bloqué, pièces doublées sur la carte de victoire, pièces gratuites dans la boutique) et interstitiels après une victoire seulement (jamais avant le niveau 10, au plus une victoire sur deux, 120 s minimum après tout plein écran, jamais après l'achat « Sans publicité »). Déclarer « Contient des annonces » et l'identifiant publicitaire (AD_ID). Aucune bannière. Tant que admob_ids.cfg n'existe pas, les builds release n'affichent aucune annonce.",
+  "inAppPurchases": "Un seul produit géré, non consommable : identifiant « remove_ads » (supprime les interstitiels ; les vidéos récompensées restent facultatives). À créer dans Play Console > Monétiser > Produits intégrés avant le test, prix suggéré 3,99 USD (GDD section 8). Restauration automatique au lancement.",
+  "contentRating": "Questionnaire IARC à remplir dans la Play Console : voir app-content-answers.md. Aucun contenu violent, sexuel ou effrayant, pas de langage grossier, pas de jeu d'argent, pas d'interaction entre joueurs ; contient des publicités et un achat intégré. Résultat attendu « Tout public / PEGI 3 » (à confirmer).",
+  "targetAudience": "« 13 ans et plus » (13-15, 16-17, 18+). Le jeu n'est pas conçu pour les enfants ; ne pas cocher « peut attirer involontairement les enfants » sans l'assumer : cela déclencherait la politique Familles (SDK certifiés, formats restreints), non prévue dans cette version. Voir app-content-answers.md.",
+  "dataSafety": "La progression est stockée localement (user://save.json) et n'est jamais envoyée ; aucun serveur, aucun compte, pas de Firebase ni de Play Games. Le SDK AdMob collecte une localisation approximative (IP), des interactions avec les annonces, des diagnostics et l'identifiant publicitaire, partagés avec Google à des fins publicitaires ; consentement via UMP (EEE/R.-U./États américains) avec « Options de confidentialité » sur l'écran d'accueil. L'achat « Sans publicité » passe par la facturation Google Play. Détail : data-safety-answers.md.",
+  "screenshotCaptions": [
+    "01 - Un bel enchevêtrement de rubans sous la lanterne (niveau 24, Jardins fleuris)",
+    "02 - Un tap tire le ruban du dessus jusqu'à sa bobine (fermoirs dorés, niveau 12)",
+    "03 - Lantern Lift : gardez la lanterne de niveau (bulle d'équilibre, panier 2/4)",
+    "04 - Carte de victoire : « Festival restauré ! », 3 étoiles, la ville derrière",
+    "05 - Puzzle du jour, le même pour tout le monde",
+    "06 - Festival Market : compagnons (Pip, Mochi, Hazel, Bao...)",
+    "07 - Collines aux Moulins : crochets de vent (niveau 45)",
+    "08 - Carte du festival : lanternes, étoiles, Pip au niveau 1"
+  ],
+  "screenshots": [
+    {
+      "file": "01-tangle.png",
+      "caption": "Free the festival!",
+      "alt": "Level 24 Seed Lantern in the Flower Gardens: a lantern hangs above a dark board tangled with blue, purple, yellow, olive, green and red ribbons; below, a wooden rack with a red and a yellow spool, the next spools, an empty basket and Pip with a flower crown."
+    },
+    {
+      "file": "02-one-tap.png",
+      "caption": "Tap the ribbon on top",
+      "alt": "Level 12 Two Clasps on Lantern Street at dusk with bunting: free ribbons glow, two golden clasps and two keys sit on the ribbons, the rack shows a red and a yellow spool, the basket is empty and Pip wears his scarf."
+    },
+    {
+      "file": "03-lantern-lift.png",
+      "caption": "Keep the lantern level",
+      "alt": "Level 24 after three pulls: the balance bubble is centred, a blue and a purple ribbon wait in the basket (2 of 4), the yellow spool fills, and the hint reads A knot can tip the balance."
+    },
+    {
+      "file": "04-town.png",
+      "caption": "Bring the town back to life",
+      "alt": "The win card Festival restored! for level 2 Bakery Sign with three stars, Lantern Street 1 of 20, the buttons Next level and Festival map, Pip cheering above and the town houses below."
+    },
+    {
+      "file": "05-daily.png",
+      "caption": "A new puzzle every day",
+      "alt": "The Daily puzzle screen, Same puzzle for everyone today: a dense tangle with wind hooks and a clasp, three spools on the rack, a basket of four and the hint Today's puzzle: the same for every player."
+    },
+    {
+      "file": "06-shop.png",
+      "caption": "Dress up Pip and your ribbons",
+      "alt": "The Festival Market, Animals tab: Pip the Fox shown large and marked In use, then cards for Mochi the Cat, Hazel the Bunny and Bao the Panda with their coin prices; buttons Map, +40 coins video and Remove ads."
+    },
+    {
+      "file": "07-wind.png",
+      "caption": "Beat the wind",
+      "alt": "Level 45 Kite Hill in the Windmill Hills under a blue sky with clouds and windmills: two wind hooks with a countdown of 3 on the ribbons, a clasp at the top, Pip in aviator goggles and the hint Challenge: wait for the right wind."
+    },
+    {
+      "file": "08-map.png",
+      "caption": "Light up the festival map",
+      "alt": "The home screen: the Knotlight title with 3 stars and 15 coins, a red ribbon path winding past lantern levels 1 to 6 with their star ratings, Pip sitting at level 1, a dark castle to the left, and the buttons Daily, Gifts, Goals and Market."
+    }
+  ],
+  "languages": [
+    {
+      "code": "en-US",
+      "name": "English (United States)",
+      "title": "Knotlight: Ribbon Puzzle",
+      "shortDescription": "Untangle magical ribbons, light the lanterns and save the festival!",
+      "fullDescription": [
+        "The night before the Lantern Festival, a mischievous wind tied every ribbon in the town of Lumina into knots. Help Luma and her fox Pip set them free, one tap at a time.",
+        "",
+        "HOW TO PLAY",
+        "• Tap the ribbon on top. It peels off and winds onto the spool of its colour.",
+        "• Spools hold three ribbons and arrive one by one, so plan the order.",
+        "• Pip's basket keeps a few ribbons waiting when their spool is not there yet.",
+        "• Open golden clasps, untie knots, keep the hanging lanterns level and beat the wind.",
+        "",
+        "WHY YOU'LL LIKE IT",
+        "• 60 hand-checked levels across Lantern Street, the Flower Gardens and the Windmill Hills.",
+        "• A new daily puzzle every day, the same for everyone, with a streak calendar.",
+        "• No timer, no move limit. Undo, hints and retries are always there.",
+        "• Every level is verified by a solver: there is always a way out.",
+        "• Earn stars and coins, restore the town, and dress up Pip, your ribbons and spools.",
+        "• Colour-blind friendly: every ribbon colour also has its own pattern.",
+        "• No account, no sign-up, playable offline. Your progress stays on your phone.",
+        "",
+        "Free to play. Contains ads: rewarded videos (a hint, an extra basket slot, double coins) are always optional, and short ads may appear after a level is won. One optional purchase removes those ads."
+      ],
+      "releaseNotes": "First release: 60 levels in 3 worlds, daily puzzle, shop and star road.",
+      "captions": [
+        "Free the festival!",
+        "Tap the ribbon on top",
+        "Keep the lantern level",
+        "Bring the town back to life",
+        "A new puzzle every day",
+        "Dress up Pip and your ribbons",
+        "Beat the wind",
+        "Light up the festival map"
+      ]
+    },
+    {
+      "code": "fr-FR",
+      "name": "Français (France)",
+      "title": "Knotlight : Puzzle de Rubans",
+      "shortDescription": "Démêlez les rubans magiques, allumez les lanternes et sauvez la fête !",
+      "fullDescription": [
+        "La veille de la Fête des Lanternes, un vent espiègle a noué tous les rubans de la ville de Lumina. Aidez Luma et son renard Pip à les libérer, un tap à la fois.",
+        "",
+        "COMMENT JOUER",
+        "• Touchez le ruban du dessus : il se détache et s'enroule sur la bobine de sa couleur.",
+        "• Les bobines contiennent trois rubans et arrivent une par une : choisissez l'ordre.",
+        "• Le panier de Pip garde quelques rubans en attente quand leur bobine n'est pas encore là.",
+        "• Ouvrez les fermoirs dorés, défaites les nœuds, gardez les lanternes de niveau et déjouez le vent.",
+        "",
+        "POURQUOI VOUS ALLEZ AIMER",
+        "• 60 niveaux vérifiés à la main dans la Rue des Lanternes, les Jardins Fleuris et les Collines aux Moulins.",
+        "• Un nouveau puzzle du jour chaque jour, le même pour tout le monde, avec un calendrier de série.",
+        "• Pas de chrono, pas de limite de coups. Annuler, indices et recommencer sont toujours là.",
+        "• Chaque niveau est vérifié par un solveur : il y a toujours une issue.",
+        "• Gagnez des étoiles et des pièces, restaurez la ville, habillez Pip, vos rubans et vos bobines.",
+        "• Adapté aux daltoniens : chaque couleur de ruban a aussi son propre motif.",
+        "• Sans compte ni inscription, jouable hors ligne. Votre progression reste sur votre téléphone.",
+        "",
+        "Gratuit. Contient des publicités : les vidéos récompensées (un indice, une place de panier en plus, pièces doublées) sont toujours facultatives, et de courtes annonces peuvent apparaître après un niveau réussi. Un achat facultatif supprime ces annonces."
+      ],
+      "releaseNotes": "Première version : 60 niveaux dans 3 mondes, puzzle du jour, boutique et route des étoiles.",
+      "captions": [
+        "Libérez la fête !",
+        "Touchez le ruban du dessus",
+        "Gardez la lanterne de niveau",
+        "Faites revivre la ville",
+        "Un nouveau puzzle chaque jour",
+        "Habillez Pip et vos rubans",
+        "Déjouez le vent",
+        "Allumez la carte du festival"
+      ]
+    }
+  ],
+  "screenshotSets": {
+    "phone": "screenshots/phone (anglais, fiche par défaut en-US)",
+    "phone-fr": "screenshots/phone-fr (mêmes vues en français, pour la fiche fr-FR)",
+    "source": "games/threadbound-festival/tests/capture_store.gd (rendu offscreen 1080x1920 ; argument 2 = langue)"
+  }
+}
